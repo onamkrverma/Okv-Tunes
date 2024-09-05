@@ -20,6 +20,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={poppins.className}>
         <main className="container relative">
+          <div className="absolute top-0 w-full h-48 -z-10 flex items-center justify-end rounded-full">
+            <span className="bg-custom_gradient block w-3/4 h-full blur-3xl" />
+          </div>
           <Navbar />
           <SideNavbar />
           {children}

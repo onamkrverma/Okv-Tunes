@@ -7,6 +7,16 @@ const nextConfig = {
     });
     return config;
   },
+
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "c.saavncdn.com",
+        port: "",
+      },
+    ],
+  },
 };
 
 export default nextConfig;

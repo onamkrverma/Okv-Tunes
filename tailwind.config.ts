@@ -14,14 +14,14 @@ const config: Config = {
       },
       backgroundImage: {
         custom_gradient:
-          "linear-gradient(98.37deg, #f50175 .99%, #177edc 100%)",
+          "linear-gradient(45deg, rgb(63 100 233 / 45%), rgb(233 63 63 / 45%),rgb(255 184 0 / 45%))",
       },
 
       textColor: {
         primary: "#ffffff",
       },
       boxShadow: {
-        primary: "0 0 5px 5px #2d2d2d",
+        primary: "0 0 5px 5px #202020",
       },
     },
   },

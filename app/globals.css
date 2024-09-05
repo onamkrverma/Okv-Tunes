@@ -14,12 +14,22 @@
 }
 
 :root {
-  --side-nav-width: 240px;
+  --side-nav-width: 200px;
 }
 
 body {
   background-color: #0d0d0d;
-  color: white;
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+  scroll-snap-stop: always;
+  scroll-behavior: smooth;
+  scroll-snap-type: mandatory;
+  color: #ffffff;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
 
 .container {
