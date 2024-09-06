@@ -31,6 +31,15 @@ body {
   width: 0;
   height: 0;
 }
+.upnext-songs::-webkit-scrollbar {
+  width: 2px;
+  background: transparent;
+  height: 0px;
+}
+.upnext-songs::-webkit-scrollbar-thumb {
+  background: whitesmoke;
+  border-radius: 10px;
+}
 
 .container {
   width: 100%;
@@ -38,9 +47,21 @@ body {
   /* padding: 0 1rem; */
   max-width: 1800px;
 }
-.page-container {
+.inner-container {
   width: calc(100% - var(--side-nav-width));
-  margin: 2rem 0 0 auto;
+  margin: 2rem 0 2rem auto;
   padding: 0 1rem;
   max-width: 1200px;
+}
+
+@media (min-width: 1441px) {
+  .inner-container {
+    margin: 2rem auto;
+  }
+}
+@media (max-width: 426px) {
+  .inner-container {
+    width: 100%;
+    margin: 2rem auto;
+  }
 }

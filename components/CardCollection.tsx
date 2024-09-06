@@ -29,9 +29,15 @@ const CardCollection = async ({ playlistId, title }: Props) => {
         {playlist.data.songs.map((song) => (
           <Card
             key={song.id}
+            id={song.id}
             title={song.name}
-            imageSrc={
+            imageUrl={
               song.image.find((item) => item.quality === "500x500")?.url ?? ""
+            }
+            artist={song.artists.primary[0].name}
+            audioUrl={
+              song.downloadUrl.find((item) => item.quality === "320kbps")
+                ?.url ?? ""
             }
           />
         ))}
