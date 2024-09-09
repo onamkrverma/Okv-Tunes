@@ -16,6 +16,7 @@ import CaretUpIcon from "@/public/icons/caret-up.svg";
 import Image from "next/image";
 import ReactPlayer from "react-player";
 import { useGlobalContext } from "@/app/GlobalContex";
+import secondsToTime from "@/utils/secondsToTime";
 
 const PlayerControls = () => {
   const { currentSong, setGlobalState } = useGlobalContext();
@@ -38,8 +39,6 @@ const PlayerControls = () => {
   const duration = playerRef?.current?.getDuration();
 
   const currentTime = duration ? playerState?.played * duration : 0;
-  console.log(currentTime);
-  console.log(playerState);
 
   useEffect(() => {
     playerRef.current?.seekTo(seekTime);
@@ -120,9 +119,9 @@ const PlayerControls = () => {
             }
           >
             {!playerState.playing ? (
-              <PlayIcon className="w-8 h-8" />
+              <PlayIcon className="w-10 h-10" />
             ) : (
-              <PauseIcon className="w-8 h-8" />
+              <PauseIcon className="w-10 h-10" />
             )}
           </button>
           <button type="button" title="next">
@@ -130,7 +129,10 @@ const PlayerControls = () => {
           </button>
         </div>
 
-        <div className="hidden sm:flex gap-6 items-center justify-end">
+        <div className="hidden sm:flex gap-4 items-center justify-end">
+          <small className="text-neutral-200">
+            {secondsToTime(currentTime)} / {secondsToTime(duration ?? 0)}
+          </small>
           <div className="flex gap-2 items-center justify-center w-24">
             <button type="button" title="mute" className="">
               <SpeakerIcon className="w-6 h-6" />

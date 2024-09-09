@@ -1,10 +1,3 @@
-export interface Playlists extends Data<PlaylistData> {}
-
-export interface Data<T> {
-  success: boolean;
-  data: T;
-}
-
 export interface PlaylistData {
   id: string;
   name: string;
@@ -60,7 +53,7 @@ export interface Song {
   label: string;
   explicitContent: boolean;
   playCount: number;
-  language: Language;
+  language: string;
   hasLyrics: boolean;
   lyricsId: null;
   url: string;
@@ -83,6 +76,10 @@ export interface Artists {
   all: Artist[];
 }
 
-export enum Language {
-  Hindi = "hindi",
+export interface Data<T> {
+  success: boolean;
+  data: T;
 }
+
+export interface TPlaylists extends Data<PlaylistData> {}
+export interface TSongs extends Data<Song[]> {}

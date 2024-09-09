@@ -9,9 +9,7 @@ type Props = {
 };
 
 const CardCollection = async ({ playlistId, title }: Props) => {
-  const playlist = await getPlaylists({
-    id: playlistId,
-  });
+  const playlist = await getPlaylists({ id: playlistId });
 
   const urlSlug = `/playlist/${encodeURIComponent(
     title.replaceAll(" ", "-").toLowerCase()

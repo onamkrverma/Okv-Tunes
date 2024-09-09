@@ -1,14 +1,17 @@
 "use client";
-import secondsToTime from "@/utils/secondsToTime";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import PlayerControls from "./PlayerControls";
 import { useGlobalContext } from "@/app/GlobalContex";
+import SuggestedSongs from "./SuggestedSongs";
 
 const Plalyer = () => {
   const { currentSong } = useGlobalContext();
-  // const [isMaximise, setIsMaximise] = useState(true);
   const { id, imageUrl, title, isMaximise } = currentSong;
+
+  currentSong.id
+    ? localStorage.setItem("currentSong", JSON.stringify(currentSong))
+    : null;
 
   useEffect(() => {
     document.body.style.overflow = isMaximise ? "hidden" : "auto";
@@ -34,40 +37,7 @@ const Plalyer = () => {
               />
             </div>
             {/* upcomming tracks */}
-            <div className="flex flex-col gap-2 w-full max-w-sm h-[400px] rounded-md p-2">
-              <h2 className="font-bold text-xl border-b underline decoration-wavy underline-offset-4 py-2 ">
-                Up Next
-              </h2>
-              <div className="upnext-songs overflow-y-scroll ">
-                {Array(20)
-                  .fill(0)
-                  .map((song, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center gap-4 p-2 cursor-pointer hover:bg-secondary"
-                    >
-                      <Image
-                        src={
-                          "https://c.saavncdn.com/373/Stree-2-Hindi-2024-20240828083834-500x500.jpg"
-                        }
-                        alt={"name" + "okv tunes"}
-                        width={50}
-                        height={50}
-                        priority
-                        className="w-[50px] h-[50px] object-cover rounded-md"
-                      />
-                      <p className="truncate w-80">
-                        {/* {song.name.replaceAll("&quot;", '"')} */}
-                        songs Name{" "}
-                      </p>
-                      <small className="text-neutral-400">
-                        {/* {'secondsToTime(song.duration)'} */}
-                        02:00
-                      </small>
-                    </div>
-                  ))}
-              </div>
-            </div>
+            <SuggestedSongs songId={id} />
           </div>
           <PlayerControls />
         </>

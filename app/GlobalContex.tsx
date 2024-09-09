@@ -1,5 +1,11 @@
 "use client";
-import React, { createContext, ReactNode, useContext, useState } from "react";
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 type TCurrentSong = {
   id: string;
@@ -8,6 +14,7 @@ type TCurrentSong = {
   artist: string;
   audioUrl: string;
   isMaximise: boolean;
+  isRefetchSuggesion: boolean;
 };
 
 type TGlobalState = {
@@ -21,6 +28,7 @@ const defaultState: TGlobalState = {
     artist: "",
     audioUrl: "",
     isMaximise: false,
+    isRefetchSuggesion: false,
   },
 };
 type TGlobalContext = {
@@ -40,6 +48,14 @@ export const GlobalContextProvider = ({
   value,
 }: TGlobalProviderProps) => {
   const [globalState, setGlobalState] = useState(value || defaultState);
+  useEffect(() => {
+    const localCurrentSongInfo = localStorage.getItem("currentSong");
+
+    const currentSongInfo: TCurrentSong = JSON.parse(
+      localCurrentSongInfo ?? "{}"
+    );
+    setGlobalState({ currentSong: currentSongInfo });
+  }, []);
 
   return (
     <GlobalContext.Provider value={{ ...globalState, setGlobalState }}>
