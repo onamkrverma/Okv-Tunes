@@ -19,10 +19,10 @@ const Card = ({ title, imageUrl, artist, audioUrl, id }: Props) => {
         id,
         artist,
         title,
-        imageUrl: imageUrl,
+        imageUrl,
         audioUrl,
         isMaximise: true,
-        isRefetchSuggesion: true,
+        isRefetchSuggestion: true,
       },
     });
   };

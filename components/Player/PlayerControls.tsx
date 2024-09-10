@@ -18,12 +18,17 @@ import ReactPlayer from "react-player";
 import { useGlobalContext } from "@/app/GlobalContex";
 import secondsToTime from "@/utils/secondsToTime";
 
-const PlayerControls = () => {
+type Props = {
+  handlePrev: () => void;
+  handleNext: () => void;
+};
+
+const PlayerControls = ({ handleNext, handlePrev }: Props) => {
   const { currentSong, setGlobalState } = useGlobalContext();
   const { artist, audioUrl, id, imageUrl, title, isMaximise } = currentSong;
 
   const [playerState, setPlayerState] = useState({
-    url: audioUrl,
+    url: "",
     playing: false,
     controls: false,
     // volume: parseFloat(localVolume) ?? 1.0,
@@ -42,8 +47,15 @@ const PlayerControls = () => {
 
   useEffect(() => {
     playerRef.current?.seekTo(seekTime);
-    // eslint-disable-next-line
   }, [seekTime]);
+
+  useEffect(() => {
+    // reset state on songs changes
+    setPlayerState({
+      ...playerState,
+      url: audioUrl,
+    });
+  }, [currentSong]);
 
   // get audio buffered end amount
   useEffect(() => {
@@ -55,6 +67,7 @@ const PlayerControls = () => {
     <div className="fixed left-0 bottom-16 sm:bottom-0 w-full h-16 bg-secondary">
       <ReactPlayer
         ref={playerRef}
+        // url={playerState.url}
         onPlay={() => setPlayerState({ ...playerState, playing: true })}
         onPause={() => setPlayerState({ ...playerState, playing: false })}
         onProgress={(state) =>
@@ -107,7 +120,12 @@ const PlayerControls = () => {
         </div>
         {/* controls */}
         <div className="flex gap-6 items-center justify-end sm:justify-center">
-          <button type="button" title="prev">
+          <button
+            type="button"
+            title="prev"
+            onClick={handlePrev}
+            className="hidden sm:block"
+          >
             <PrevIcon className="w-6 h-6" />
           </button>
           <button
@@ -124,7 +142,12 @@ const PlayerControls = () => {
               <PauseIcon className="w-10 h-10" />
             )}
           </button>
-          <button type="button" title="next">
+          <button
+            type="button"
+            title="next"
+            onClick={handleNext}
+            className="hidden sm:block"
+          >
             <NextIcon className="w-6 h-6" />
           </button>
         </div>

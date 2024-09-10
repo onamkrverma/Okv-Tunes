@@ -1,18 +1,35 @@
 "use client";
-import { getSuggestedSongs } from "@/utils/api";
 import secondsToTime from "@/utils/secondsToTime";
 import Image from "next/image";
 import React from "react";
-import useSWR from "swr";
 import Loading from "../Loading";
+import type { Song, TSongs } from "@/utils/api.d";
+import { useGlobalContext } from "@/app/GlobalContex";
 
-const SuggestedSongs = ({ songId }: { songId: string }) => {
-  const dataFetcher = () => getSuggestedSongs({ id: songId });
-  const { data, isLoading } = useSWR("/suggested-songs", dataFetcher, {
-    // revalidateOnMount: true,
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false,
-  });
+type Props = {
+  suggestedSongsData?: TSongs;
+  isLoading: boolean;
+};
+
+const SuggestedSongs = ({ suggestedSongsData, isLoading }: Props) => {
+  const { currentSong, setGlobalState } = useGlobalContext();
+
+  const handleUpdateState = (song: Song) => {
+    setGlobalState({
+      currentSong: {
+        id: song.id,
+        artist: song.artists.primary[0].name,
+        title: song.name,
+        imageUrl:
+          song.image.find((item) => item.quality === "500x500")?.url ?? "",
+        audioUrl:
+          song.downloadUrl.find((item) => item.quality === "320kbps")?.url ??
+          "",
+        isMaximise: true,
+        isRefetchSuggestion: true,
+      },
+    });
+  };
 
   return (
     <div className="flex flex-col gap-2 w-full max-w-sm h-[400px] rounded-md p-2">
@@ -21,10 +38,11 @@ const SuggestedSongs = ({ songId }: { songId: string }) => {
       </h2>
       <div className="upnext-songs overflow-y-scroll ">
         {!isLoading ? (
-          data?.data?.map((song, index) => (
+          suggestedSongsData?.data?.map((song, index) => (
             <div
               key={song.id}
               className="flex items-center gap-4 p-2 cursor-pointer hover:bg-secondary"
+              onClick={() => handleUpdateState(song)}
             >
               <Image
                 src={

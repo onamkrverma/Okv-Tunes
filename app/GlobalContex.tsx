@@ -14,7 +14,7 @@ type TCurrentSong = {
   artist: string;
   audioUrl: string;
   isMaximise: boolean;
-  isRefetchSuggesion: boolean;
+  isRefetchSuggestion: boolean;
 };
 
 type TGlobalState = {
@@ -28,7 +28,7 @@ const defaultState: TGlobalState = {
     artist: "",
     audioUrl: "",
     isMaximise: false,
-    isRefetchSuggesion: false,
+    isRefetchSuggestion: false,
   },
 };
 type TGlobalContext = {
@@ -66,7 +66,7 @@ export const GlobalContextProvider = ({
 
 export const useGlobalContext = () => {
   const context = useContext(GlobalContext);
-  if (!context) {
+  if (context === null) {
     throw new Error("Something went wrong!");
   }
   return context;
