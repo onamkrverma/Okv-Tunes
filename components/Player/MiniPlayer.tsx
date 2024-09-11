@@ -1,6 +1,7 @@
 "use client";
 import React, {
   Dispatch,
+  RefObject,
   SetStateAction,
   useEffect,
   useRef,
@@ -17,27 +18,25 @@ import Image from "next/image";
 import ReactPlayer from "react-player";
 import { useGlobalContext } from "@/app/GlobalContex";
 import secondsToTime from "@/utils/secondsToTime";
+import { TplayerState } from "./index";
 
 type Props = {
   handlePrev: () => void;
   handleNext: () => void;
+  playerRef: RefObject<ReactPlayer>;
+  playerState: TplayerState;
+  setPlayerState: Dispatch<SetStateAction<TplayerState>>;
 };
 
-const PlayerControls = ({ handleNext, handlePrev }: Props) => {
+const MiniPlayer = ({
+  playerRef,
+  playerState,
+  setPlayerState,
+  handleNext,
+  handlePrev,
+}: Props) => {
   const { currentSong, setGlobalState } = useGlobalContext();
   const { artist, audioUrl, id, imageUrl, title, isMaximise } = currentSong;
-
-  const [playerState, setPlayerState] = useState({
-    url: "",
-    playing: false,
-    controls: false,
-    // volume: parseFloat(localVolume) ?? 1.0,
-    volume: 0.1,
-    muted: false,
-    played: 0,
-    loaded: 0,
-  });
-  const playerRef = useRef<ReactPlayer>(null);
 
   const [seekTime, setSeekTime] = useState(0);
   const [bufferedAmount, setBufferedAmount] = useState(0);
@@ -49,14 +48,6 @@ const PlayerControls = ({ handleNext, handlePrev }: Props) => {
     playerRef.current?.seekTo(seekTime);
   }, [seekTime]);
 
-  useEffect(() => {
-    // reset state on songs changes
-    setPlayerState({
-      ...playerState,
-      url: audioUrl,
-    });
-  }, [currentSong]);
-
   // get audio buffered end amount
   useEffect(() => {
     const bufferedAmount = Math.floor(playerState.loaded * 100);
@@ -64,38 +55,53 @@ const PlayerControls = ({ handleNext, handlePrev }: Props) => {
   }, [playerState.loaded]);
 
   return (
-    <div className="fixed left-0 bottom-16 sm:bottom-0 w-full h-16 bg-secondary">
-      <ReactPlayer
-        ref={playerRef}
-        // url={playerState.url}
-        onPlay={() => setPlayerState({ ...playerState, playing: true })}
-        onPause={() => setPlayerState({ ...playerState, playing: false })}
-        onProgress={(state) =>
-          setPlayerState({
-            ...playerState,
-            played: state.played,
-            loaded: state.loaded,
-          })
-        }
-        {...playerState}
-        className="hidden"
-      />
-      <div className="grid grid-cols-2 sm:grid-cols-3 items-center px-4 relative">
-        <input
-          type="range"
-          title="seekbar"
-          step="any"
-          value={currentTime || 0}
-          min={0}
-          max={duration || 0}
-          onChange={(e) => setSeekTime(e.currentTarget.valueAsNumber)}
-          //  style={{
-          //    "--buffered-width": `${bufferedAmount}%`,
-          //  }}
-          className="absolute top-0 left-0 w-full h-[2px] accent-action cursor-pointer"
-        />
+    <div
+      className={`fixed left-0 bottom-16 sm:bottom-0 w-full sm:h-16 sm:bg-secondary z-20 ${
+        isMaximise ? "h-40 pb-4" : "h-16 bg-secondary "
+      }`}
+    >
+      <div
+        className={`flex justify-between sm:flex-row items-center px-4 relative ${
+          isMaximise ? "flex-col gap-1" : "flex-row"
+        }`}
+      >
         <div
-          className="flex items-center gap-4 p-2 cursor-pointer"
+          className={`w-full sm:absolute top-0 left-0 ${
+            isMaximise ? "static " : "absolute"
+          }`}
+        >
+          <input
+            type="range"
+            title="seekbar"
+            step="any"
+            value={currentTime || 0}
+            min={0}
+            max={duration || 0}
+            onChange={(e) => setSeekTime(e.currentTarget.valueAsNumber)}
+            //  style={{
+            //    "--buffered-width": `${bufferedAmount}%`,
+            //  }}
+            className={`sm:absolute  sm:h-0.5 w-full accent-action cursor-pointer ${
+              isMaximise ? "static h-1" : "absolute h-0.5"
+            }`}
+          />
+          <div
+            className={`sm:hidden justify-between items-center ${
+              isMaximise ? "flex" : "hidden"
+            }`}
+          >
+            <small className="text-neutral-200">
+              {secondsToTime(currentTime)}
+            </small>
+            <small className="text-neutral-200">
+              {secondsToTime(duration ?? 0)}
+            </small>
+          </div>
+        </div>
+        <div
+          className={`sm:flex items-center gap-4 p-2 cursor-pointer ${
+            isMaximise ? "hidden" : "flex"
+          }`}
           onClick={() =>
             setGlobalState({
               currentSong: {
@@ -113,20 +119,22 @@ const PlayerControls = ({ handleNext, handlePrev }: Props) => {
             priority
             className="w-[50px] h-[50px] object-cover rounded-md"
           />
-          <div className="flex flex-col w-full">
+          <div className="flex flex-col w-full max-w-40">
             <p className="truncate">{title?.replaceAll("&quot;", '"')}</p>
             <small className="truncate text-neutral-400">{artist}</small>
           </div>
         </div>
         {/* controls */}
-        <div className="flex gap-6 items-center justify-end sm:justify-center">
+        <div className="flex gap-6 items-center justify-center">
           <button
             type="button"
             title="prev"
             onClick={handlePrev}
-            className="hidden sm:block"
+            className={`sm:block ${isMaximise ? "block" : "hidden "}`}
           >
-            <PrevIcon className="w-6 h-6" />
+            <PrevIcon
+              className={`sm:w-6 sm:h-6 ${isMaximise ? "w-8 h-8" : "w-6 h-6"}`}
+            />
           </button>
           <button
             type="button"
@@ -137,26 +145,41 @@ const PlayerControls = ({ handleNext, handlePrev }: Props) => {
             }
           >
             {!playerState.playing ? (
-              <PlayIcon className="w-10 h-10" />
+              <PlayIcon
+                className={`sm:w-10 sm:h-10 ${
+                  isMaximise ? "w-14 h-14" : "w-10 h-10"
+                }`}
+              />
             ) : (
-              <PauseIcon className="w-10 h-10" />
+              <PauseIcon
+                className={`sm:w-10 sm:h-10 ${
+                  isMaximise ? "w-14 h-14" : "w-10 h-10"
+                }`}
+              />
             )}
           </button>
+
           <button
             type="button"
             title="next"
             onClick={handleNext}
-            className="hidden sm:block"
+            className={`sm:block ${isMaximise ? "block " : "hidden "}`}
           >
-            <NextIcon className="w-6 h-6" />
+            <NextIcon
+              className={`sm:w-6 sm:h-6 ${isMaximise ? "w-8 h-8" : "w-6 h-6"}`}
+            />
           </button>
         </div>
 
-        <div className="hidden sm:flex gap-4 items-center justify-end">
-          <small className="text-neutral-200">
+        <div
+          className={`sm:flex gap-4 items-center sm:justify-end sm:w-fit ${
+            isMaximise ? "flex justify-between w-full" : "hidden "
+          }`}
+        >
+          <small className="text-neutral-200 w-24 text-center hidden sm:block">
             {secondsToTime(currentTime)} / {secondsToTime(duration ?? 0)}
           </small>
-          <div className="flex gap-2 items-center justify-center w-24">
+          <div className={`flex gap-2 items-center justify-center w-24 `}>
             <button type="button" title="mute" className="">
               <SpeakerIcon className="w-6 h-6" />
             </button>
@@ -179,7 +202,7 @@ const PlayerControls = ({ handleNext, handlePrev }: Props) => {
           <button
             type="button"
             title={isMaximise ? "minimise" : "maximise"}
-            className={`transition-transform ${
+            className={`hidden sm:block transition-transform ${
               isMaximise ? "rotate-180" : "rotate-0"
             }`}
             onClick={() =>
@@ -191,7 +214,7 @@ const PlayerControls = ({ handleNext, handlePrev }: Props) => {
               })
             }
           >
-            <CaretUpIcon className={`w-6 h-6 `} />
+            <CaretUpIcon className={`w-4 h-4 sm:w-6 sm:h-6 `} />
           </button>
         </div>
       </div>
@@ -199,4 +222,4 @@ const PlayerControls = ({ handleNext, handlePrev }: Props) => {
   );
 };
 
-export default PlayerControls;
+export default MiniPlayer;

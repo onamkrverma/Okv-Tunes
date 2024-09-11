@@ -11,7 +11,7 @@ const SideNavbar = () => {
 
   return (
     <>
-      <section className="hidden sm:flex flex-col gap-2 pt-4 p-6 w-[var(--side-nav-width)] h-full bg-secondary border border-l fixed top-0 left-0  ">
+      <section className="hidden sm:flex flex-col gap-2 pt-4 p-6 w-[var(--side-nav-width)] h-full bg-secondary border border-l fixed top-0 left-0 z-10 ">
         <Link href={"/"} className="flex items-center">
           <Logo />
         </Link>
@@ -33,7 +33,7 @@ const SideNavbar = () => {
       </section>
 
       {/* for mobile navigation */}
-      <nav className="sm:hidden block w-full fixed bottom-0 right-0 z-10">
+      <nav className="sm:hidden block w-full fixed bottom-0 right-0 z-[15]">
         <div className="flex items-center justify-evenly gap-2 p-2 bg-primary border-t border-neutral-400 backdrop-blur-md text-primary">
           {navLinks.map((navLink, index) => (
             <Link

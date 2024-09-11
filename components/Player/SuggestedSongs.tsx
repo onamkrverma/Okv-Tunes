@@ -1,10 +1,11 @@
 "use client";
 import secondsToTime from "@/utils/secondsToTime";
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import Loading from "../Loading";
 import type { Song, TSongs } from "@/utils/api.d";
 import { useGlobalContext } from "@/app/GlobalContex";
+import CaretUpIcon from "@/public/icons/caret-up.svg";
 
 type Props = {
   suggestedSongsData?: TSongs;
@@ -12,7 +13,8 @@ type Props = {
 };
 
 const SuggestedSongs = ({ suggestedSongsData, isLoading }: Props) => {
-  const { currentSong, setGlobalState } = useGlobalContext();
+  const { setGlobalState } = useGlobalContext();
+  const [isUpnextClick, setIsUpnextClick] = useState(false);
 
   const handleUpdateState = (song: Song) => {
     setGlobalState({
@@ -32,8 +34,23 @@ const SuggestedSongs = ({ suggestedSongsData, isLoading }: Props) => {
   };
 
   return (
-    <div className="flex flex-col gap-2 w-full max-w-sm h-[400px] rounded-md p-2">
-      <h2 className="font-bold text-xl border-b underline decoration-wavy underline-offset-4 py-2 ">
+    <div
+      className={`flex sm:translate-x-0 flex-col gap-2 w-full max-w-[80%] sm:max-w-sm h-[300px] sm:h-[400px] rounded-md p-2 sm:bg-secondary/70 bg-secondary absolute sm:static transition-transform duration-500 ${
+        isUpnextClick ? "translate-x-0 " : "translate-x-[95%] "
+      }`}
+    >
+      <button
+        type="button"
+        title="queue"
+        onClick={() => setIsUpnextClick(!isUpnextClick)}
+        className="sm:hidden flex items-center justify-center gap-1 absolute top-[30%] -left-[50px]  bg-secondary rounded-md rounded-b-none p-2 text-xs -rotate-90 transition-transform duration-500"
+      >
+        Up Next
+        <CaretUpIcon
+          className={`w-4 h-4 ${isUpnextClick ? "rotate-180" : "rotate-0"}`}
+        />
+      </button>
+      <h2 className="font-bold text-sm sm:text-xl border-b underline decoration-wavy underline-offset-4 py-2 ">
         Up Next
       </h2>
       <div className="upnext-songs overflow-y-scroll ">
@@ -41,7 +58,7 @@ const SuggestedSongs = ({ suggestedSongsData, isLoading }: Props) => {
           suggestedSongsData?.data?.map((song, index) => (
             <div
               key={song.id}
-              className="flex items-center gap-4 p-2 cursor-pointer hover:bg-secondary"
+              className="flex items-center gap-4 p-2 cursor-pointer rounded-md hover:bg-secondary"
               onClick={() => handleUpdateState(song)}
             >
               <Image

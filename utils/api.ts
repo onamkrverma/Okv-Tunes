@@ -7,9 +7,7 @@ const serverUrl =
     ? "http://localhost:3000"
     : process.env.MY_SERVER_URL;
 
-const api = Wretch(`${serverUrl}/api`, { next: { revalidate: 0 } }).addon(
-  queryString
-);
+const api = Wretch(`${serverUrl}/api`).addon(queryString);
 
 type TApiquery = {
   id: string;
