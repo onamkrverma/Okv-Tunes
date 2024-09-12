@@ -10,15 +10,15 @@ const PlaylistSongs = async ({ params }: Props) => {
   const id = params.slug.split("-").pop() as string;
   const title = params.slug.split("-").slice(0, -1).join(" ");
 
-  const playlist = await getPlaylists({
-    id: id,
-  });
+  // const playlist = await getPlaylists({
+  //   id: id,
+  // });
 
-  const { name, description, songs } = playlist.data;
+  // const { name, description, songs } = playlist.data;
 
   return (
     <div className="inner-container flex flex-col gap-6">
-      <div className="flex gap-4 flex-col sm:flex-row items-center ">
+      {/* <div className="flex gap-4 flex-col sm:flex-row items-center ">
         <div className="w-[200px] h-[200px]">
           <Image
             src={
@@ -68,7 +68,7 @@ const PlaylistSongs = async ({ params }: Props) => {
             </small>
           </div>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 };

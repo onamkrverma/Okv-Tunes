@@ -46,6 +46,7 @@ const MiniPlayer = ({
 
   useEffect(() => {
     playerRef.current?.seekTo(seekTime);
+    // eslint-disable-next-line
   }, [seekTime]);
 
   // get audio buffered end amount

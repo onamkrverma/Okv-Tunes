@@ -114,11 +114,12 @@ const Plalyer = () => {
 
   useEffect(() => {
     // set url on songs changes
-    setPlayerState({
-      ...playerState,
+    setPlayerState((prev) => ({
+      ...prev,
       url: audioUrl,
-    });
-  }, [currentSong]);
+    }));
+    // eslint-disable-next-line
+  }, [audioUrl]);
 
   return (
     <div>
@@ -157,7 +158,11 @@ const Plalyer = () => {
               </button>
             </div>
 
-            <div className="absolute w-full h-full blur-[600px] -z-10 pointer-events-none">
+            <div
+              className={`absolute w-full h-full blur-[600px] -z-10 pointer-events-none ${
+                !isMaximise ? "hidden" : "block"
+              }`}
+            >
               <Image
                 src={imageUrl}
                 alt={title + "okv tunes"}
@@ -182,21 +187,23 @@ const Plalyer = () => {
               className="hidden"
             />
             {/* song poster */}
-            <div className="w-[250px] h-[250px]  sm:w-[350px] sm:h-[350px]">
+            <div className="w-[250px] sm:w-[350px]">
               <Image
                 src={imageUrl}
                 alt={title + "okv tunes"}
                 width={350}
                 height={350}
                 priority
-                className="w-full h-full  object-cover rounded-lg"
+                className="w-full h-auto  object-cover rounded-lg"
               />
             </div>
-            <div className="flex sm:hidden flex-col items-center w-full">
-              <p className="truncate text-2xl">
+            <div className="flex sm:hidden flex-col items-center w-full max-w-60">
+              <p className="truncate text-2xl w-full text-center">
                 {title?.replaceAll("&quot;", '"')}
               </p>
-              <small className="truncate text-neutral-400 ">{artist}</small>
+              <small className="truncate text-neutral-400 w-full text-center">
+                {artist}
+              </small>
             </div>
 
             {/* upcomming tracks */}
