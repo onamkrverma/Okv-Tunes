@@ -11,7 +11,7 @@ export interface PlaylistData {
   songCount: number;
   artists: Artist[];
   image: Image[];
-  songs: Song[];
+  songs: TSong[];
 }
 
 export interface Artist {
@@ -43,7 +43,7 @@ export enum ArtistType {
   Artist = "artist",
 }
 
-export interface Song {
+export interface TSong {
   id: string;
   name: string;
   type: "song";
@@ -76,10 +76,15 @@ export interface Artists {
   all: Artist[];
 }
 
+export interface SearchSongs {
+  results: TSong[];
+}
+
 export interface Data<T> {
   success: boolean;
   data: T;
 }
 
 export interface TPlaylists extends Data<PlaylistData> {}
-export interface TSongs extends Data<Song[]> {}
+export interface TSongs extends Data<TSong[]> {}
+export interface TSearchSongs extends Data<SearchSongs> {}

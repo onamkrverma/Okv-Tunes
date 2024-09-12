@@ -1,16 +1,19 @@
 import Wretch from "wretch";
 import queryString from "wretch/addons/queryString";
-import { TPlaylists, TSongs } from "./api.d";
+import { TPlaylists, TSearchSongs, TSongs } from "./api.d";
 
 const serverUrl =
   process.env.NODE_ENV === "development"
     ? "http://localhost:3000"
     : process.env.MY_SERVER_URL;
 
-const api = Wretch(`${serverUrl}/api`).addon(queryString);
+const api = Wretch(`${serverUrl}/api`, { next: { revalidate: 0 } }).addon(
+  queryString
+);
 
 type TApiquery = {
-  id: string;
+  id?: string;
+  query?: string;
   limit?: number;
 };
 
@@ -43,6 +46,18 @@ export const getSuggestedSongs = async ({ id, limit = 10 }: TApiquery) => {
     .query(querParams)
     .get(`/songs/suggestions`)
     .json()) as TSongs;
+
+  return response;
+};
+export const getSearchSongs = async ({ query, limit = 2 }: TApiquery) => {
+  const querParams = {
+    query,
+    limit,
+  };
+  const response = (await api
+    .query(querParams)
+    .get(`/songs/search`)
+    .json()) as TSearchSongs;
 
   return response;
 };
