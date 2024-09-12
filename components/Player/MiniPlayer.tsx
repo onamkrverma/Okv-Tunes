@@ -192,12 +192,12 @@ const MiniPlayer = ({
               min={0.0}
               max={1.0}
               value={playerState.volume}
-              onChange={(e) =>
+              onChange={(e) => {
                 setPlayerState({
                   ...playerState,
                   volume: e.currentTarget.valueAsNumber,
-                })
-              }
+                });
+              }}
             />
           </div>
           <button

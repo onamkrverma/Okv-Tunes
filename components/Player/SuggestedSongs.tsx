@@ -1,22 +1,32 @@
 "use client";
 import secondsToTime from "@/utils/secondsToTime";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import Loading from "../Loading";
-import type { Song, TSongs } from "@/utils/api.d";
+import type { TSong, TSongs } from "@/utils/api.d";
 import { useGlobalContext } from "@/app/GlobalContex";
 import CaretUpIcon from "@/public/icons/caret-up.svg";
+import PlayIcon from "@/public/icons/play.svg";
+import PauseIcon from "@/public/icons/pause.svg";
+import { TplayerState } from "./index";
 
 type Props = {
   suggestedSongsData?: TSongs;
   isLoading: boolean;
+  playerState: TplayerState;
+  setPlayerState: Dispatch<SetStateAction<TplayerState>>;
 };
 
-const SuggestedSongs = ({ suggestedSongsData, isLoading }: Props) => {
-  const { setGlobalState } = useGlobalContext();
+const SuggestedSongs = ({
+  suggestedSongsData,
+  isLoading,
+  playerState,
+  setPlayerState,
+}: Props) => {
+  const { currentSong, setGlobalState } = useGlobalContext();
   const [isUpnextClick, setIsUpnextClick] = useState(false);
 
-  const handleUpdateState = (song: Song) => {
+  const handleUpdateState = (song: TSong) => {
     setGlobalState({
       currentSong: {
         id: song.id,
@@ -28,7 +38,7 @@ const SuggestedSongs = ({ suggestedSongsData, isLoading }: Props) => {
           song.downloadUrl.find((item) => item.quality === "320kbps")?.url ??
           "",
         isMaximise: true,
-        isRefetchSuggestion: true,
+        isRefetchSuggestion: false,
       },
     });
   };
@@ -50,15 +60,49 @@ const SuggestedSongs = ({ suggestedSongsData, isLoading }: Props) => {
           className={`w-4 h-4 ${isUpnextClick ? "rotate-180" : "rotate-0"}`}
         />
       </button>
-      <h2 className="font-bold text-sm sm:text-xl border-b underline decoration-wavy underline-offset-4 py-2 ">
-        Up Next
-      </h2>
+      <div className="flex items-center gap-2 w-full border-b">
+        <h2 className="uppercase font-bold text-sm sm:text-lg underline underline-offset-4 py-2 ">
+          Up Next
+        </h2>
+        <label className="w-10 h-3 relative">
+          <input
+            type="checkbox"
+            title="autoplay"
+            aria-label="autoplay"
+            placeholder="autoplay"
+            checked={playerState.autoPlay}
+            onChange={() =>
+              setPlayerState({
+                ...playerState,
+                autoPlay: !playerState.autoPlay,
+              })
+            }
+            className="hidden"
+          />
+          <span
+            className="w-full h-full absolute top-0 bg-neutral-300 rounded-md"
+            title="autoplay"
+          >
+            <span
+              className={`cursor-pointer absolute -top-1 transition-transform duration-300 ${
+                playerState.autoPlay ? "translate-x-full" : "translate-x-0"
+              }`}
+            >
+              {playerState.autoPlay ? (
+                <PlayIcon className="w-5 h-5 p-1 rounded-full bg-action" />
+              ) : (
+                <PauseIcon className="w-5 h-5 p-1 rounded-full bg-action" />
+              )}
+            </span>
+          </span>
+        </label>
+      </div>
       <div className="upnext-songs overflow-y-scroll ">
         {!isLoading ? (
           suggestedSongsData?.data?.map((song, index) => (
             <div
               key={song.id}
-              className="flex items-center gap-4 p-2 cursor-pointer rounded-md hover:bg-secondary"
+              className="relative flex items-center gap-4 p-2 cursor-pointer rounded-md hover:bg-secondary"
               onClick={() => handleUpdateState(song)}
             >
               <Image
@@ -72,6 +116,9 @@ const SuggestedSongs = ({ suggestedSongsData, isLoading }: Props) => {
                 priority
                 className="w-[50px] h-[50px] object-cover rounded-md"
               />
+              {currentSong.id === song.id ? (
+                <PlayIcon className="absolute left-6 w-5 h-5 p-1 rounded-full bg-action animate-spin" />
+              ) : null}
               <p className="truncate w-80">
                 {song.name.replaceAll("&quot;", '"')}
               </p>

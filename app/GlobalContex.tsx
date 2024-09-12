@@ -15,6 +15,7 @@ type TCurrentSong = {
   audioUrl: string;
   isMaximise: boolean;
   isRefetchSuggestion: boolean;
+  volume?: number;
 };
 
 type TGlobalState = {
@@ -29,6 +30,7 @@ const defaultState: TGlobalState = {
     audioUrl: "",
     isMaximise: false,
     isRefetchSuggestion: false,
+    volume: 1.0,
   },
 };
 type TGlobalContext = {

@@ -59,7 +59,7 @@ body {
     margin: 2rem auto;
   }
 }
-@media (max-width: 768px) {
+@media (max-width: 640px) {
   .inner-container {
     width: 100%;
     margin: 2rem auto;

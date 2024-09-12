@@ -18,6 +18,7 @@ export type TplayerState = {
   muted: boolean;
   played: number;
   loaded: number;
+  autoPlay: boolean;
 };
 
 const Plalyer = () => {
@@ -30,21 +31,25 @@ const Plalyer = () => {
     artist,
     audioUrl,
     isRefetchSuggestion,
+    volume,
   } = currentSong;
   const [playerState, setPlayerState] = useState<TplayerState>({
     url: "",
     playing: false,
     controls: false,
-    // volume: parseFloat(localVolume) ?? 1.0,
-    volume: 0.1,
+    volume: volume ?? 1.0,
     muted: false,
     played: 0,
     loaded: 0,
+    autoPlay: false,
   });
   const playerRef = useRef<ReactPlayer>(null);
 
   currentSong.id
-    ? localStorage.setItem("currentSong", JSON.stringify(currentSong))
+    ? localStorage.setItem(
+        "currentSong",
+        JSON.stringify({ ...currentSong, volume: playerState.volume })
+      )
     : null;
 
   useEffect(() => {
@@ -60,6 +65,11 @@ const Plalyer = () => {
       revalidateOnReconnect: false,
     }
   );
+
+  useEffect(() => {
+    if (!isRefetchSuggestion) return;
+    mutate("/suggested-songs");
+  }, [isRefetchSuggestion]);
 
   const updateNextPrevTrack = (type: "prev" | "next") => {
     if (!suggestedSongsData) return;
@@ -117,6 +127,7 @@ const Plalyer = () => {
     setPlayerState((prev) => ({
       ...prev,
       url: audioUrl,
+      playing: playerState.autoPlay,
     }));
     // eslint-disable-next-line
   }, [audioUrl]);
@@ -126,8 +137,8 @@ const Plalyer = () => {
       {id ? (
         <>
           <div
-            className={`inner-container !mt-0 fixed top-0 right-0 left-0 bg-primary flex gap-4 sm:justify-evenly !pt-12 sm:!pt-0  flex-col sm:flex-row items-center h-full z-[11] transition-transform duration-500 ${
-              isMaximise ? "translate-y-0" : "translate-y-full"
+            className={`inner-container !mt-0 fixed top-0 right-0 left-0 bg-primary flex gap-4 sm:justify-evenly !pt-12 sm:!pt-0 flex-col md:flex-row items-center h-full z-[11] transition-transform duration-700 ${
+              isMaximise ? "translate-y-0" : "translate-y-[150%]"
             }`}
           >
             <div className="w-full flex justify-between items-center absolute top-3 px-4">
@@ -176,6 +187,7 @@ const Plalyer = () => {
               ref={playerRef}
               onPlay={() => setPlayerState({ ...playerState, playing: true })}
               onPause={() => setPlayerState({ ...playerState, playing: false })}
+              onEnded={() => (playerState.autoPlay ? handleNext() : null)}
               onProgress={(state) =>
                 setPlayerState({
                   ...playerState,
@@ -201,7 +213,7 @@ const Plalyer = () => {
               <p className="truncate text-2xl w-full text-center">
                 {title?.replaceAll("&quot;", '"')}
               </p>
-              <small className="truncate text-neutral-400 w-full text-center">
+              <small className="truncate text-neutral-300 w-full text-center">
                 {artist}
               </small>
             </div>
@@ -210,6 +222,8 @@ const Plalyer = () => {
             <SuggestedSongs
               suggestedSongsData={suggestedSongsData}
               isLoading={isLoading}
+              playerState={playerState}
+              setPlayerState={setPlayerState}
             />
           </div>
 

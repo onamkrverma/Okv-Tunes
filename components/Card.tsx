@@ -31,16 +31,16 @@ const Card = ({ title, imageUrl, artist, audioUrl, id }: Props) => {
     <button
       type="button"
       onClick={handleUpdateState}
-      className="flex flex-col gap-2 w-[180px] bg-secondary border rounded-md hover:shadow-primary cursor-pointer"
+      className="flex flex-col gap-2 w-[150px] sm:w-[180px] bg-secondary border rounded-md hover:shadow-primary cursor-pointer"
     >
-      <div className="w-[180px] h-[180px]">
+      <div className="w-[150px] sm:w-[180px]">
         <Image
           src={imageUrl}
           alt={title + "okv tunes"}
           width={180}
           height={180}
           priority
-          className="w-full h-full object-cover rounded-t-md"
+          className="w-full h-auto object-cover rounded-t-md"
         />
       </div>
       <p className="truncate w-full px-2 pb-2 text-center">{title}</p>
