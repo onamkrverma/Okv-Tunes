@@ -18,7 +18,7 @@ const CardCollection = async ({ playlistId, title }: Props) => {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">{title}</h2>
+        <h2 className="text-lg sm:text-xl font-semibold truncate">{title}</h2>
         <Link href={`${urlSlug}`} className="text-sm hover:underline">
           View all
         </Link>

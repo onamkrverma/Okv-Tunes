@@ -15,7 +15,7 @@ const SideNavbar = () => {
         <Link href={"/"} className="flex items-center">
           <Logo />
         </Link>
-        <nav>
+        <nav className="my-4">
           <ul>
             {navLinks.map((navLink, index) => (
               <li key={index}>

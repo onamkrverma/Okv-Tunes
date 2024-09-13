@@ -13,12 +13,13 @@ const PlaylistSongs = async ({ params }: Props) => {
 
   const playlist = await getPlaylists({
     id: id,
+    limit: 50,
   });
 
   const { name, description, songs } = playlist.data;
 
   return (
-    <div className="inner-container flex flex-col gap-6">
+    <div className="inner-container flex flex-col gap-6 !pb-24">
       <div className="flex gap-4 flex-col sm:flex-row items-center ">
         <div className="w-[200px] h-[200px]">
           <Image

@@ -56,7 +56,7 @@ const Plalyer = () => {
     document.body.style.overflow = isMaximise ? "hidden" : "auto";
   }, [isMaximise]);
 
-  const dataFetcher = () => getSuggestedSongs({ id: id });
+  const dataFetcher = () => getSuggestedSongs({ id: id, limit: 20 });
   const { data: suggestedSongsData, isLoading } = useSWR(
     id ? "/suggested-songs" : null,
     dataFetcher,
@@ -68,7 +68,7 @@ const Plalyer = () => {
 
   useEffect(() => {
     if (!isRefetchSuggestion) return;
-    // mutate("/suggested-songs");
+    mutate("/suggested-songs");
   }, [isRefetchSuggestion]);
 
   const updateNextPrevTrack = (type: "prev" | "next") => {
@@ -123,6 +123,9 @@ const Plalyer = () => {
   };
 
   useEffect(() => {
+    setGlobalState({
+      currentSong: { ...currentSong, isRefetchSuggestion: false },
+    });
     // set url on songs changes
     setPlayerState((prev) => ({
       ...prev,

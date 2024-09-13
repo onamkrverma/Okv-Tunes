@@ -1,7 +1,5 @@
 import SongsCollection from "@/components/SongsCollection";
 import { getSearchSongs } from "@/utils/api";
-import secondsToTime from "@/utils/secondsToTime";
-import Image from "next/image";
 
 const Search = async ({
   searchParams,
@@ -10,10 +8,10 @@ const Search = async ({
 }) => {
   const searchQuery = searchParams?.search;
 
-  const searchResult = await getSearchSongs({ query: searchQuery });
+  const searchResult = await getSearchSongs({ query: searchQuery, limit: 50 });
 
   return (
-    <div className="inner-container flex flex-col gap-6 !pb-20">
+    <div className="inner-container flex flex-col gap-6 !pb-24">
       <div className="flex flex-col gap-4 my-4">
         <h2 className="capitalize font-bold text-sm sm:text-lg  ">
           Search results for {`"${searchQuery}"`}

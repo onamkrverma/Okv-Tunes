@@ -7,7 +7,7 @@ const serverUrl =
     ? "http://localhost:3000"
     : process.env.NEXT_PUBLIC_MY_SERVER_URL;
 
-const api = Wretch(`${serverUrl}/api`, { next: { revalidate: 0 } }).addon(
+const api = Wretch(`${serverUrl}/api`, { next: { revalidate: 3600 } }).addon(
   queryString
 );
 
@@ -49,7 +49,7 @@ export const getSuggestedSongs = async ({ id, limit = 10 }: TApiquery) => {
 
   return response;
 };
-export const getSearchSongs = async ({ query, limit = 2 }: TApiquery) => {
+export const getSearchSongs = async ({ query, limit = 10 }: TApiquery) => {
   const querParams = {
     query,
     limit,
