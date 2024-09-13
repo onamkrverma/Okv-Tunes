@@ -23,7 +23,11 @@ const Navbar = () => {
       <Link href={"/"} className="flex items-center sm:hidden">
         <Logo />
       </Link>
-      <button type="button" onClick={() => setIsSearchClick(!isSearchClick)}>
+      <button
+        type="button"
+        className="block sm:hidden absolute right-4"
+        onClick={() => setIsSearchClick(!isSearchClick)}
+      >
         {!isSearchClick ? (
           <SearchIcon className="w-6 h-6" />
         ) : (
@@ -31,7 +35,7 @@ const Navbar = () => {
         )}
       </button>
       <form
-        className={`sm:w-80 w-10/12 border rounded-lg sm:static absolute transition-transform duration-500 ${
+        className={`sm:w-96 w-10/12 border rounded-lg sm:static absolute sm:translate-x-0 transition-transform duration-500 ${
           isSearchClick ? "translate-x-0" : "-translate-x-[200%]"
         }`}
         onSubmit={handleSubmit}

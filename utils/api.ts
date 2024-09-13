@@ -5,7 +5,7 @@ import { TPlaylists, TSearchSongs, TSongs } from "./api.d";
 const serverUrl =
   process.env.NODE_ENV === "development"
     ? "http://localhost:3000"
-    : process.env.MY_SERVER_URL;
+    : process.env.NEXT_PUBLIC_MY_SERVER_URL;
 
 const api = Wretch(`${serverUrl}/api`, { next: { revalidate: 0 } }).addon(
   queryString

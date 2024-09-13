@@ -68,7 +68,7 @@ const Plalyer = () => {
 
   useEffect(() => {
     if (!isRefetchSuggestion) return;
-    mutate("/suggested-songs");
+    // mutate("/suggested-songs");
   }, [isRefetchSuggestion]);
 
   const updateNextPrevTrack = (type: "prev" | "next") => {

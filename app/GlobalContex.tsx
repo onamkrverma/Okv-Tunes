@@ -56,7 +56,9 @@ export const GlobalContextProvider = ({
     const currentSongInfo: TCurrentSong = JSON.parse(
       localCurrentSongInfo ?? "{}"
     );
-    setGlobalState({ currentSong: currentSongInfo });
+    localCurrentSongInfo
+      ? setGlobalState({ currentSong: currentSongInfo })
+      : null;
   }, []);
 
   return (

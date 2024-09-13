@@ -46,7 +46,7 @@ const SuggestedSongs = ({
   return (
     <div
       className={`flex sm:translate-x-0 flex-col gap-2 w-full max-w-[80%] sm:max-w-sm h-[300px] sm:h-[400px] rounded-md p-2 sm:bg-secondary/70 bg-secondary absolute sm:static transition-transform duration-500 ${
-        isUpnextClick ? "translate-x-0 " : "translate-x-[95%] "
+        isUpnextClick ? "translate-x-0" : "translate-x-[95%]"
       }`}
     >
       <button
