@@ -18,13 +18,13 @@
 }
 
 body {
-  background-color: #0d0d0d;
+  background-color: #0d0d0d !important;
   -ms-overflow-style: none; /* Internet Explorer 10+ */
   scrollbar-width: none; /* Firefox */
   scroll-snap-stop: always;
   scroll-behavior: smooth;
   scroll-snap-type: mandatory;
-  color: #ffffff;
+  color: #ffffff !important;
 }
 
 ::-webkit-scrollbar {

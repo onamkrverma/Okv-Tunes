@@ -6,7 +6,11 @@ import SideNavbar from "@/components/SideNavbar";
 import dynamic from "next/dynamic";
 import { GlobalContextProvider } from "./GlobalContex";
 
-const poppins = Poppins({ weight: "400", subsets: ["latin"] });
+const poppins = Poppins({
+  display: "swap",
+  weight: ["200", "400", "500", "600"],
+  subsets: ["latin"],
+});
 const Plalyer = dynamic(() => import("@/components/Player"), { ssr: false });
 
 export const metadata: Metadata = {
