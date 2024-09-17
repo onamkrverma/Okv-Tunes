@@ -1,19 +1,23 @@
 import Wretch from "wretch";
 import queryString from "wretch/addons/queryString";
-import { TPlaylists, TSearchSongs, TSongs } from "./api.d";
+import {
+  TArtistRes,
+  TPlaylists,
+  TSearchArtist,
+  TSearchSongs,
+  TSongs,
+} from "./api.d";
 
 const serverUrl =
   process.env.NODE_ENV === "development"
     ? "http://localhost:3000"
     : process.env.NEXT_PUBLIC_MY_SERVER_URL;
 
-const api = Wretch(`${serverUrl}/api`, { next: { revalidate: 3600 } }).addon(
-  queryString
-);
+const api = Wretch(`${serverUrl}/api`).addon(queryString);
 
 type TApiquery = {
   id?: string;
-  query?: string;
+  query?: string | null;
   limit?: number;
 };
 
@@ -58,6 +62,31 @@ export const getSearchSongs = async ({ query, limit = 10 }: TApiquery) => {
     .query(querParams)
     .get(`/songs/search`)
     .json()) as TSearchSongs;
+
+  return response;
+};
+export const getArtist = async ({ id, limit = 10 }: TApiquery) => {
+  const querParams = {
+    id, // id= artist id
+    limit,
+  };
+  const response = (await api
+    .query(querParams)
+    .get(`/artists`)
+    .json()) as TArtistRes;
+
+  return response;
+};
+
+export const getSearchArtists = async ({ query, limit = 10 }: TApiquery) => {
+  const querParams = {
+    query,
+    limit,
+  };
+  const response = (await api
+    .query(querParams)
+    .get(`/artists/search`)
+    .json()) as TSearchArtist;
 
   return response;
 };

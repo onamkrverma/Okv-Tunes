@@ -2,18 +2,23 @@ import { getPlaylists } from "@/utils/api";
 import Link from "next/link";
 import React from "react";
 import Card from "./Card";
+import { topArtist } from "@/utils/topArtists";
 
 type Props = {
-  playlistId: string;
+  id?: string;
   title: string;
+  type: "song" | "artist";
 };
 
-const CardCollection = async ({ playlistId, title }: Props) => {
-  const playlist = await getPlaylists({ id: playlistId });
+const CardCollection = async ({ type, id, title }: Props) => {
+  const playlist = type === "song" ? await getPlaylists({ id: id }) : null;
 
-  const urlSlug = `/playlist/${encodeURIComponent(
-    title.replaceAll(" ", "-").toLowerCase()
-  )}-${playlistId}`;
+  const urlSlug =
+    type == "song"
+      ? `/playlist/${encodeURIComponent(
+          title.replaceAll(" ", "-").toLowerCase()
+        )}-${id}`
+      : "/artists";
 
   return (
     <div className="flex flex-col gap-4">
@@ -24,21 +29,35 @@ const CardCollection = async ({ playlistId, title }: Props) => {
         </Link>
       </div>
       <div className="flex items-center gap-4 p-1.5 overflow-x-auto">
-        {playlist.data.songs.map((song) => (
-          <Card
-            key={song.id}
-            id={song.id}
-            title={song.name}
-            imageUrl={
-              song.image.find((item) => item.quality === "500x500")?.url ?? ""
-            }
-            artist={song.artists.primary[0].name}
-            audioUrl={
-              song.downloadUrl.find((item) => item.quality === "320kbps")
-                ?.url ?? ""
-            }
-          />
-        ))}
+        {type === "song"
+          ? playlist?.data.songs.map((song) => (
+              <Card
+                key={song.id}
+                id={song.id}
+                title={song.name}
+                imageUrl={
+                  song.image.find((item) => item.quality === "500x500")?.url ??
+                  "logo-circle.svg"
+                }
+                artist={song.artists.primary[0].name}
+                audioUrl={
+                  song.downloadUrl.find((item) => item.quality === "320kbps")
+                    ?.url ?? ""
+                }
+                type="song"
+              />
+            ))
+          : topArtist
+              .slice(0, 10)
+              .map((artist) => (
+                <Card
+                  key={artist.artistid}
+                  id={artist.artistid}
+                  title={artist.name}
+                  imageUrl={artist.image}
+                  type="artist"
+                />
+              ))}
       </div>
     </div>
   );

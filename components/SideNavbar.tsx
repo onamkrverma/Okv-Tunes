@@ -3,10 +3,22 @@ import Link from "next/link";
 import React from "react";
 import Logo from "@/public/logo-full.svg";
 import HomeIcon from "@/public/icons/home.svg";
+import ArtistsIcon from "@/public/icons/artists.svg";
 import { usePathname } from "next/navigation";
 
 const SideNavbar = () => {
-  const navLinks = [{ title: "Home", icon: HomeIcon, link: "/" }];
+  const navLinks = [
+    {
+      title: "Home",
+      icon: HomeIcon,
+      link: "/",
+    },
+    {
+      title: "Artists",
+      icon: ArtistsIcon,
+      link: "/artists",
+    },
+  ];
   const currentPath = usePathname();
 
   return (
@@ -21,7 +33,9 @@ const SideNavbar = () => {
               <li key={index}>
                 <Link
                   href={navLink.link}
-                  className="flex items-center gap-2 hover:bg-neutral-800 p-2 px-3 rounded-lg "
+                  className={`flex items-center gap-2 my-1 hover:bg-neutral-700 p-2 px-3 rounded-lg ${
+                    currentPath === navLink.link ? "bg-neutral-800" : ""
+                  }`}
                 >
                   {<navLink.icon className="w-6 h-6" />}
                   <p>{navLink.title}</p>

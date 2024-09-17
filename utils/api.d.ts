@@ -22,6 +22,19 @@ export interface Artist {
   type: ArtistType;
   url: string;
 }
+interface Bio {
+  text: string;
+  title: string;
+  sequence: number;
+}
+export interface TArtist extends Artist {
+  followerCount: number;
+  fanCount: string;
+  bio: Bio[];
+  dob: string;
+  wiki: string;
+  topSongs: TSong[];
+}
 
 export interface Image {
   quality: "50x50" | "150x150" | "500x500";
@@ -79,6 +92,9 @@ export interface Artists {
 export interface SearchSongs {
   results: TSong[];
 }
+export interface SearchArtists {
+  results: Artist[];
+}
 
 export interface Data<T> {
   success: boolean;
@@ -88,3 +104,5 @@ export interface Data<T> {
 export interface TPlaylists extends Data<PlaylistData> {}
 export interface TSongs extends Data<TSong[]> {}
 export interface TSearchSongs extends Data<SearchSongs> {}
+export interface TArtistRes extends Data<TArtist> {}
+export interface TSearchArtist extends Data<SearchArtists> {}

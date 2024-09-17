@@ -4,6 +4,7 @@ import { TSong } from "@/utils/api.d";
 import Image from "next/image";
 import secondsToTime from "@/utils/secondsToTime";
 import { useGlobalContext } from "@/app/GlobalContex";
+import ImageWithFallback from "./ImageWithFallback";
 
 type Props = {
   song: TSong;
@@ -16,7 +17,8 @@ const SongsCollection = ({ song }: Props) => {
 
   const artistName = artists.primary[0].name;
   const albumName = album.name;
-  const imageUrl = image.find((item) => item.quality === "500x500")?.url ?? "";
+  const imageUrl =
+    image.find((item) => item.quality === "500x500")?.url ?? "logo-circle.svg";
   const audioUrl =
     downloadUrl.find((item) => item.quality === "320kbps")?.url ?? "";
 
@@ -40,7 +42,8 @@ const SongsCollection = ({ song }: Props) => {
       onClick={handleUpdateState}
       className="flex items-center gap-4 p-2 cursor-pointer hover:bg-secondary"
     >
-      <Image
+      <ImageWithFallback
+        id={id}
         src={imageUrl}
         alt={name + "okv tunes"}
         width={50}
