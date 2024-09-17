@@ -9,6 +9,7 @@ import CaretUpIcon from "@/public/icons/caret-up.svg";
 import PlayIcon from "@/public/icons/play.svg";
 import PauseIcon from "@/public/icons/pause.svg";
 import { TplayerState } from "./index";
+import ImageWithFallback from "../ImageWithFallback";
 
 type Props = {
   suggestedSongsData?: TSongs;
@@ -105,11 +106,12 @@ const SuggestedSongs = ({
               className="relative flex items-center gap-4 p-2 cursor-pointer rounded-md hover:bg-secondary"
               onClick={() => handleUpdateState(song)}
             >
-              <Image
+              <ImageWithFallback
                 src={
                   song.image.find((item) => item.quality === "500x500")?.url ??
-                  ""
+                  "/logo-circle.svg"
                 }
+                id={song.id}
                 alt={song.name + "okv tunes"}
                 width={50}
                 height={50}

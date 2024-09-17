@@ -9,6 +9,7 @@ import MiniPlayer from "./MiniPlayer";
 import ReactPlayer from "react-player";
 import CaretUpIcon from "@/public/icons/caret-up.svg";
 import ThreeDotsIcon from "@/public/icons/three-dots.svg";
+import ImageWithFallback from "@/components/ImageWithFallback";
 
 export type TplayerState = {
   url: string;
@@ -116,6 +117,9 @@ const Plalyer = () => {
 
   const handleNext = () => {
     updateNextPrevTrack("next");
+    playerState.autoPlay
+      ? setPlayerState({ ...playerState, playing: true })
+      : null;
   };
 
   const handlePrev = () => {
@@ -130,10 +134,80 @@ const Plalyer = () => {
     setPlayerState((prev) => ({
       ...prev,
       url: audioUrl,
-      playing: playerState.autoPlay,
     }));
     // eslint-disable-next-line
   }, [audioUrl]);
+
+  // media session
+  useEffect(() => {
+    if ("mediaSession" in navigator) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: title,
+        album: artist,
+        artwork: [
+          {
+            src: imageUrl,
+            sizes: "96x96",
+            type: "image/jpg",
+          },
+          {
+            src: imageUrl,
+            sizes: "128x128",
+            type: "image/jpg",
+          },
+          {
+            src: imageUrl,
+            sizes: "192x192",
+            type: "image/jpg",
+          },
+          {
+            src: imageUrl,
+            sizes: "256x256",
+            type: "image/jpg",
+          },
+          {
+            src: imageUrl,
+            sizes: "384x384",
+            type: "image/jpg",
+          },
+          {
+            src: imageUrl,
+            sizes: "512x512",
+            type: "image/jpg",
+          },
+        ],
+      });
+
+      navigator.mediaSession.setActionHandler("play", () => {
+        setPlayerState({ ...playerState, playing: true });
+      });
+      navigator.mediaSession.setActionHandler("pause", () => {
+        setPlayerState({ ...playerState, playing: false });
+      });
+
+      if (!suggestedSongsData) return;
+      const currentSongIndex = suggestedSongsData?.data.findIndex(
+        (item) => item.id === id
+      );
+      if (currentSongIndex > 0) {
+        navigator.mediaSession.setActionHandler("previoustrack", () => {
+          handlePrev();
+        });
+      } else {
+        // Unset the "previoustrack" action handler at the end of a list.
+        navigator.mediaSession.setActionHandler("previoustrack", null);
+      }
+
+      if (currentSongIndex !== suggestedSongsData.data.length - 1) {
+        navigator.mediaSession.setActionHandler("nexttrack", () => {
+          handleNext();
+        });
+      } else {
+        // Unset the "nexttrack" action handler at the end of a playlist.
+        navigator.mediaSession.setActionHandler("nexttrack", null);
+      }
+    }
+  }, [currentSong, playerState]);
 
   return (
     <div>
@@ -177,8 +251,10 @@ const Plalyer = () => {
                 !isMaximise ? "hidden" : "block"
               }`}
             >
-              <Image
+              <ImageWithFallback
+                id={currentSong.id}
                 src={imageUrl}
+                fallbackSrc={"/logo-circle.svg"}
                 alt={title + "okv tunes"}
                 width={500}
                 height={500}
@@ -203,8 +279,10 @@ const Plalyer = () => {
             />
             {/* song poster */}
             <div className="w-[250px] sm:w-[350px]">
-              <Image
+              <ImageWithFallback
+                id={currentSong.id}
                 src={imageUrl}
+                fallbackSrc={"/logo-circle.svg"}
                 alt={title + "okv tunes"}
                 width={350}
                 height={350}

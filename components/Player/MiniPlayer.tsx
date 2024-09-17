@@ -19,6 +19,7 @@ import ReactPlayer from "react-player";
 import { useGlobalContext } from "@/app/GlobalContex";
 import secondsToTime from "@/utils/secondsToTime";
 import { TplayerState } from "./index";
+import ImageWithFallback from "../ImageWithFallback";
 
 type Props = {
   handlePrev: () => void;
@@ -95,7 +96,7 @@ const MiniPlayer = ({
               {secondsToTime(currentTime)}
             </small>
             <small className="text-neutral-200">
-              {secondsToTime(duration ?? 0)}
+              {duration ? secondsToTime(duration) : secondsToTime(0)}
             </small>
           </div>
         </div>
@@ -112,7 +113,8 @@ const MiniPlayer = ({
             })
           }
         >
-          <Image
+          <ImageWithFallback
+            id={id}
             src={imageUrl}
             alt={title + "okv tunes"}
             width={50}
