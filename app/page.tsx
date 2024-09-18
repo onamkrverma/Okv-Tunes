@@ -14,7 +14,7 @@ export default function Home() {
         />
       ))}
 
-      <CardCollection title="Top Artists" type="artist" />
+      <CardCollection title="Popular Artists" type="artist" />
     </div>
   );
 }

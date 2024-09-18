@@ -4,6 +4,7 @@ import React from "react";
 import Logo from "@/public/logo-full.svg";
 import HomeIcon from "@/public/icons/home.svg";
 import ArtistsIcon from "@/public/icons/artists.svg";
+import ChartIcon from "@/public/icons/chart.svg";
 import { usePathname } from "next/navigation";
 
 const SideNavbar = () => {
@@ -12,6 +13,11 @@ const SideNavbar = () => {
       title: "Home",
       icon: HomeIcon,
       link: "/",
+    },
+    {
+      title: "Chart",
+      icon: ChartIcon,
+      link: "/chart",
     },
     {
       title: "Artists",

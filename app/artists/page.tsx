@@ -5,7 +5,7 @@ import React from "react";
 const TopArtists = () => {
   return (
     <div className="inner-container flex flex-col gap-6 !pb-28">
-      <h2 className="text-lg sm:text-xl font-semibold truncate">
+      <h2 className="text-lg sm:text-2xl font-semibold truncate">
         Popular Artists
       </h2>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 md:gap-2 justify-items-center">

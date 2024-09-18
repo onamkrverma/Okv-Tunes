@@ -8,16 +8,16 @@ import Link from "next/link";
 type Props = {
   id: string;
   title: string;
-  imageUrl: string;
+  imageUrl?: string;
   artist?: string;
   audioUrl?: string;
-  type: "song" | "artist";
+  type: "song" | "artist" | "playlist";
 };
 const Card = ({ title, imageUrl, artist, audioUrl, id, type }: Props) => {
   const { setGlobalState } = useGlobalContext();
 
   const handleUpdateState = () => {
-    if (!artist || !audioUrl) return;
+    if (!artist || !audioUrl || !imageUrl) return;
     setGlobalState({
       currentSong: {
         id,
@@ -31,13 +31,18 @@ const Card = ({ title, imageUrl, artist, audioUrl, id, type }: Props) => {
     });
   };
 
-  const urlSlug = `artists/${encodeURIComponent(
-    title.replaceAll(" ", "-").toLowerCase()
-  )}-${id}`;
+  const urlSlug =
+    type === "artist"
+      ? `artists/${encodeURIComponent(
+          title.replaceAll(" ", "-").toLowerCase()
+        )}-${id}`
+      : `/playlist/${encodeURIComponent(
+          title.replaceAll(" ", "-").toLowerCase()
+        )}-${id}`;
 
   return (
     <>
-      {type === "song" ? (
+      {type === "song" && imageUrl ? (
         <button
           type="button"
           onClick={handleUpdateState}
@@ -66,7 +71,7 @@ const Card = ({ title, imageUrl, artist, audioUrl, id, type }: Props) => {
           </div>
           <p className="truncate w-full px-2 pb-2 text-center">{title}</p>
         </button>
-      ) : (
+      ) : type === "artist" && imageUrl ? (
         <Link
           href={urlSlug}
           className="flex flex-col gap-2 w-[150px] sm:w-[180px] rounded-full cursor-pointer group"
@@ -93,6 +98,21 @@ const Card = ({ title, imageUrl, artist, audioUrl, id, type }: Props) => {
             </span>
           </div>
           <p className="truncate w-full px-2 pb-2 text-center">{title}</p>
+        </Link>
+      ) : (
+        <Link
+          href={urlSlug}
+          className="flex flex-col items-center justify-center gap-2 border border-neutral-400 p-2 w-[150px] h-[150px] sm:w-[180px] sm:h-[180px] rounded-md cursor-pointer bg-custom_gradient relative"
+        >
+          <Image
+            src="/logo-circle.svg"
+            alt="logo"
+            width={32}
+            height={32}
+            className="w-8 h-8 absolute top-2 left-2"
+          />
+
+          <p className="w-full text-center text-xl font-bold">{title}</p>
         </Link>
       )}
     </>
