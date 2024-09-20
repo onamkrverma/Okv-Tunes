@@ -1,4 +1,5 @@
 export const homePlaylists = [
+  { id: "6689255", title: "New Fresh Tunes" },
   { id: "110858205", title: "Trending Today" },
   { id: "946682072", title: "Top Hindi Songs" },
   { id: "49", title: "Dumdaar Hits" },
