@@ -53,15 +53,15 @@ const SideNavbar = () => {
       </section>
 
       {/* for mobile navigation */}
-      <nav className="sm:hidden block w-full fixed bottom-0 right-0 z-[15]">
+      <nav className="sm:hidden block w-full fixed bottom-0 right-0 z-10">
         <div className="flex items-center justify-evenly gap-2 p-2 bg-primary border-t border-neutral-400 backdrop-blur-md text-primary">
           {navLinks.map((navLink, index) => (
             <Link
               key={index}
               href={navLink.link}
               title={navLink.title}
-              className={`flex flex-col items-center rounded-md p-1 ${
-                currentPath === navLink.link ? "text-white" : ""
+              className={`flex flex-col items-center rounded-md p-1 px-2 ${
+                currentPath === navLink.link ? "bg-neutral-800" : ""
               }`}
             >
               {<navLink.icon className="w-6 h-6" />}

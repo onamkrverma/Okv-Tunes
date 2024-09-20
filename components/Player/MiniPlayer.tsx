@@ -40,26 +40,18 @@ const MiniPlayer = ({
   const { artist, audioUrl, id, imageUrl, title, isMaximise } = currentSong;
 
   const [seekTime, setSeekTime] = useState(0);
-  const [bufferedAmount, setBufferedAmount] = useState(0);
   const duration = playerRef?.current?.getDuration();
-
-  const currentTime = duration ? playerState?.played * duration : 0;
+  const currentTime = playerState?.played ?? 0;
 
   useEffect(() => {
     playerRef.current?.seekTo(seekTime);
     // eslint-disable-next-line
   }, [seekTime]);
 
-  // get audio buffered end amount
-  useEffect(() => {
-    const bufferedAmount = Math.floor(playerState.loaded * 100);
-    setBufferedAmount(bufferedAmount);
-  }, [playerState.loaded]);
-
   return (
     <div
-      className={`fixed left-0 bottom-16 sm:bottom-0 w-full sm:h-16 sm:bg-secondary z-20 ${
-        isMaximise ? "h-40 pb-4" : "h-16 bg-secondary "
+      className={`fixed left-0 sm:bottom-0 w-full sm:h-16 sm:bg-secondary z-[15] ${
+        isMaximise ? "h-40 pb-4 bottom-0" : "h-16 bg-secondary bottom-16"
       }`}
     >
       <div
@@ -80,10 +72,7 @@ const MiniPlayer = ({
             min={0}
             max={duration || 0}
             onChange={(e) => setSeekTime(e.currentTarget.valueAsNumber)}
-            //  style={{
-            //    "--buffered-width": `${bufferedAmount}%`,
-            //  }}
-            className={`sm:absolute  sm:h-0.5 w-full accent-action cursor-pointer ${
+            className={`sm:absolute sm:h-0.5 w-full accent-action cursor-pointer ${
               isMaximise ? "static h-1" : "absolute h-0.5"
             }`}
           />

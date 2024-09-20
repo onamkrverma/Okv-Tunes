@@ -90,9 +90,11 @@ export interface Artists {
 }
 
 export interface SearchSongs {
+  total: number;
   results: TSong[];
 }
 export interface SearchArtists {
+  total: number;
   results: Artist[];
 }
 

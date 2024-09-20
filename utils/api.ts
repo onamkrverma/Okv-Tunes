@@ -13,7 +13,9 @@ const serverUrl =
     ? "http://localhost:3000"
     : process.env.NEXT_PUBLIC_MY_SERVER_URL;
 
-const api = Wretch(`${serverUrl}/api`).addon(queryString);
+const api = Wretch(`${serverUrl}/api`, {
+  next: { revalidate: 3600 * 24 },
+}).addon(queryString);
 
 type TApiquery = {
   id?: string;

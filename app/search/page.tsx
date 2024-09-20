@@ -54,27 +54,35 @@ const Search = () => {
           setActiveToggle={setActiveToggle}
         />
         {!isLoading && !artistsLoading ? (
-          activeToggle === "songs" ? (
-            songResults?.data.results.map((song) => (
-              <SongsCollection key={song.id} song={song} />
-            ))
+          activeToggle === "songs" && songResults ? (
+            songResults?.data?.total > 0 ? (
+              songResults?.data.results.map((song) => (
+                <SongsCollection key={song.id} song={song} />
+              ))
+            ) : (
+              <p>No songs found for this query</p>
+            )
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 md:gap-2 justify-items-center">
-              {artistsResults?.data.results.map((artist) => (
-                <Card
-                  key={artist.id}
-                  id={artist.id}
-                  title={artist.name}
-                  imageUrl={
-                    artist.image.find(
-                      (item) =>
-                        item.quality === "500x500" &&
-                        item.url.includes("/c.saavncdn")
-                    )?.url ?? "/logo-circle.svg"
-                  }
-                  type="artist"
-                />
-              ))}
+              {artistsResults && artistsResults?.data.total > 0 ? (
+                artistsResults?.data.results.map((artist) => (
+                  <Card
+                    key={artist.id}
+                    id={artist.id}
+                    title={artist.name}
+                    imageUrl={
+                      artist.image.find(
+                        (item) =>
+                          item.quality === "500x500" &&
+                          item.url.includes("/c.saavncdn")
+                      )?.url ?? "/logo-circle.svg"
+                    }
+                    type="artist"
+                  />
+                ))
+              ) : (
+                <p>No artists found for this query</p>
+              )}
             </div>
           )
         ) : (

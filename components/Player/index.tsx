@@ -18,7 +18,7 @@ export type TplayerState = {
   volume: number;
   muted: boolean;
   played: number;
-  loaded: number;
+  loaded?: number;
   autoPlay: boolean;
 };
 
@@ -40,7 +40,7 @@ const Plalyer = () => {
     controls: false,
     volume: volume ?? 1.0,
     muted: false,
-    played: 0,
+    played: 0, // in seconds
     loaded: 0,
     autoPlay: false,
   });
@@ -117,9 +117,7 @@ const Plalyer = () => {
 
   const handleNext = () => {
     updateNextPrevTrack("next");
-    playerState.autoPlay
-      ? setPlayerState({ ...playerState, playing: true })
-      : null;
+    setPlayerState({ ...playerState, autoPlay: true, playing: true });
   };
 
   const handlePrev = () => {
@@ -183,6 +181,13 @@ const Plalyer = () => {
       });
       navigator.mediaSession.setActionHandler("pause", () => {
         setPlayerState({ ...playerState, playing: false });
+      });
+
+      navigator.mediaSession.setActionHandler("seekbackward", () => {
+        playerRef.current?.seekTo(playerState.played - 10);
+      });
+      navigator.mediaSession.setActionHandler("seekforward", () => {
+        playerRef.current?.seekTo(playerState.played + 10);
       });
 
       if (!suggestedSongsData) return;
@@ -270,8 +275,7 @@ const Plalyer = () => {
               onProgress={(state) =>
                 setPlayerState({
                   ...playerState,
-                  played: state.played,
-                  loaded: state.loaded,
+                  played: state.playedSeconds,
                 })
               }
               {...playerState}

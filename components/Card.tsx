@@ -102,17 +102,18 @@ const Card = ({ title, imageUrl, artist, audioUrl, id, type }: Props) => {
       ) : (
         <Link
           href={urlSlug}
-          className="flex flex-col items-center justify-center gap-2 border border-neutral-400 p-2 w-[150px] h-[150px] sm:w-[180px] sm:h-[180px] rounded-md cursor-pointer bg-custom_gradient relative"
+          className="flex flex-col items-center justify-center gap-2 p-2 w-[150px] h-[150px] sm:w-[180px] sm:h-[180px] rounded-md cursor-pointer bg-custom_gradient relative"
         >
           <Image
             src="/logo-circle.svg"
             alt="logo"
             width={32}
             height={32}
-            className="w-8 h-8 absolute top-2 left-2"
+            className="w-8 h-8 absolute bottom-2 left-2"
           />
 
           <p className="w-full text-center text-xl font-bold">{title}</p>
+          <span className="absolute top-0 left-0 w-full h-28 bg-action/50 -z-10 rounded-t-md rounded-br-[100%]"></span>
         </Link>
       )}
     </>
