@@ -218,7 +218,7 @@ const Plalyer = () => {
       {id ? (
         <>
           <div
-            className={`inner-container !mt-0 fixed top-0 right-0 left-0 bg-primary flex gap-4 sm:justify-evenly !pt-12 sm:!pt-0 flex-col md:flex-row items-center h-full z-[11] transition-transform duration-700 ${
+            className={`inner-container !mt-0 fixed top-0 right-0 left-0 bg-primary flex gap-4 sm:justify-evenly !pt-20 sm:!pt-0 flex-col md:flex-row items-center h-full z-[11] transition-transform duration-700 ${
               isMaximise ? "translate-y-0" : "translate-y-[150%]"
             }`}
           >
@@ -281,7 +281,7 @@ const Plalyer = () => {
             />
             <div className="flex flex-col gap-4">
               {/* song poster */}
-              <div className="w-[250px] sm:w-[350px]">
+              <div className="w-[250px] sm:w-[150px] md:w-fit lg:w-[350px]">
                 <ImageWithFallback
                   id={currentSong.id}
                   src={imageUrl}

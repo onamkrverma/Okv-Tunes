@@ -49,8 +49,8 @@ const MiniPlayer = ({
 
   return (
     <div
-      className={`fixed left-0 bottom-16 sm:bottom-0 w-full sm:h-16 sm:bg-secondary z-[15] ${
-        isMaximise ? "h-40 pb-4" : "h-16 bg-secondary "
+      className={`fixed left-0 bottom-16 h-fit sm:bottom-0 w-full sm:h-16 sm:bg-secondary z-[15] sm:translate-y-0 transition-transform duration-300 ${
+        isMaximise ? "translate-y-10 pb-4" : "bg-secondary translate-y-0 "
       }`}
     >
       <div
