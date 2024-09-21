@@ -1,6 +1,5 @@
 "use client";
 import { useGlobalContext } from "@/app/GlobalContex";
-import Image from "next/image";
 import React from "react";
 import ImageWithFallback from "./ImageWithFallback";
 import Link from "next/link";
@@ -55,11 +54,10 @@ const Card = ({ title, imageUrl, artist, audioUrl, id, type }: Props) => {
               alt={title + "okv tunes"}
               width={180}
               height={180}
-              priority
               className="w-full h-auto object-cover rounded-md"
             />
             <span className="hidden group-hover:flex transition-colors duration-500 absolute top-0 w-full h-full items-center justify-center backdrop-brightness-50 rounded-md">
-              <Image
+              <img
                 src="/logo-circle.svg"
                 alt="logo"
                 width={32}
@@ -69,7 +67,9 @@ const Card = ({ title, imageUrl, artist, audioUrl, id, type }: Props) => {
               <span className="absolute w-14 h-14 rounded-full bg-primary/80 transition-transform duration-500 scale-100 hover:scale-150"></span>
             </span>
           </div>
-          <p className="truncate w-full px-2 pb-2 text-center">{title}</p>
+          <p className="truncate w-full px-2 pb-2 text-center">
+            {title.replaceAll("&quot;", '"')}
+          </p>
         </button>
       ) : type === "artist" && imageUrl ? (
         <Link
@@ -83,11 +83,10 @@ const Card = ({ title, imageUrl, artist, audioUrl, id, type }: Props) => {
               alt={title + "okv tunes"}
               width={180}
               height={180}
-              priority
               className="w-full h-auto object-cover rounded-full"
             />
             <span className="hidden group-hover:flex transition-colors duration-500 rounded-full absolute top-0 w-full h-full items-center justify-center backdrop-brightness-50">
-              <Image
+              <img
                 src="/logo-circle.svg"
                 alt="logo"
                 width={32}
@@ -104,7 +103,7 @@ const Card = ({ title, imageUrl, artist, audioUrl, id, type }: Props) => {
           href={urlSlug}
           className="flex flex-col items-center justify-center gap-2 p-2 w-[150px] h-[150px] sm:w-[180px] sm:h-[180px] rounded-md cursor-pointer bg-custom_gradient relative"
         >
-          <Image
+          <img
             src="/logo-circle.svg"
             alt="logo"
             width={32}

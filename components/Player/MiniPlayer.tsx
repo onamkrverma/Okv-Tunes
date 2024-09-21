@@ -14,7 +14,6 @@ import PrevIcon from "@/public/icons/previous.svg";
 import SpeakerIcon from "@/public/icons/speaker.svg";
 import MuteSpeakerIcon from "@/public/icons/mute-speaker.svg";
 import CaretUpIcon from "@/public/icons/caret-up.svg";
-import Image from "next/image";
 import ReactPlayer from "react-player";
 import { useGlobalContext } from "@/app/GlobalContex";
 import secondsToTime from "@/utils/secondsToTime";
@@ -50,8 +49,8 @@ const MiniPlayer = ({
 
   return (
     <div
-      className={`fixed left-0 sm:bottom-0 w-full sm:h-16 sm:bg-secondary z-[15] ${
-        isMaximise ? "h-40 pb-4 bottom-0" : "h-16 bg-secondary bottom-16"
+      className={`fixed left-0 bottom-16 sm:bottom-0 w-full sm:h-16 sm:bg-secondary z-[15] ${
+        isMaximise ? "h-40 pb-4" : "h-16 bg-secondary "
       }`}
     >
       <div
@@ -108,7 +107,6 @@ const MiniPlayer = ({
             alt={title + "okv tunes"}
             width={50}
             height={50}
-            priority
             className="w-[50px] h-[50px] object-cover rounded-md"
           />
           <div className="flex flex-col w-full max-w-40">
@@ -172,8 +170,19 @@ const MiniPlayer = ({
             {secondsToTime(currentTime)} / {secondsToTime(duration ?? 0)}
           </small>
           <div className={`flex gap-2 items-center justify-center w-24 `}>
-            <button type="button" title="mute" className="">
-              <SpeakerIcon className="w-6 h-6" />
+            <button
+              type="button"
+              title="mute"
+              className="cursor-pointer"
+              onClick={() =>
+                setPlayerState({ ...playerState, muted: !playerState.muted })
+              }
+            >
+              {!playerState.muted ? (
+                <SpeakerIcon className="w-6 h-6" />
+              ) : (
+                <MuteSpeakerIcon className="w-6 h-6" />
+              )}
             </button>
             <input
               type="range"

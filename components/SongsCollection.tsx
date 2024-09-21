@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import { TSong } from "@/utils/api.d";
-import Image from "next/image";
 import secondsToTime from "@/utils/secondsToTime";
 import { useGlobalContext } from "@/app/GlobalContex";
 import ImageWithFallback from "./ImageWithFallback";
@@ -15,7 +14,7 @@ const SongsCollection = ({ song }: Props) => {
 
   const { id, album, artists, downloadUrl, image, name, duration } = song;
 
-  const artistName = artists.primary[0].name;
+  const artistName = artists.all.map((artist) => artist.name).join(" , ");
   const albumName = album.name;
   const imageUrl =
     image.find((item) => item.quality === "500x500")?.url ?? "logo-circle.svg";
@@ -48,7 +47,6 @@ const SongsCollection = ({ song }: Props) => {
         alt={name + "okv tunes"}
         width={50}
         height={50}
-        priority
         className="w-[50px] h-[50px] object-cover rounded-md"
       />
       <p className="truncate w-80 text-start">

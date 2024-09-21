@@ -1,7 +1,15 @@
-import React, { useEffect, useState } from "react";
-import Image, { ImageProps } from "next/image";
+import React, {
+  DetailedHTMLProps,
+  ImgHTMLAttributes,
+  useEffect,
+  useState,
+} from "react";
 
-interface ImageWithFallbackProps extends ImageProps {
+interface ImageWithFallbackProps
+  extends DetailedHTMLProps<
+    ImgHTMLAttributes<HTMLImageElement>,
+    HTMLImageElement
+  > {
   fallbackSrc?: string;
   id?: string;
 }
@@ -15,7 +23,7 @@ const ImageWithFallback = (props: ImageWithFallbackProps) => {
   }, [id]);
 
   return (
-    <Image
+    <img
       {...rest}
       src={imgSrc}
       onError={() => {

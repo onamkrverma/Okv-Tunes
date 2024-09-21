@@ -1,7 +1,6 @@
 import SongsCollection from "@/components/SongsCollection";
 import { getPlaylists } from "@/utils/api";
 import secondsToTime from "@/utils/secondsToTime";
-import Image from "next/image";
 import React from "react";
 type Props = {
   params: { slug: string };
@@ -19,10 +18,10 @@ const PlaylistSongs = async ({ params }: Props) => {
   const { name, description, songs } = playlist.data;
 
   return (
-    <div className="inner-container flex flex-col gap-6 !pb-24">
+    <div className="inner-container flex flex-col gap-6">
       <div className="flex gap-4 flex-col flex-wrap sm:flex-row items-center ">
         <div className="w-[200px] h-[200px]">
-          <Image
+          <img
             src={
               songs[0].image.find((item) => item.quality === "500x500")?.url ??
               ""
@@ -30,7 +29,6 @@ const PlaylistSongs = async ({ params }: Props) => {
             alt={name + "okv tunes"}
             width={200}
             height={200}
-            priority
             className="w-full h-full object-cover rounded-md shadow-lg shadow-neutral-700"
           />
         </div>

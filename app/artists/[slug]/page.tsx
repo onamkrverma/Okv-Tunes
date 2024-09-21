@@ -1,6 +1,5 @@
 import SongsCollection from "@/components/SongsCollection";
 import { getArtist } from "@/utils/api";
-import Image from "next/image";
 import React from "react";
 type Props = {
   params: { slug: string };
@@ -12,10 +11,10 @@ const ArtistInfo = async ({ params }: Props) => {
   const { image, name, topSongs, bio, wiki, dob } = artist.data;
 
   return (
-    <div className="inner-container flex flex-col gap-6 !pb-24">
+    <div className="inner-container flex flex-col gap-6">
       <div className="flex gap-4 flex-col flex-wrap sm:flex-row items-center ">
         <div className="w-[200px] h-[200px]">
-          <Image
+          <img
             src={
               image.find(
                 (item) =>
@@ -25,7 +24,6 @@ const ArtistInfo = async ({ params }: Props) => {
             alt={name + " okv tunes"}
             width={200}
             height={200}
-            priority
             className="w-full h-full object-cover rounded-full shadow-lg shadow-neutral-700"
           />
         </div>

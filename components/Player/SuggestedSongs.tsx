@@ -1,6 +1,5 @@
 "use client";
 import secondsToTime from "@/utils/secondsToTime";
-import Image from "next/image";
 import React, { Dispatch, SetStateAction, useState } from "react";
 import Loading from "../Loading";
 import type { TSong, TSongs } from "@/utils/api.d";
@@ -115,7 +114,6 @@ const SuggestedSongs = ({
                 alt={song.name + "okv tunes"}
                 width={50}
                 height={50}
-                priority
                 className="w-[50px] h-[50px] object-cover rounded-md"
               />
               {currentSong.id === song.id ? (

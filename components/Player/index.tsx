@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import { useGlobalContext } from "@/app/GlobalContex";
 import SuggestedSongs from "./SuggestedSongs";
@@ -263,7 +262,6 @@ const Plalyer = () => {
                 alt={title + "okv tunes"}
                 width={500}
                 height={500}
-                priority
                 className="w-full h-full object-cover"
               />
             </div>
@@ -281,28 +279,28 @@ const Plalyer = () => {
               {...playerState}
               className="hidden"
             />
-            {/* song poster */}
-            <div className="w-[250px] sm:w-[350px]">
-              <ImageWithFallback
-                id={currentSong.id}
-                src={imageUrl}
-                fallbackSrc={"/logo-circle.svg"}
-                alt={title + "okv tunes"}
-                width={350}
-                height={350}
-                priority
-                className="w-full h-auto  object-cover rounded-lg"
-              />
+            <div className="flex flex-col gap-4">
+              {/* song poster */}
+              <div className="w-[250px] sm:w-[350px]">
+                <ImageWithFallback
+                  id={currentSong.id}
+                  src={imageUrl}
+                  fallbackSrc={"/logo-circle.svg"}
+                  alt={title + "okv tunes"}
+                  width={350}
+                  height={350}
+                  className="w-full h-auto  object-cover rounded-lg"
+                />
+              </div>
+              <div className="flex sm:hidden flex-col items-center w-full max-w-60">
+                <p className="truncate text-2xl w-full text-center">
+                  {title?.replaceAll("&quot;", '"')}
+                </p>
+                <small className="truncate text-neutral-300 w-full text-center">
+                  {artist}
+                </small>
+              </div>
             </div>
-            <div className="flex sm:hidden flex-col items-center w-full max-w-60">
-              <p className="truncate text-2xl w-full text-center">
-                {title?.replaceAll("&quot;", '"')}
-              </p>
-              <small className="truncate text-neutral-300 w-full text-center">
-                {artist}
-              </small>
-            </div>
-
             {/* upcomming tracks */}
             <SuggestedSongs
               suggestedSongsData={suggestedSongsData}
