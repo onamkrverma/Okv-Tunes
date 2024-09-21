@@ -43,7 +43,7 @@ const Search = () => {
   }, [searchQuery]);
 
   return (
-    <div className="inner-container flex flex-col gap-6 !pb-24">
+    <div className="inner-container flex flex-col gap-6">
       <div className="flex flex-col gap-4 my-2">
         <h2 className="capitalize font-bold text-sm sm:text-lg  ">
           Search results for {`"${searchQuery}"`}

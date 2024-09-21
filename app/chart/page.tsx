@@ -4,7 +4,7 @@ import React from "react";
 
 const Chart = () => {
   return (
-    <div className="inner-container flex flex-col gap-6 !pb-28">
+    <div className="inner-container flex flex-col gap-6">
       <h2 className="text-lg sm:text-2xl font-semibold truncate">
         Featured Charts
       </h2>

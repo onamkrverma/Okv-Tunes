@@ -4,7 +4,7 @@ import { topArtist } from "@/utils/topArtists";
 
 export default function Home() {
   return (
-    <div className="inner-container flex flex-col gap-6 !pb-28">
+    <div className="inner-container flex flex-col gap-6">
       {homePlaylists.map((item) => (
         <CardCollection
           key={item.id}

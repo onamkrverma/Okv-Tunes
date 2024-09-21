@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import SideNavbar from "@/components/SideNavbar";
 import dynamic from "next/dynamic";
 import { GlobalContextProvider } from "./GlobalContex";
+import Footer from "@/components/Footer";
 
 const poppins = Poppins({
   display: "swap",
@@ -35,6 +36,7 @@ export default function RootLayout({
             <SideNavbar />
             {children}
             <Plalyer />
+            <Footer />
           </main>
         </GlobalContextProvider>
       </body>
