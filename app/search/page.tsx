@@ -40,6 +40,8 @@ const Search = () => {
     activeToggle === "songs"
       ? mutate("/search-songs")
       : mutate("/search-artists");
+
+    document.title = `${searchQuery}-Search • Okv-Tunes`;
   }, [searchQuery]);
 
   return (

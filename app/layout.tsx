@@ -15,8 +15,47 @@ const poppins = Poppins({
 const Plalyer = dynamic(() => import("@/components/Player"), { ssr: false });
 
 export const metadata: Metadata = {
-  title: "Okv Tunes",
-  description: "Okv Tunes",
+  title: "Listen to Trending Music for Free | Ad-Free Streaming on Okv-Tunes",
+  description:
+    "Listen to Unlimited Songs for Free on Okv Tunes! Enjoy ad-free streaming of trending Bollywood, Indian Pop, Punjabi, Haryanvi, Tamil, and Telugu hits. Start listening now!",
+  keywords: [
+    "Free music app",
+    "No ads music streaming",
+    "Unlimited music streaming",
+    "Ad-free songs",
+    "Music without ads",
+    "Free music player",
+    "Online music streaming",
+    "High-quality music streaming",
+    "Free music downloads",
+    "Non-stop music streaming",
+  ],
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_MY_SERVER_URL || "http://localhost:3000"
+  ),
+  alternates: {
+    canonical: "/",
+  },
+  // verification: {
+  //   google: "",
+  // },
+  icons: [
+    { rel: "icon", url: "/android-chrome-192x192.png" },
+    { rel: "apple-touch-icon", url: "/apple-touch-icon.png" },
+  ],
+  openGraph: {
+    type: "website",
+    url: "/",
+    title: "Listen to Trending Music for Free | Ad-Free Streaming on Okv-Tunes",
+    description:
+      "Listen to Unlimited Songs for Free on Okv Tunes! Enjoy ad-free streaming of trending Bollywood, Indian Pop, Punjabi, Haryanvi, Tamil, and Telugu hits. Start listening now!",
+    siteName: "Okv-Tunes",
+    images: [
+      {
+        url: "/logo-full.svg",
+      },
+    ],
+  },
 };
 
 export default function RootLayout({

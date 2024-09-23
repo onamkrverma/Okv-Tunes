@@ -1,6 +1,10 @@
 import { homePlaylists } from "@/utils/playlists";
 import CardCollection from "@/components/CardCollection";
-import { topArtist } from "@/utils/topArtists";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Listen to Trending Music for Free | Ad-Free Streaming on Okv-Tunes",
+};
 
 export default function Home() {
   return (

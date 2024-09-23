@@ -1,6 +1,13 @@
 import Card from "@/components/Card";
 import { topArtist } from "@/utils/topArtists";
+import { Metadata } from "next";
 import React from "react";
+
+export const metadata: Metadata = {
+  title: "Top Artists • Okv-Tunes",
+  description:
+    "Discover and stream the latest and trending music on Okv Tunes. Enjoy ad-free listening with top hits from popular artists like Arijit Singh, Neha Kakkar, Justin Bieber, Diljit Dosanjh and more",
+};
 
 const TopArtists = () => {
   return (

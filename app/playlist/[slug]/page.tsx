@@ -1,10 +1,21 @@
 import SongsCollection from "@/components/SongsCollection";
 import { getPlaylists } from "@/utils/api";
-import secondsToTime from "@/utils/secondsToTime";
+import { Metadata } from "next";
 import React from "react";
 type Props = {
   params: { slug: string };
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const id = params.slug.split("-").pop();
+  const playlist = await getPlaylists({ id: id });
+  const { name, description } = playlist.data;
+
+  return {
+    title: `${name} • Okv-Tunes`,
+    description: `${description}`,
+  };
+}
 
 const PlaylistSongs = async ({ params }: Props) => {
   const id = params.slug.split("-").pop() as string;

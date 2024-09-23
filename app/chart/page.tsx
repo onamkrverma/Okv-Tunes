@@ -1,6 +1,11 @@
 import Card from "@/components/Card";
 import { topChartPlaylists } from "@/utils/playlists";
+import { Metadata } from "next";
 import React from "react";
+
+export const metadata: Metadata = {
+  title: "Top Trending Songs • Okv-Tunes",
+};
 
 const Chart = () => {
   return (

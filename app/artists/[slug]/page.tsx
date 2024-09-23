@@ -1,11 +1,24 @@
 import SongsCollection from "@/components/SongsCollection";
 import { getArtist } from "@/utils/api";
+import { Metadata, ResolvingMetadata } from "next";
 import React from "react";
 type Props = {
   params: { slug: string };
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const id = params.slug.split("-").pop();
+  const artist = await getArtist({ id: id });
+  const { name, bio } = artist.data;
+
+  return {
+    title: `${name} songs • Okv-Tunes`,
+    description: `${bio[0]?.text.slice(0, 160)}`,
+  };
+}
+
 const ArtistInfo = async ({ params }: Props) => {
-  const id = params.slug.split("-").pop() as string;
+  const id = params.slug.split("-").pop();
   const artist = await getArtist({ id: id, limit: 50 });
 
   const { image, name, topSongs, bio, wiki, dob } = artist.data;

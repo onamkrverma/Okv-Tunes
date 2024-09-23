@@ -12,7 +12,9 @@ export const topChartPlaylists = [
   { id: "158220028", title: "Top Viral Hindi Hits" },
   { id: "1219706044", title: "Top 50 Hindi Chartbusters" },
   { id: "1134595537", title: "Top 50 English Songs" },
-  { id: "1134543511", title: "Top 50 Punjabi Superhits" },
+  { id: "1134543511", title: "Top 50 Superhits Punjabi" },
+  { id: "1134651042", title: "Top 50 Superhits Tamil" },
+  { id: "1134643225", title: "Top 50 Superhits Telgu" },
 ];
 
 export const latestHists = [
