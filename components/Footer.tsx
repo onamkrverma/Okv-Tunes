@@ -26,7 +26,7 @@ const Footer = () => {
               <li key={item.id}>
                 <Link
                   href={urlSlug(item.title, item.id)}
-                  className={`flex items-center gap-2 my-1 text-xs text-neutral-400 hover:text-neutral-200`}
+                  className={`flex items-center gap-2 my-1 text-sm text-neutral-400 hover:text-neutral-200`}
                 >
                   {item.title}
                 </Link>
@@ -41,7 +41,7 @@ const Footer = () => {
               <li key={item.id}>
                 <Link
                   href={urlSlug(item.title, item.id)}
-                  className={`flex items-center gap-2 my-1 text-xs text-neutral-400 hover:text-neutral-200`}
+                  className={`flex items-center gap-2 my-1 text-sm text-neutral-400 hover:text-neutral-200`}
                 >
                   {item.title}
                 </Link>

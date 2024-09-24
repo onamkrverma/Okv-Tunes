@@ -1,18 +1,22 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import SideNavbar from "@/components/SideNavbar";
-import dynamic from "next/dynamic";
-import { GlobalContextProvider } from "./GlobalContex";
-import Footer from "@/components/Footer";
+import ClientLayout from "./clientLayout";
 
 const poppins = Poppins({
   display: "swap",
   weight: ["200", "400", "500", "600"],
   subsets: ["latin"],
 });
-const Plalyer = dynamic(() => import("@/components/Player"), { ssr: false });
+
+export const viewport: Viewport = {
+  themeColor: [{ media: "(prefers-color-scheme: dark)", color: "#0d0d0d" }],
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: true,
+  viewportFit: "cover",
+};
 
 export const metadata: Metadata = {
   title: "Listen to Trending Music for Free | Ad-Free Streaming on Okv-Tunes",
@@ -36,6 +40,8 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
   },
+  manifest: "/manifest.webmanifest",
+
   // verification: {
   //   google: "",
   // },
@@ -66,18 +72,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={poppins.className}>
-        <GlobalContextProvider>
-          <main className="container relative">
-            <div className="absolute top-0 w-full h-48 -z-10 flex items-center justify-end rounded-full">
-              <span className="bg-custom_gradient block w-3/4 h-full blur-3xl" />
-            </div>
-            <Navbar />
-            <SideNavbar />
-            {children}
-            <Plalyer />
-            <Footer />
-          </main>
-        </GlobalContextProvider>
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );

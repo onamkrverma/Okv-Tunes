@@ -31,6 +31,8 @@ const CardCollection = async ({ type, id, title }: Props) => {
           View all
         </Link>
       </div>
+
+      {/* <img src={imageOpt} alt="logo" /> */}
       <div className="flex items-center gap-4 p-1.5 overflow-x-auto">
         {type === "song"
           ? playlist?.data.songs.map((song) => (
