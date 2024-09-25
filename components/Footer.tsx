@@ -51,7 +51,11 @@ const Footer = () => {
         </div>
       </div>
       <small className="border-t w-full flex justify-end my-2 pt-2 text-neutral-400">
-        © 2024-{new Date().getFullYear()} Okv-Tunes All rights reserved.
+        © 2024
+        {new Date().getFullYear() > 2024
+          ? `-${new Date().getFullYear()}`
+          : ""}{" "}
+        Okv-Tunes All rights reserved.
       </small>
     </div>
   );

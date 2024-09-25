@@ -18,6 +18,7 @@ self.addEventListener("install", (event) => {
         "/maskable_icon_x512.png",
         "/screenshot.webp",
         "/manifest.webmanifest",
+        "/offline",
       ]);
     })
   );
@@ -94,7 +95,7 @@ async function dynamicCaching(request) {
     return response;
   } catch (error) {
     console.error("Dynamic caching failed:", error);
-    return caches.match(request);
+    return caches.match("/offline");
   }
 }
 
