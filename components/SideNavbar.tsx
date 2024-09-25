@@ -30,7 +30,7 @@ const SideNavbar = () => {
   return (
     <>
       <section className="hidden sm:flex flex-col gap-2 pt-4 p-6 w-[var(--side-nav-width)] h-full bg-secondary border border-l fixed top-0 left-0 z-10 ">
-        <Link href={"/"} className="flex items-center">
+        <Link href={"/"} title="Okv Tunes logo" className="flex items-center">
           <Logo />
         </Link>
         <nav className="my-4">

@@ -42,6 +42,7 @@ const Search = () => {
       : mutate("/search-artists");
 
     document.title = `${searchQuery}-Search • Okv-Tunes`;
+    // eslint-disable-next-line
   }, [searchQuery]);
 
   return (

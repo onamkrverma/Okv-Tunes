@@ -1,0 +1,44 @@
+{
+  "name": "Okv Tunes",
+  "short_name": "Okv Tunes",
+  "description": "Listen to Unlimited Songs for Free on Okv Tunes! Enjoy ad-free streaming of trending Bollywood, Indian Pop, Punjabi, Haryanvi, Tamil, and Telugu hits. Start listening now!",
+  "start_url": "/",
+  "id": "okvtunes",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/maskable_icon_x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshot.webp",
+      "sizes": "1170x858",
+      "type": "image/webp",
+      "form_factor": "wide",
+      "label": "Okv Tunes"
+    },
+    {
+      "src": "screenshot.webp",
+      "sizes": "1170x858",
+      "type": "image/webp",
+      "label": "Okv Tunes"
+    }
+  ]
+}

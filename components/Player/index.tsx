@@ -211,6 +211,8 @@ const Plalyer = () => {
         navigator.mediaSession.setActionHandler("nexttrack", null);
       }
     }
+
+    // eslint-disable-next-line
   }, [currentSong, playerState]);
 
   return (

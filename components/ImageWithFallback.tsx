@@ -20,12 +20,14 @@ const ImageWithFallback = (props: ImageWithFallbackProps) => {
 
   useEffect(() => {
     setImgSrc(src);
+    // eslint-disable-next-line
   }, [id]);
 
   return (
     <img
       {...rest}
       src={imgSrc}
+      alt={rest.alt}
       onError={() => {
         setImgSrc(fallbackSrc ?? "/logo-circle.svg");
       }}
