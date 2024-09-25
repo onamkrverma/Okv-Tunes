@@ -5,10 +5,10 @@ import SongsCollection from "@/components/SongsCollection";
 import Toggle from "@/components/Toggle";
 import { getArtist, getSearchArtists, getSearchSongs } from "@/utils/api";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import useSWR, { mutate } from "swr";
 
-const Search = () => {
+const SearchComponent = () => {
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get("search");
   const toggleList = ["songs", "artists"];
@@ -89,11 +89,17 @@ const Search = () => {
             </div>
           )
         ) : (
-          <Loading loadingText="loading" />
+          <Loading loadingText="Loading" />
         )}
       </div>
     </div>
   );
 };
+
+const Search = () => (
+  <Suspense fallback={<Loading loadingText="Loading" />}>
+    <SearchComponent />
+  </Suspense>
+);
 
 export default Search;

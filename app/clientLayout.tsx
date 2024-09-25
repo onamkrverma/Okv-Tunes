@@ -38,7 +38,6 @@ const ClientLayout = ({
         {children}
         <Plalyer />
         <Footer />
-        {/* <RegisterSw /> */}
       </main>
     </GlobalContextProvider>
   );
