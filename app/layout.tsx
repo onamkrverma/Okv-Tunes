@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import ClientLayout from "./clientLayout";
+import { GoogleTagManager } from "@next/third-parties/google";
 
 const poppins = Poppins({
   display: "swap",
@@ -41,10 +42,9 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   manifest: "/manifest.webmanifest",
-
-  // verification: {
-  //   google: "",
-  // },
+  verification: {
+    google: "fXdwObHVbw1lHf43nqKlsB7ZwhohZGTglPx2CY4RAVg",
+  },
   icons: [
     { rel: "icon", url: "/android-chrome-192x192.png" },
     { rel: "apple-touch-icon", url: "/apple-touch-icon.png" },
@@ -71,6 +71,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <GoogleTagManager gtmId="GTM-5G23KL35" />
       <body className={poppins.className}>
         <ClientLayout>{children}</ClientLayout>
       </body>
