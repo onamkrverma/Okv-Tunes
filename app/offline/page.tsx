@@ -21,7 +21,7 @@ const Offline = () => {
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);
     };
-  }, [router]);
+  }, []);
 
   const hanldeRefresh = () => {
     if (navigator.onLine && !isOffline) {
