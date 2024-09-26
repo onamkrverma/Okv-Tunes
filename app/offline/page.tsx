@@ -1,15 +1,14 @@
 "use client";
-import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 const Offline = () => {
   const [isOffline, setIsOffline] = useState(false);
-  const router = useRouter();
+  
 
   useEffect(() => {
     const handleOnline = () => {
       setIsOffline(false);
-      router.replace("/"); // if online
+      window.location.reload(); // if online
     };
     const handleOffline = () => {
       setIsOffline(true);
@@ -26,7 +25,7 @@ const Offline = () => {
 
   const hanldeRefresh = () => {
     if (navigator.onLine && !isOffline) {
-      router.replace("/");
+      window.location.reload();
     }
   };
 
