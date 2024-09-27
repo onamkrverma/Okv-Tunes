@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Okv Tunes 
+Okv Tunes is a Progressive Web App (PWA) music streaming platform that allows users to search for songs or artists, browse charts, and discover new music across various genres and languages.
 
-## Getting Started
+![image](https://github.com/user-attachments/assets/a5d27616-2f74-4c9c-a920-67561de36f16)
 
-First, run the development server:
+
+## Features
+- **Enjoy Free Music**: Listen to unlimited music without interruptions.
+- **Search Songs or Artists**: Easily find your favorite songs or artists.
+- **Charts**: Stay updated with the latest hits and trending songs.
+- **New Releases**: Discover new music across different languages and genres.
+- **Top Songs**: Browse top songs in Hindi, English, Punjabi, Tamil, Telugu, and more.
+- **Popular Artists**: Explore music from popular artists like Arijit Singh, Neha Kakkar, Justin Bieber, and more.
+- **Controls player from notification**: Enables control of the music player directly from the notification panel.
+
+
+### Don't forget to :star: the repo
+
+## Technologies Used
+
+- **Next.js**: Utilized API routes for RESTful API development
+- **TypeScript**
+- **Tailwind CSS**
+- **Saavan API**
+- **Wretch**
+
+
+
+## Getting Started with Nextjs App
+- This project is bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+- Clone down this repositery. You will need to `node.js` and `git` installed globally on your machine.
+
+## Installation
+Instructions on how to install and set up your project.
 
 ```bash
+# Clone the repository
+git clone https://github.com/onamkrverma/Okv-Tunes.git
+
+# Navigate to the project directory
+cd okv-tunes
+
+# Install dependencies
+npm install
+
+# Start the development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Contributing
+Guidelines for contributing to your project.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature-branch`).
+3. Commit your changes (`git commit -m 'Add some feature'`).
+4. Push to the branch (`git push origin feature-branch`).
+Open a pull request.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
