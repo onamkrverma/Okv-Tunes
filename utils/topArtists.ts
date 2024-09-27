@@ -6,6 +6,12 @@ export const topArtist = [
       "https://c.saavncdn.com/artists/Arijit_Singh_002_20230323062147_500x500.jpg",
   },
   {
+    artistid: "881158",
+    name: "Jubin Nautiyal",
+    image:
+      "http://c.saavncdn.com/artists/Jubin_Nautiyal_003_20231130204020_500x500.jpg",
+  },
+  {
     artistid: "464932",
     name: "Neha Kakkar",
     image:

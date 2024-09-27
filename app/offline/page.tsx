@@ -1,33 +1,32 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import React, { useEffect } from "react";
 
 const Offline = () => {
-  const [isOffline, setIsOffline] = useState(false);
-  
+  const router = useRouter();
+
+  const handleRefresh = () => {
+    if (window.navigator.onLine) {
+      const historyLength = window.history.length;
+      if (historyLength > 0) {
+        router.back();
+      } else {
+        router.replace("/");
+      }
+    }
+  };
 
   useEffect(() => {
     const handleOnline = () => {
-      setIsOffline(false);
-      window.location.reload(); // if online
-    };
-    const handleOffline = () => {
-      setIsOffline(true);
+      handleRefresh();
     };
 
     window.addEventListener("online", handleOnline);
-    window.addEventListener("offline", handleOffline);
 
     return () => {
       window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
     };
   }, []);
-
-  const hanldeRefresh = () => {
-    if (navigator.onLine && !isOffline) {
-      window.location.reload();
-    }
-  };
 
   return (
     <div className="inner-container flex flex-col items-center">
@@ -63,11 +62,16 @@ const Offline = () => {
         </svg>
         <h1>No Internet</h1>
         <p>Opps... You are currently offline</p>
-        <p>Please verify your internet connection and try again</p>
+        <ul className="list-disc pl-5 space-y-2 text-start">
+          <li className="text-xs ">Check Internet Connection</li>
+          <li className="text-xs">Ensure Wi-Fi or mobile data is on</li>
+          <li className="text-xs ">Wait a few minutes and try again later</li>
+        </ul>
+
         <button
           type="button"
           title="refresh"
-          onClick={hanldeRefresh}
+          onClick={handleRefresh}
           className="bg-neutral-800 p-2 rounded-md"
         >
           Refresh

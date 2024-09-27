@@ -1,5 +1,4 @@
 const CACHE_NAME = "OkvTunesCache";
-// const cachePaths = ["/", "/chart", "/artists", "/offline"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -7,6 +6,7 @@ self.addEventListener("install", (event) => {
       return cache.addAll([
         "/",
         "/offline",
+        "/_next/static/chunks/app/offline/page.js",
         "/android-chrome-192x192.png",
         "/android-chrome-512x512.png",
         "/apple-touch-icon.png",
@@ -35,7 +35,7 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-async function cacheFirstStrategy(request) {
+async function requestWithFallback(request) {
   try {
     const cache = await caches.open(CACHE_NAME);
     const cachedResponse = await cache.match(request);
@@ -45,8 +45,6 @@ async function cacheFirstStrategy(request) {
     }
 
     const networkResponse = await fetch(request);
-    // const responseClone = networkResponse.clone();
-    // // await cache.put(request, responseClone);
     return networkResponse;
   } catch (error) {
     console.error("Cache first strategy failed:", error);
@@ -56,25 +54,7 @@ async function cacheFirstStrategy(request) {
   }
 }
 
-async function dynamicCaching(request) {
-  try {
-    const cache = await caches.open(CACHE_NAME);
-    const response = await fetch(request);
-    const responseClone = response.clone();
-    await cache.put(request, responseClone);
-    return response;
-  } catch (error) {
-    console.error("Dynamic caching failed:", error);
-    if (error instanceof Error) {
-      console.log(error.stack);
-    }
-    const cache = await caches.open(CACHE_NAME);
-    const cachedResponse = await cache.match("/offline");
-    return cachedResponse;
-  }
-}
-
 self.addEventListener("fetch", (event) => {
   const { request } = event;
-  event.respondWith(cacheFirstStrategy(request));
+  event.respondWith(requestWithFallback(request));
 });
