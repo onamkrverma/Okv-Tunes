@@ -20,6 +20,7 @@ type TCurrentSong = {
 
 type TGlobalState = {
   currentSong: TCurrentSong;
+  likedSongs: string[];
 };
 const defaultState: TGlobalState = {
   currentSong: {
@@ -32,9 +33,11 @@ const defaultState: TGlobalState = {
     isRefetchSuggestion: false,
     volume: 1.0,
   },
+  likedSongs: [],
 };
 type TGlobalContext = {
   currentSong: TCurrentSong;
+  likedSongs: string[];
   setGlobalState: React.Dispatch<React.SetStateAction<TGlobalState>>;
 };
 
@@ -50,14 +53,24 @@ export const GlobalContextProvider = ({
   value,
 }: TGlobalProviderProps) => {
   const [globalState, setGlobalState] = useState(value || defaultState);
+
   useEffect(() => {
     const localCurrentSongInfo = localStorage.getItem("currentSong");
+    const localLikedSongs = localStorage.getItem("likedSongs");
 
-    const currentSongInfo: TCurrentSong = JSON.parse(
-      localCurrentSongInfo ?? "{}"
-    );
-    localCurrentSongInfo
-      ? setGlobalState({ currentSong: currentSongInfo })
+    const currentSongInfo: TCurrentSong = localCurrentSongInfo
+      ? JSON.parse(localCurrentSongInfo ?? "{}")
+      : defaultState.currentSong;
+
+    const likedSongs: string[] = localLikedSongs
+      ? JSON.parse(localLikedSongs)
+      : defaultState.likedSongs;
+
+    localCurrentSongInfo || localLikedSongs
+      ? setGlobalState({
+          currentSong: currentSongInfo,
+          likedSongs: likedSongs,
+        })
       : null;
   }, []);
 

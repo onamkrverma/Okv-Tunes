@@ -19,6 +19,7 @@ import { useGlobalContext } from "@/app/GlobalContex";
 import secondsToTime from "@/utils/secondsToTime";
 import { TplayerState } from "./index";
 import ImageWithFallback from "../ImageWithFallback";
+import HeartIcon from "@/public/icons/heart.svg";
 
 type Props = {
   handlePrev: () => void;
@@ -35,7 +36,7 @@ const MiniPlayer = ({
   handleNext,
   handlePrev,
 }: Props) => {
-  const { currentSong, setGlobalState } = useGlobalContext();
+  const { currentSong, setGlobalState, likedSongs } = useGlobalContext();
   const { artist, audioUrl, id, imageUrl, title, isMaximise } = currentSong;
 
   const [seekTime, setSeekTime] = useState(0);
@@ -46,6 +47,29 @@ const MiniPlayer = ({
     playerRef.current?.seekTo(seekTime);
     // eslint-disable-next-line
   }, [seekTime]);
+
+  likedSongs !== undefined && likedSongs.length > 0
+    ? localStorage.setItem("likedSongs", JSON.stringify(likedSongs))
+    : null;
+
+  const isLikedSongId =
+    likedSongs && likedSongs.length > 0
+      ? likedSongs?.some((songId) => songId === id)
+      : false;
+
+  const handleLiked = () => {
+    if (isLikedSongId) {
+      const updateList = likedSongs.filter((songId) => songId !== id);
+      return setGlobalState((prev) => ({
+        ...prev,
+        likedSongs: updateList,
+      }));
+    }
+    setGlobalState((prev) => ({
+      ...prev,
+      likedSongs: [...likedSongs, id],
+    }));
+  };
 
   return (
     <div
@@ -93,12 +117,13 @@ const MiniPlayer = ({
             isMaximise ? "hidden" : "flex"
           }`}
           onClick={() =>
-            setGlobalState({
+            setGlobalState((prev) => ({
+              ...prev,
               currentSong: {
                 ...currentSong,
                 isMaximise: !currentSong.isMaximise,
               },
-            })
+            }))
           }
         >
           <ImageWithFallback
@@ -200,6 +225,15 @@ const MiniPlayer = ({
               }}
             />
           </div>
+          <div className="flex items-center justify-center ">
+            <button type="button" onClick={handleLiked}>
+              <HeartIcon
+                className={`w-6 h-6 ${
+                  isLikedSongId ? "fill-action stroke-action" : ""
+                }`}
+              />
+            </button>
+          </div>
           <button
             type="button"
             title={isMaximise ? "minimise" : "maximise"}
@@ -207,12 +241,13 @@ const MiniPlayer = ({
               isMaximise ? "rotate-180" : "rotate-0"
             }`}
             onClick={() =>
-              setGlobalState({
+              setGlobalState((prev) => ({
+                ...prev,
                 currentSong: {
                   ...currentSong,
                   isMaximise: !currentSong.isMaximise,
                 },
-              })
+              }))
             }
           >
             <CaretUpIcon className={`w-4 h-4 sm:w-6 sm:h-6 `} />

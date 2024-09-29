@@ -17,7 +17,8 @@ const Card = ({ title, imageUrl, artist, audioUrl, id, type }: Props) => {
 
   const handleUpdateState = () => {
     if (!artist || !audioUrl || !imageUrl) return;
-    setGlobalState({
+    setGlobalState((prev) => ({
+      ...prev,
       currentSong: {
         id,
         artist,
@@ -27,7 +28,7 @@ const Card = ({ title, imageUrl, artist, audioUrl, id, type }: Props) => {
         isMaximise: true,
         isRefetchSuggestion: true,
       },
-    });
+    }));
   };
 
   const urlSlug =

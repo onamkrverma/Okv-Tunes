@@ -5,6 +5,7 @@ import Logo from "@/public/logo-full.svg";
 import HomeIcon from "@/public/icons/home.svg";
 import ArtistsIcon from "@/public/icons/artists.svg";
 import ChartIcon from "@/public/icons/chart.svg";
+import HeartIcon from "@/public/icons/heart.svg";
 import { usePathname } from "next/navigation";
 
 const SideNavbar = () => {
@@ -23,6 +24,11 @@ const SideNavbar = () => {
       title: "Artists",
       icon: ArtistsIcon,
       link: "/artists",
+    },
+    {
+      title: "Liked",
+      icon: HeartIcon,
+      link: "/liked",
     },
   ];
   const currentPath = usePathname();

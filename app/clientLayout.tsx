@@ -13,6 +13,7 @@ const ClientLayout = ({
   children: React.ReactNode;
 }>) => {
   useEffect(() => {
+    if (process.env.NODE_ENV === "development") return;
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker
         .register("/sw.js")

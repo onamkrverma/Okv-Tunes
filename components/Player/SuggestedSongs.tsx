@@ -27,7 +27,8 @@ const SuggestedSongs = ({
   const [isUpnextClick, setIsUpnextClick] = useState(false);
 
   const handleUpdateState = (song: TSong) => {
-    setGlobalState({
+    setGlobalState((prev) => ({
+      ...prev,
       currentSong: {
         id: song.id,
         artist: song.artists.primary[0].name,
@@ -40,7 +41,7 @@ const SuggestedSongs = ({
         isMaximise: true,
         isRefetchSuggestion: false,
       },
-    });
+    }));
   };
 
   return (

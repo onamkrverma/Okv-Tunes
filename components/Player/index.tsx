@@ -101,7 +101,8 @@ const Plalyer = () => {
     const nextAudioUrl =
       downloadUrl.find((item) => item.quality === "320kbps")?.url ?? "";
 
-    setGlobalState({
+    setGlobalState((prev) => ({
+      ...prev,
       currentSong: {
         id: nextId,
         title: nextTitle,
@@ -111,7 +112,7 @@ const Plalyer = () => {
         isRefetchSuggestion: false,
         isMaximise: currentSong.isMaximise,
       },
-    });
+    }));
   };
 
   const handleNext = () => {
@@ -124,9 +125,10 @@ const Plalyer = () => {
   };
 
   useEffect(() => {
-    setGlobalState({
+    setGlobalState((prev) => ({
+      ...prev,
       currentSong: { ...currentSong, isRefetchSuggestion: false },
-    });
+    }));
     // set url on songs changes
     setPlayerState((prev) => ({
       ...prev,
@@ -232,12 +234,13 @@ const Plalyer = () => {
                   isMaximise ? "rotate-180" : "rotate-0"
                 }`}
                 onClick={() =>
-                  setGlobalState({
+                  setGlobalState((prev) => ({
+                    ...prev,
                     currentSong: {
                       ...currentSong,
                       isMaximise: !currentSong.isMaximise,
                     },
-                  })
+                  }))
                 }
               >
                 <CaretUpIcon className={`w-6 h-6 `} />

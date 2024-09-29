@@ -1,16 +1,17 @@
 "use client";
-import React from "react";
+import React, { ChangeEvent, MouseEvent } from "react";
 import { TSong } from "@/utils/api.d";
 import secondsToTime from "@/utils/secondsToTime";
 import { useGlobalContext } from "@/app/GlobalContex";
 import ImageWithFallback from "./ImageWithFallback";
+import HeartIcon from "@/public/icons/heart.svg";
 
 type Props = {
   song: TSong;
 };
 
 const SongsCollection = ({ song }: Props) => {
-  const { setGlobalState } = useGlobalContext();
+  const { setGlobalState, likedSongs } = useGlobalContext();
 
   const { id, album, artists, downloadUrl, image, name, duration } = song;
 
@@ -22,7 +23,8 @@ const SongsCollection = ({ song }: Props) => {
     downloadUrl.find((item) => item.quality === "320kbps")?.url ?? "";
 
   const handleUpdateState = () => {
-    setGlobalState({
+    setGlobalState((prev) => ({
+      ...prev,
       currentSong: {
         id,
         artist: artistName,
@@ -32,7 +34,27 @@ const SongsCollection = ({ song }: Props) => {
         isMaximise: true,
         isRefetchSuggestion: true,
       },
-    });
+    }));
+  };
+
+  const isLikedSongId =
+    likedSongs && likedSongs.length > 0
+      ? likedSongs?.some((songId) => songId === id)
+      : false;
+
+  const handleLiked = (event: MouseEvent<HTMLSpanElement>) => {
+    event.stopPropagation();
+    if (isLikedSongId) {
+      const updateList = likedSongs.filter((songId) => songId !== id);
+      return setGlobalState((prev) => ({
+        ...prev,
+        likedSongs: updateList,
+      }));
+    }
+    setGlobalState((prev) => ({
+      ...prev,
+      likedSongs: [...likedSongs, id],
+    }));
   };
 
   return (
@@ -58,6 +80,13 @@ const SongsCollection = ({ song }: Props) => {
       <small className="truncate w-60 text-neutral-400 hidden sm:block">
         {albumName.replaceAll("&quot;", '"')}
       </small>
+      <span role="button" onClick={(e) => handleLiked(e)}>
+        <HeartIcon
+          className={`w-6 h-6 ${
+            isLikedSongId ? "fill-action stroke-action" : ""
+          }`}
+        />
+      </span>
       <small className="text-neutral-400">{secondsToTime(duration)}</small>
     </button>
   );
