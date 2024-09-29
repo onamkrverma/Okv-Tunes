@@ -228,8 +228,8 @@ const MiniPlayer = ({
           <div className="flex items-center justify-center ">
             <button type="button" onClick={handleLiked}>
               <HeartIcon
-                className={`w-6 h-6 ${
-                  isLikedSongId ? "fill-action stroke-action" : ""
+                className={`w-6 h-6 fill-none ${
+                  isLikedSongId ? "!fill-action stroke-action" : ""
                 }`}
               />
             </button>

@@ -82,8 +82,8 @@ const SongsCollection = ({ song }: Props) => {
       </small>
       <span role="button" onClick={(e) => handleLiked(e)}>
         <HeartIcon
-          className={`w-6 h-6 ${
-            isLikedSongId ? "fill-action stroke-action" : ""
+          className={`w-6 h-6 fill-none ${
+            isLikedSongId ? "!fill-action stroke-action" : ""
           }`}
         />
       </span>
