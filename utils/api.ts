@@ -18,7 +18,7 @@ const api = Wretch(`${serverUrl}/api`, {
 }).addon(queryString);
 
 type TApiquery = {
-  id?: string;
+  id?: string | string[];
   query?: string | null;
   limit?: number;
 };
@@ -35,14 +35,14 @@ export const getPlaylists = async ({ id, limit = 10 }: TApiquery) => {
 
   return response;
 };
-export const getSong = async ({ id }: TApiquery) => {
+export const getSongs = async ({ id }: TApiquery) => {
   const querParams = {
-    id, // id=songId
+    id, // id=[songId]
   };
   const response = (await api.query(querParams).get(`/songs`).json()) as TSongs;
-
   return response;
 };
+
 export const getSuggestedSongs = async ({ id, limit = 10 }: TApiquery) => {
   const querParams = {
     id, // id=songId

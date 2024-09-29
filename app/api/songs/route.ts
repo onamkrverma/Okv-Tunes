@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 const mainServerUrl = process.env.MAIN_SERVER_URL;
 
 export const GET = async (requeset: NextRequest) => {
-  const id = requeset.nextUrl.searchParams.get("id");
+  const id = requeset.nextUrl.searchParams.getAll("id");
 
   try {
     if (!id) {
@@ -11,7 +11,7 @@ export const GET = async (requeset: NextRequest) => {
         { status: 404 }
       );
     }
-    const res = await fetch(`${mainServerUrl}/api/songs/${id}`);
+    const res = await fetch(`${mainServerUrl}/api/songs/${id.join(",")}`);
     const data = await res.json();
     return NextResponse.json(data, { status: 200 });
   } catch (error: unknown) {
