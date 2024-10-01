@@ -1,8 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 const mainServerUrl = process.env.MAIN_SERVER_URL;
 
-export const GET = async (requeset: NextRequest) => {
-  const id = requeset.nextUrl.searchParams.getAll("id");
+export const GET = async (request: NextRequest) => {
+  const id = request.nextUrl.searchParams.getAll("id");
 
   try {
     if (!id) {
