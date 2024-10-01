@@ -20,7 +20,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Listen to Trending Music for Free | Ad-Free Streaming on Okv-Tunes",
+  title: "Okv Tunes - Listen to Trending Music for Free | Ad-Free Streaming",
   description:
     "Listen to Unlimited Songs for Free on Okv Tunes! Enjoy ad-free streaming of trending Bollywood, Indian Pop, Punjabi, Haryanvi, Tamil, and Telugu hits. Start listening now!",
   keywords: [
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: "/",
-    title: "Listen to Trending Music for Free | Ad-Free Streaming on Okv-Tunes",
+    title: "Okv Tunes - Listen to Trending Music for Free | Ad-Free Streaming",
     description:
       "Listen to Unlimited Songs for Free on Okv Tunes! Enjoy ad-free streaming of trending Bollywood, Indian Pop, Punjabi, Haryanvi, Tamil, and Telugu hits. Start listening now!",
     siteName: "Okv-Tunes",

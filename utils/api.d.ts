@@ -61,7 +61,7 @@ export interface TSong {
   name: string;
   type: "song";
   year: string;
-  releaseDate: Date;
+  releaseDate: string;
   duration: number;
   label: string;
   explicitContent: boolean;

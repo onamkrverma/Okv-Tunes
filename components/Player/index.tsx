@@ -9,6 +9,9 @@ import ReactPlayer from "react-player";
 import CaretUpIcon from "@/public/icons/caret-up.svg";
 import ThreeDotsIcon from "@/public/icons/three-dots.svg";
 import ImageWithFallback from "@/components/ImageWithFallback";
+import InfoIcon from "@/public/icons/info.svg";
+import Popup from "./Popup";
+import { usePathname, useRouter } from "next/navigation";
 
 export type TplayerState = {
   url: string;
@@ -44,6 +47,9 @@ const Plalyer = () => {
     autoPlay: false,
   });
   const playerRef = useRef<ReactPlayer>(null);
+  const [isMoreClick, setIsMoreClick] = useState(false);
+  const [isPopup, setIsPopup] = useState(false);
+  const pathName = usePathname();
 
   currentSong.id
     ? localStorage.setItem(
@@ -217,12 +223,21 @@ const Plalyer = () => {
     // eslint-disable-next-line
   }, [currentSong, playerState]);
 
+  // minimise player on router change
+  useEffect(() => {
+    setGlobalState((prev) => ({
+      ...prev,
+      currentSong: { ...currentSong, isMaximise: false },
+    }));
+    setIsPopup(false);
+  }, [pathName]);
+
   return (
     <div>
       {id ? (
         <>
           <div
-            className={`inner-container !mt-0 fixed top-0 right-0 left-0 bg-primary flex gap-4 sm:justify-evenly !pt-20 sm:!pt-0 flex-col md:flex-row items-center h-full z-[11] transition-transform duration-700 ${
+            className={`!mt-0 fixed top-0 right-0 left-0 bg-primary flex gap-4 sm:justify-evenly !pt-20 sm:!pt-0 flex-col md:flex-row items-center h-full z-[11] transition-transform duration-700 ${
               isMaximise ? "translate-y-0" : "translate-y-[150%]"
             }`}
           >
@@ -249,9 +264,24 @@ const Plalyer = () => {
                 type="button"
                 title="more"
                 className=""
-                onClick={() => {}}
+                onClick={() => setIsMoreClick(!isMoreClick)}
               >
                 <ThreeDotsIcon className={`w-6 h-6 `} />
+              </button>
+            </div>
+
+            <div
+              className={` absolute top-0 right-10 bg-secondary flex flex-col gap-2 p-2 rounded-md transition-transform duration-500 ${
+                isMoreClick ? "-translate-y-full" : "translate-y-8"
+              } `}
+            >
+              <button
+                type="button"
+                className="flex items-center gap-1"
+                onClick={() => setIsPopup(true)}
+              >
+                <InfoIcon className="w-4 h-4" />
+                Info
               </button>
             </div>
 
@@ -286,7 +316,7 @@ const Plalyer = () => {
             />
             <div className="flex flex-col gap-4">
               {/* song poster */}
-              <div className="w-[250px] sm:w-[150px] md:w-fit lg:w-[350px]">
+              <div className="w-[250px] sm:w-[150px] md:w-[250px] lg:w-[350px]">
                 <ImageWithFallback
                   id={currentSong.id}
                   src={imageUrl}
@@ -314,7 +344,6 @@ const Plalyer = () => {
               setPlayerState={setPlayerState}
             />
           </div>
-
           <MiniPlayer
             playerRef={playerRef}
             playerState={playerState}
@@ -322,6 +351,9 @@ const Plalyer = () => {
             handleNext={handleNext}
             handlePrev={handlePrev}
           />
+          {isPopup ? (
+            <Popup isPopup={isPopup} setIsPopup={setIsPopup} songId={id} />
+          ) : null}
         </>
       ) : null}
     </div>

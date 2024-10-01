@@ -3,7 +3,7 @@ import CardCollection from "@/components/CardCollection";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Listen to Trending Music for Free | Ad-Free Streaming on Okv-Tunes",
+  title: "Okv Tunes - Listen to Trending Music for Free | Ad-Free Streaming",
 };
 
 export default function Home() {

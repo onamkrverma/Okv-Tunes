@@ -1,5 +1,5 @@
 "use client";
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import Input from "./Input";
 import SearchIcon from "@/public/icons/search.svg";
 import CrossIcon from "@/public/icons/cross.svg";
@@ -10,6 +10,9 @@ import { useRouter } from "next/navigation";
 const Navbar = () => {
   const [isSearchClick, setIsSearchClick] = useState(false);
   const navigate = useRouter();
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const handleSubmit = (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formInput = e.target.elements[0] as HTMLInputElement;
@@ -17,6 +20,12 @@ const Navbar = () => {
     navigate.push(`/search?search=${searchQuery}`);
     e.target.reset();
   };
+
+  useEffect(() => {
+    if (isSearchClick) {
+      inputRef.current?.focus();
+    }
+  }, [isSearchClick]);
 
   return (
     <header className="inner-container !mt-0 !p-4 flex items-center justify-between sm:justify-center sticky top-0 left-0 backdrop-blur-lg bg-primary/50 px-10 py-2 border-b z-10">
@@ -47,6 +56,7 @@ const Navbar = () => {
         <Input
           type="search"
           name="search"
+          ref={inputRef}
           leftAdornment={<SearchIcon className="w-6 h-6" />}
           placeholder="Search songs or artists"
           className="focus:!ring-0"

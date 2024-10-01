@@ -5,6 +5,7 @@ import useSWR from "swr";
 import { useGlobalContext } from "@/app/GlobalContex";
 import Loading from "@/components/Loading";
 import HeartIcon from "@/public/icons/heart.svg";
+import { useEffect } from "react";
 
 const PlaylistSongs = () => {
   const { likedSongs } = useGlobalContext();
@@ -18,6 +19,10 @@ const PlaylistSongs = () => {
       revalidateOnReconnect: false,
     }
   );
+
+  useEffect(() => {
+    document.title = "Liked Songs • Okv-Tunes";
+  }, []);
 
   return (
     <div className="inner-container flex flex-col gap-6">
