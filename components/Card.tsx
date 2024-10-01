@@ -52,7 +52,7 @@ const Card = ({ title, imageUrl, artist, audioUrl, id, type }: Props) => {
             <ImageWithFallback
               id={id}
               src={imageUrl}
-              alt={title + "okv tunes"}
+              alt={title + " okv tunes"}
               width={180}
               height={180}
               className="w-full h-auto object-cover rounded-md"
