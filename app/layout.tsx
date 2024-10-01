@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     siteName: "Okv-Tunes",
     images: [
       {
-        url: "/logo-full.svg",
+        url: "/logo-circle.svg",
       },
     ],
   },
