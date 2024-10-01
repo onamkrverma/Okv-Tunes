@@ -1,5 +1,6 @@
 import {
   DetailedHTMLProps,
+  ForwardedRef,
   InputHTMLAttributes,
   ReactNode,
   useId,
@@ -12,9 +13,16 @@ interface Props
   > {
   label?: string;
   leftAdornment?: ReactNode | ReactNode[];
+  inputRef?: ForwardedRef<HTMLInputElement>;
 }
 
-const Input = ({ label, leftAdornment, className, ...rest }: Props) => {
+const Input = ({
+  label,
+  leftAdornment,
+  className,
+  inputRef,
+  ...rest
+}: Props) => {
   const id = useId();
 
   return (
@@ -38,6 +46,7 @@ const Input = ({ label, leftAdornment, className, ...rest }: Props) => {
           className={`text-primary w-full rounded-lg border-0 p-2 px-3 bg-secondary shadow-sm placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-action-300 transition-colors sm:text-sm sm:leading-6 focus-visible:outline-none
           ${leftAdornment ? "rounded-l-none" : "rounded-l-lg"} ${className}`}
           placeholder={label}
+          ref={inputRef}
           {...rest}
         />
       </div>

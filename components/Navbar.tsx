@@ -56,7 +56,7 @@ const Navbar = () => {
         <Input
           type="search"
           name="search"
-          ref={inputRef}
+          inputRef={inputRef}
           leftAdornment={<SearchIcon className="w-6 h-6" />}
           placeholder="Search songs or artists"
           className="focus:!ring-0"
