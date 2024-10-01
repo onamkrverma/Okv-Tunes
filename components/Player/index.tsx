@@ -272,7 +272,7 @@ const Plalyer = () => {
 
             <div
               className={` absolute top-0 right-10 bg-secondary flex flex-col gap-2 p-2 rounded-md transition-transform duration-500 ${
-                isMoreClick ? "-translate-y-full" : "translate-y-8"
+                isMoreClick ? "translate-y-8" : "-translate-y-full"
               } `}
             >
               <button
