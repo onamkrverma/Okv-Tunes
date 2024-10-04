@@ -230,6 +230,7 @@ const Plalyer = () => {
       currentSong: { ...currentSong, isMaximise: false },
     }));
     setIsPopup(false);
+    // eslint-disable-next-line
   }, [pathName]);
 
   return (
