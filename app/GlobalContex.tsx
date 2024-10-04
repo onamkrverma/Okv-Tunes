@@ -6,6 +6,8 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { getSession } from "next-auth/react";
+import { Session } from "next-auth";
 
 type TCurrentSong = {
   id: string;
@@ -21,6 +23,7 @@ type TCurrentSong = {
 type TGlobalState = {
   currentSong: TCurrentSong;
   likedSongs: string[];
+  session: Session | null;
 };
 const defaultState: TGlobalState = {
   currentSong: {
@@ -34,10 +37,12 @@ const defaultState: TGlobalState = {
     volume: 1.0,
   },
   likedSongs: [],
+  session: null,
 };
 type TGlobalContext = {
   currentSong: TCurrentSong;
   likedSongs: string[];
+  session: Session | null;
   setGlobalState: React.Dispatch<React.SetStateAction<TGlobalState>>;
 };
 
@@ -53,6 +58,18 @@ export const GlobalContextProvider = ({
   value,
 }: TGlobalProviderProps) => {
   const [globalState, setGlobalState] = useState(value || defaultState);
+
+  const getUserSession = async () => {
+    const seession = await getSession();
+    setGlobalState((prev) => ({
+      ...prev,
+      session: seession,
+    }));
+  };
+
+  useEffect(() => {
+    getUserSession();
+  }, []);
 
   useEffect(() => {
     const localCurrentSongInfo = localStorage.getItem("currentSong");
@@ -70,6 +87,7 @@ export const GlobalContextProvider = ({
       ? setGlobalState({
           currentSong: currentSongInfo,
           likedSongs: likedSongs,
+          session: null,
         })
       : null;
   }, []);

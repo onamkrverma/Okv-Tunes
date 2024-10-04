@@ -6,6 +6,7 @@ import {
   TSearchArtist,
   TSearchSongs,
   TSongs,
+  TUser,
 } from "./api.d";
 
 const serverUrl =
@@ -21,6 +22,7 @@ type TApiquery = {
   id?: string | string[];
   query?: string | null;
   limit?: number;
+  email?: string;
 };
 
 export const getPlaylists = async ({ id, limit = 10 }: TApiquery) => {
@@ -89,6 +91,25 @@ export const getSearchArtists = async ({ query, limit = 10 }: TApiquery) => {
     .query(querParams)
     .get(`/artists/search`)
     .json()) as TSearchArtist;
+
+  return response;
+};
+
+export const getUserInfo = async ({ email }: TApiquery) => {
+  const querParams = {
+    email,
+  };
+  const response = (await api.query(querParams).get(`/users`).json()) as TUser;
+
+  return response;
+};
+export const likeUnlikeSong = async (postReq: {
+  email: string;
+  songId: string;
+}) => {
+  const response = (await api.post(postReq, `/users/like-dislike`).json()) as {
+    message: string;
+  };
 
   return response;
 };

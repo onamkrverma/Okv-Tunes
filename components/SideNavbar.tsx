@@ -9,8 +9,10 @@ import HeartIcon from "@/public/icons/heart.svg";
 import { usePathname } from "next/navigation";
 import LogoutIcon from "@/public/icons/logout.svg";
 import { logoutAction } from "@/app/actions/auth";
+import { useGlobalContext } from "@/app/GlobalContex";
 
 const SideNavbar = () => {
+  const { session, setGlobalState } = useGlobalContext();
   const navLinks = [
     {
       title: "Home",
@@ -41,8 +43,13 @@ const SideNavbar = () => {
       const sw = await navigator.serviceWorker.getRegistration("/sw.js");
       await sw?.unregister();
     }
+    setGlobalState((prev) => ({
+      ...prev,
+      session: null,
+    }));
     await logoutAction();
   };
+  console.log(session);
 
   return (
     <>
@@ -69,14 +76,23 @@ const SideNavbar = () => {
             </ul>
           </nav>
 
-          <form action={handleLogout}>
-            <button
-              type="submit"
+          {session ? (
+            <form action={handleLogout}>
+              <button
+                type="submit"
+                className="flex items-center gap-2 my-1 hover:bg-neutral-700 p-2 px-3 rounded-lg"
+              >
+                <LogoutIcon className="w-6 h-6" /> Logout
+              </button>
+            </form>
+          ) : (
+            <Link
+              href={"/login"}
               className="flex items-center gap-2 my-1 hover:bg-neutral-700 p-2 px-3 rounded-lg"
             >
-              <LogoutIcon className="w-6 h-6" /> Logout
-            </button>
-          </form>
+              <LogoutIcon className="w-6 h-6 rotate-180" /> Login
+            </Link>
+          )}
         </div>
       </section>
 

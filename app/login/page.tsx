@@ -21,6 +21,11 @@ const Login = () => {
     if (res?.error) {
       return setErrorMessage(res.error);
     }
+    if ("serviceWorker" in navigator) {
+      console.log("first");
+      const sw = await navigator.serviceWorker.getRegistration("/sw.js");
+      await sw?.unregister();
+    }
     router.push("/");
   };
 
