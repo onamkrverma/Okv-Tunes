@@ -20,6 +20,8 @@ import secondsToTime from "@/utils/secondsToTime";
 import { TplayerState } from "./index";
 import ImageWithFallback from "../ImageWithFallback";
 import HeartIcon from "@/public/icons/heart.svg";
+import { getLikedSongs, getUserInfo, likeDislikeSong } from "@/utils/api";
+import useSWR, { mutate } from "swr";
 
 type Props = {
   handlePrev: () => void;
@@ -36,10 +38,11 @@ const MiniPlayer = ({
   handleNext,
   handlePrev,
 }: Props) => {
-  const { currentSong, setGlobalState, likedSongs } = useGlobalContext();
+  const { currentSong, setGlobalState, session } = useGlobalContext();
   const { artist, audioUrl, id, imageUrl, title, isMaximise } = currentSong;
 
   const [seekTime, setSeekTime] = useState(0);
+  const [isLiked, setIsLiked] = useState(false);
   const duration = playerRef?.current?.getDuration();
   const currentTime = playerState?.played ?? 0;
 
@@ -48,27 +51,27 @@ const MiniPlayer = ({
     // eslint-disable-next-line
   }, [seekTime]);
 
-  likedSongs !== undefined && likedSongs.length > 0
-    ? localStorage.setItem("likedSongs", JSON.stringify(likedSongs))
-    : null;
+  const userId = session?.user?.id;
+  const dataFetcher = () => getLikedSongs({ id: userId });
+  const { data: likedSongsIds, isLoading } = useSWR(
+    userId ? "/liked-songs" : null,
+    dataFetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
 
   const isLikedSongId =
-    likedSongs && likedSongs.length > 0
-      ? likedSongs?.some((songId) => songId === id)
+    likedSongsIds && likedSongsIds.length > 0
+      ? likedSongsIds?.some((songId) => songId === id)
       : false;
 
-  const handleLiked = () => {
-    if (isLikedSongId) {
-      const updateList = likedSongs.filter((songId) => songId !== id);
-      return setGlobalState((prev) => ({
-        ...prev,
-        likedSongs: updateList,
-      }));
-    }
-    setGlobalState((prev) => ({
-      ...prev,
-      likedSongs: [...likedSongs, id],
-    }));
+  const handleLiked = async () => {
+    if (!userId) return;
+    const res = await likeDislikeSong(userId, id);
+    console.log(res);
+    await mutate("/liked-songs");
   };
 
   return (

@@ -105,7 +105,7 @@ export interface Data<T> {
 
 export interface LikedSong {
   songId: string;
-  likedAt: string;
+  likedAt?: string;
 }
 
 export interface TUser {

@@ -3,12 +3,10 @@ import Input from "@/components/Input";
 import { gooogleLoginAction, loginAction } from "../actions/auth";
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import GoogleIcon from "@/public/icons/google.svg";
 
 const Login = () => {
   const [errorMessage, setErrorMessage] = useState("");
-  const router = useRouter();
 
   const handleLogin = async (formData: FormData) => {
     const email = formData.get("email")?.toString();
@@ -21,12 +19,16 @@ const Login = () => {
     if (res?.error) {
       return setErrorMessage(res.error);
     }
-    if ("serviceWorker" in navigator) {
-      console.log("first");
-      const sw = await navigator.serviceWorker.getRegistration("/sw.js");
-      await sw?.unregister();
+    // if ("serviceWorker" in navigator) {
+    //   const sw = await navigator.serviceWorker.getRegistration("/sw.js");
+    //   await sw?.unregister();
+    // }
+    const historyLength = window.history.length;
+    if (historyLength > 0) {
+      window.history.back();
+    } else {
+      window.location.href = "/";
     }
-    router.push("/");
   };
 
   return (

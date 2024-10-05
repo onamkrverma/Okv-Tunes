@@ -6,7 +6,6 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { getSession } from "next-auth/react";
 import { Session } from "next-auth";
 
 type TCurrentSong = {
@@ -60,10 +59,13 @@ export const GlobalContextProvider = ({
   const [globalState, setGlobalState] = useState(value || defaultState);
 
   const getUserSession = async () => {
-    const seession = await getSession();
+    const response = await fetch(
+      `/api/auth/session?timestamp=${new Date().getTime()}`
+    );
+    const session: Session | null = await response.json();
     setGlobalState((prev) => ({
       ...prev,
-      session: seession,
+      session: session,
     }));
   };
 

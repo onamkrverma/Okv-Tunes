@@ -16,9 +16,9 @@ export const loginAction = async (email: string, password: string) => {
 };
 
 export const logoutAction = async () => {
-  await signOut({ redirectTo: "/login" });
+  await signOut({ redirect: false });
 };
 
 export const gooogleLoginAction = async () => {
-  await signIn("google", { redirectTo: "/" });
+  await signIn("google", { redirect: false });
 };

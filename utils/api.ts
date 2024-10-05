@@ -1,6 +1,7 @@
 import Wretch from "wretch";
 import queryString from "wretch/addons/queryString";
 import {
+  LikedSong,
   TArtistRes,
   TPlaylists,
   TSearchArtist,
@@ -22,7 +23,6 @@ type TApiquery = {
   id?: string | string[];
   query?: string | null;
   limit?: number;
-  email?: string;
 };
 
 export const getPlaylists = async ({ id, limit = 10 }: TApiquery) => {
@@ -95,19 +95,23 @@ export const getSearchArtists = async ({ query, limit = 10 }: TApiquery) => {
   return response;
 };
 
-export const getUserInfo = async ({ email }: TApiquery) => {
-  const querParams = {
-    email,
-  };
-  const response = (await api.query(querParams).get(`/users`).json()) as TUser;
+export const getUserInfo = async ({ id }: TApiquery) => {
+  const response = (await api.get(`/users/${id}`).json()) as TUser;
 
   return response;
 };
-export const likeUnlikeSong = async (postReq: {
-  email: string;
-  songId: string;
-}) => {
-  const response = (await api.post(postReq, `/users/like-dislike`).json()) as {
+export const getLikedSongs = async ({ id }: TApiquery) => {
+  // id = userid
+  const response = (await api
+    .get(`/users/${id}/liked-songs?timestamp=${new Date().getTime()}`)
+    .json()) as string[];
+  return response;
+};
+
+export const likeDislikeSong = async (userId: string, songId: string) => {
+  const response = (await api
+    .post({ songId }, `/users/${userId}/like-dislike`)
+    .json()) as {
     message: string;
   };
 

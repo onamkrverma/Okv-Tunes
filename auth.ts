@@ -75,6 +75,22 @@ const config: NextAuthConfig = {
       if (account?.provider === "credentials") return true;
       return false;
     },
+
+    session: async ({ session, user, token }) => {
+      if (token.sub) {
+        session.user.id = token.sub;
+      }
+      return session;
+    },
+    jwt: async ({ token, user, account }) => {
+      if (user) {
+        token.uid = user.id;
+      }
+      return token;
+    },
+  },
+  session: {
+    strategy: "jwt",
   },
 };
 
