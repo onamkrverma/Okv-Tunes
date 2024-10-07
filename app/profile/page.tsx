@@ -7,7 +7,7 @@ import LogoutIcon from "@/public/icons/logout.svg";
 import ImageWithFallback from "@/components/ImageWithFallback";
 import RefreshIcon from "@/public/icons/refresh.svg";
 
-const LikedSongs = async () => {
+const Profile = async () => {
   const session = await auth();
   const userId = session?.user?.id;
   const userInfo = userId ? await getUserInfo({ id: userId }) : null;
@@ -62,7 +62,11 @@ const LikedSongs = async () => {
         {session ? (
           likedSongsIds.length > 0 ? (
             likedSongs.map((song) => (
-              <SongsCollection key={song.id} song={song} />
+              <SongsCollection
+                key={song.id}
+                song={song}
+                likedSongsIds={likedSongsIds}
+              />
             ))
           ) : (
             <div className="text-center flex flex-col items-center justify-center gap-2 min-h-40">
@@ -93,4 +97,4 @@ const LikedSongs = async () => {
   );
 };
 
-export default LikedSongs;
+export default Profile;

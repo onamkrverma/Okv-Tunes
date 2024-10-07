@@ -39,11 +39,23 @@ export const POST = async (
     if (songIndex === -1) {
       user.likedSongs.push({ songId: songId });
       await user.save();
-      return NextResponse.json({ message: "Song Liked" }, { status: 200 });
+      const likedSongs = user.likedSongs.map(
+        (item: { songId: string }) => item.songId
+      );
+      return NextResponse.json(
+        { message: "Song Liked", likedSongs },
+        { status: 200 }
+      );
     } else {
       user.likedSongs.splice(songIndex, 1);
       await user.save();
-      return NextResponse.json({ message: "Song Disliked" }, { status: 200 });
+      const likedSongs = user.likedSongs.map(
+        (item: { songId: string }) => item.songId
+      );
+      return NextResponse.json(
+        { message: "Song Disliked", likedSongs },
+        { status: 200 }
+      );
     }
   } catch (error: unknown) {
     console.error(error instanceof Error ? error.message : error);

@@ -103,7 +103,7 @@ export const getUserInfo = async ({ id }: TApiquery) => {
 export const getLikedSongs = async ({ id }: TApiquery) => {
   // id = userid
   const response = (await api
-    .get(`/users/${id}/liked-songs?timestamp=${new Date().getTime()}`)
+    .get(`/users/${id}/liked-songs`)
     .json()) as string[];
   return response;
 };
@@ -113,6 +113,7 @@ export const likeDislikeSong = async (userId: string, songId: string) => {
     .post({ songId }, `/users/${userId}/like-dislike`)
     .json()) as {
     message: string;
+    likedSongs: string[];
   };
 
   return response;

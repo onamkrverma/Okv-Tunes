@@ -13,12 +13,7 @@ const Login = () => {
       const sw = await navigator.serviceWorker.getRegistration("/sw.js");
       await sw?.unregister();
     }
-    const historyLength = window.history.length;
-    if (historyLength > 0) {
-      window.history.back();
-    } else {
-      window.location.href = "/";
-    }
+    window.location.href = "/";
   };
 
   const handleLogin = async (formData: FormData) => {
@@ -36,12 +31,7 @@ const Login = () => {
   };
 
   const handleGoogleLogin = async () => {
-    setErrorMessage("");
-    const res = await gooogleLoginAction();
-    console.log(res);
-    // if (res?.error) {
-    //   return setErrorMessage(res.error);
-    // }
+    await gooogleLoginAction();
     await removeSwAndRedirect();
   };
 

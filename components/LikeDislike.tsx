@@ -9,26 +9,18 @@ type Props = {
   songId: string;
 };
 const LikeDislike = ({ songId }: Props) => {
-  const { session } = useGlobalContext();
+  const { session, likedSongsIds, setGlobalState } = useGlobalContext();
   const userId = session?.user?.id;
-  const [isLiked, setIsLiked] = useState(false);
-
-  const dataFetcher = async () => {
-    const res = await getLikedSongs({ id: userId });
-    const isLikedSongId = res.some((item) => item === songId);
-    setIsLiked(isLikedSongId);
-  };
-
-  useEffect(() => {
-    if (!userId) return;
-    dataFetcher();
-  }, [songId, userId]);
+  const isLiked = likedSongsIds.some((item) => item === songId);
 
   const handleLiked = async (event: MouseEvent<HTMLSpanElement>) => {
     event.stopPropagation();
     if (!userId) return;
-    await likeDislikeSong(userId, songId);
-    dataFetcher();
+    const res = await likeDislikeSong(userId, songId);
+    setGlobalState((prev) => ({
+      ...prev,
+      likedSongsIds: res.likedSongs,
+    }));
   };
 
   return (

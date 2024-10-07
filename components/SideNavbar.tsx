@@ -7,8 +7,8 @@ import ArtistsIcon from "@/public/icons/artists.svg";
 import ChartIcon from "@/public/icons/chart.svg";
 import HeartIcon from "@/public/icons/heart.svg";
 import { usePathname } from "next/navigation";
-import LogoutIcon from "@/public/icons/logout.svg";
 import { useGlobalContext } from "@/app/GlobalContex";
+import UserIcon from "@/public/icons/user.svg";
 
 const SideNavbar = () => {
   const { session, setGlobalState } = useGlobalContext();
@@ -29,9 +29,9 @@ const SideNavbar = () => {
       link: "/artists",
     },
     {
-      title: "Liked",
-      icon: HeartIcon,
-      link: "/liked",
+      title: "Profile",
+      icon: UserIcon,
+      link: "/profile",
     },
   ];
   const currentPath = usePathname();

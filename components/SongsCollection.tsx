@@ -9,9 +9,10 @@ const LikeDislike = dynamic(() => import("./LikeDislike"), { ssr: false });
 
 type Props = {
   song: TSong;
+  likedSongsIds?: string[];
 };
 
-const SongsCollection = ({ song }: Props) => {
+const SongsCollection = ({ song, likedSongsIds }: Props) => {
   const { setGlobalState, session } = useGlobalContext();
 
   const { id, album, artists, downloadUrl, image, name, duration } = song;

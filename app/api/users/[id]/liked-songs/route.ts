@@ -31,12 +31,30 @@ export const GET = async (
       (item: { songId: string }) => item.songId
     );
 
-    return NextResponse.json(likedSongs, { status: 200 });
+    return NextResponse.json(likedSongs, {
+      status: 200,
+      headers: {
+        "Cache-Control":
+          "no-store, no-cache, must-revalidate, proxy-revalidate",
+        Pragma: "no-cache",
+        Expires: "0",
+        "Surrogate-Control": "no-store",
+      },
+    });
   } catch (error: unknown) {
     console.error(error instanceof Error ? error.message : error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      {
+        status: 500,
+        headers: {
+          "Cache-Control":
+            "no-store, no-cache, must-revalidate, proxy-revalidate",
+          Pragma: "no-cache",
+          Expires: "0",
+          "Surrogate-Control": "no-store",
+        },
+      }
     );
   }
 };
