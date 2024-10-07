@@ -8,6 +8,19 @@ import GoogleIcon from "@/public/icons/google.svg";
 const Login = () => {
   const [errorMessage, setErrorMessage] = useState("");
 
+  const removeSwAndRedirect = async () => {
+    if ("serviceWorker" in navigator) {
+      const sw = await navigator.serviceWorker.getRegistration("/sw.js");
+      await sw?.unregister();
+    }
+    const historyLength = window.history.length;
+    if (historyLength > 0) {
+      window.history.back();
+    } else {
+      window.location.href = "/";
+    }
+  };
+
   const handleLogin = async (formData: FormData) => {
     const email = formData.get("email")?.toString();
     const password = formData.get("password")?.toString();
@@ -19,16 +32,17 @@ const Login = () => {
     if (res?.error) {
       return setErrorMessage(res.error);
     }
-    // if ("serviceWorker" in navigator) {
-    //   const sw = await navigator.serviceWorker.getRegistration("/sw.js");
-    //   await sw?.unregister();
+    await removeSwAndRedirect();
+  };
+
+  const handleGoogleLogin = async () => {
+    setErrorMessage("");
+    const res = await gooogleLoginAction();
+    console.log(res);
+    // if (res?.error) {
+    //   return setErrorMessage(res.error);
     // }
-    const historyLength = window.history.length;
-    if (historyLength > 0) {
-      window.history.back();
-    } else {
-      window.location.href = "/";
-    }
+    await removeSwAndRedirect();
   };
 
   return (
@@ -36,7 +50,7 @@ const Login = () => {
       <div className="bg-primary/50 flex flex-col gap-4 items-center p-5 rounded-xl border shadow-neutral-500 shadow-md w-full max-w-md">
         <img src="/logo-full.svg" alt="okv tunes" className="h-12" />
         <p>Sign in and enjoy unlimited free music!</p>
-        <form action={gooogleLoginAction}>
+        <form action={handleGoogleLogin}>
           <button
             type="submit"
             className="flex items-center justify-center gap-2 border bg-primary hover:bg-secondary rounded-xl p-2 px-4"

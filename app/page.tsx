@@ -2,6 +2,7 @@ import { homePlaylists } from "@/utils/playlists";
 import CardCollection from "@/components/CardCollection";
 import { Metadata } from "next";
 import { auth } from "@/auth";
+import ImageWithFallback from "@/components/ImageWithFallback";
 
 export const metadata: Metadata = {
   title: "Okv Tunes - Listen to Trending Music for Free | Ad-Free Streaming",
@@ -14,7 +15,8 @@ export default async function Home() {
     <div className="inner-container flex flex-col gap-6">
       <div className="flex items-center gap-2">
         {session?.user?.image ? (
-          <img
+          <ImageWithFallback
+            id={session.user.id}
             src={session?.user?.image ?? "/logo-circle.svg"}
             alt="user"
             className=" w-10 h-10 rounded-full"

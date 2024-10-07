@@ -7,6 +7,10 @@ import Link from "next/link";
 
 const LoginLogout = ({ session }: { session: Session | null }) => {
   const handleLogout = async () => {
+    if ("serviceWorker" in navigator) {
+      const sw = await navigator.serviceWorker.getRegistration("/sw.js");
+      await sw?.unregister();
+    }
     await logoutAction();
     window.location.href = "/login";
   };

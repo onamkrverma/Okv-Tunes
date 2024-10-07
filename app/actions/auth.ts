@@ -20,5 +20,5 @@ export const logoutAction = async () => {
 };
 
 export const gooogleLoginAction = async () => {
-  await signIn("google", { redirect: false });
+  await signIn("google", { redirectTo: "/" });
 };

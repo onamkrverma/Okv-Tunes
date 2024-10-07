@@ -18,7 +18,13 @@ export const GET = async (
     }
     await connectDB();
 
-    const user = await Users.findById(id);
+    let user = null;
+    try {
+      user = await Users.findById(id);
+    } catch (error) {
+      user = await Users.findOne({ googleId: id });
+    }
+
     if (!user) {
       throw new Error("User not exists");
     }

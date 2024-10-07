@@ -1,3 +1,4 @@
+import ImageWithFallback from "@/components/ImageWithFallback";
 import SongsCollection from "@/components/SongsCollection";
 import { getArtist } from "@/utils/api";
 import { Metadata, ResolvingMetadata } from "next";
@@ -27,7 +28,8 @@ const ArtistInfo = async ({ params }: Props) => {
     <div className="inner-container flex flex-col gap-6">
       <div className="flex gap-4 flex-col flex-wrap sm:flex-row items-center ">
         <div className="w-[200px] h-[200px]">
-          <img
+          <ImageWithFallback
+            id={id}
             src={
               image.find(
                 (item) =>

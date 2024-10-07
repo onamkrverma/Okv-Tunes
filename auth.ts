@@ -66,6 +66,8 @@ const config: NextAuthConfig = {
               image,
               googleId: id,
             });
+          } else {
+            await Users.findOneAndUpdate({ email }, { image, googleId: id });
           }
           return true;
         } catch (error) {

@@ -22,6 +22,9 @@ import ImageWithFallback from "../ImageWithFallback";
 import HeartIcon from "@/public/icons/heart.svg";
 import { getLikedSongs, getUserInfo, likeDislikeSong } from "@/utils/api";
 import useSWR, { mutate } from "swr";
+import dynamic from "next/dynamic";
+
+const LikeDislike = dynamic(() => import("../LikeDislike"), { ssr: false });
 
 type Props = {
   handlePrev: () => void;
@@ -42,7 +45,6 @@ const MiniPlayer = ({
   const { artist, audioUrl, id, imageUrl, title, isMaximise } = currentSong;
 
   const [seekTime, setSeekTime] = useState(0);
-  const [isLiked, setIsLiked] = useState(false);
   const duration = playerRef?.current?.getDuration();
   const currentTime = playerState?.played ?? 0;
 
@@ -50,29 +52,6 @@ const MiniPlayer = ({
     playerRef.current?.seekTo(seekTime);
     // eslint-disable-next-line
   }, [seekTime]);
-
-  const userId = session?.user?.id;
-  const dataFetcher = () => getLikedSongs({ id: userId });
-  const { data: likedSongsIds, isLoading } = useSWR(
-    userId ? "/liked-songs" : null,
-    dataFetcher,
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-    }
-  );
-
-  const isLikedSongId =
-    likedSongsIds && likedSongsIds.length > 0
-      ? likedSongsIds?.some((songId) => songId === id)
-      : false;
-
-  const handleLiked = async () => {
-    if (!userId) return;
-    const res = await likeDislikeSong(userId, id);
-    console.log(res);
-    await mutate("/liked-songs");
-  };
 
   return (
     <div
@@ -229,13 +208,7 @@ const MiniPlayer = ({
             />
           </div>
           <div className="flex items-center justify-center ">
-            <button type="button" onClick={handleLiked}>
-              <HeartIcon
-                className={`w-6 h-6 fill-none ${
-                  isLikedSongId ? "!fill-action stroke-action" : ""
-                }`}
-              />
-            </button>
+            <LikeDislike songId={id} />
           </div>
           <button
             type="button"
