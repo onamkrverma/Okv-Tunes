@@ -38,6 +38,7 @@ const Navbar = () => {
       </Link>
       <button
         type="button"
+        title="search"
         className="block sm:hidden absolute right-4"
         onClick={() => setIsSearchClick(!isSearchClick)}
       >
