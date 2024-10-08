@@ -16,6 +16,12 @@ export const GET = async (request: NextRequest) => {
       `${mainServerUrl}/api/songs/${id}/suggestions?limit=${limit}`
     );
     const data = await res.json();
+    if (!data.success) {
+      return NextResponse.json(
+        { error: "No suggestions found for the given song" },
+        { status: 404 }
+      );
+    }
     return NextResponse.json(data, { status: 200 });
   } catch (error: unknown) {
     console.error(error instanceof Error ? error.message : error);

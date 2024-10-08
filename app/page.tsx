@@ -3,17 +3,18 @@ import CardCollection from "@/components/CardCollection";
 import { Metadata } from "next";
 import { auth } from "@/auth";
 import ImageWithFallback from "@/components/ImageWithFallback";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Okv Tunes - Listen to Trending Music for Free | Ad-Free Streaming",
 };
 
 export default async function Home() {
-  const session = await auth();
+  // const session = await auth();
 
   return (
     <div className="inner-container flex flex-col gap-6">
-      <div className="flex items-center gap-2">
+      {/* <Link href={"/profile"} className="flex items-center gap-2">
         {session?.user?.image ? (
           <ImageWithFallback
             id={session.user.id}
@@ -30,7 +31,7 @@ export default async function Home() {
         <h1 className="text-2xl font-bold capitalize truncate max-w-60">
           Hi, {session ? session.user?.name : "guest"}
         </h1>
-      </div>
+      </Link> */}
       {homePlaylists.map((item) => (
         <CardCollection
           key={item.id}

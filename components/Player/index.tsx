@@ -78,9 +78,9 @@ const Plalyer = () => {
   }, [isRefetchSuggestion]);
 
   const updateNextPrevTrack = (type: "prev" | "next") => {
-    if (!suggestedSongsData) return;
+    if (!suggestedSongsData || !suggestedSongsData?.success) return;
 
-    const currentSongIndex = suggestedSongsData.data.findIndex(
+    const currentSongIndex = suggestedSongsData.data?.findIndex(
       (item) => item.id === id
     );
     const updatorValue = type === "prev" ? -1 : 1;
@@ -122,6 +122,7 @@ const Plalyer = () => {
   };
 
   const handleNext = () => {
+    if (!suggestedSongsData || !suggestedSongsData?.success) return;
     updateNextPrevTrack("next");
     setPlayerState({ ...playerState, autoPlay: true, playing: true });
   };
@@ -197,8 +198,8 @@ const Plalyer = () => {
         playerRef.current?.seekTo(playerState.played + 10);
       });
 
-      if (!suggestedSongsData) return;
-      const currentSongIndex = suggestedSongsData?.data.findIndex(
+      if (!suggestedSongsData || !suggestedSongsData?.success) return;
+      const currentSongIndex = suggestedSongsData.data?.findIndex(
         (item) => item.id === id
       );
       if (currentSongIndex > 0) {
