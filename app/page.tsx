@@ -10,11 +10,11 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  // const session = await auth();
+  const session = await auth();
 
   return (
     <div className="inner-container flex flex-col gap-6">
-      {/* <Link href={"/profile"} className="flex items-center gap-2">
+      <Link href={"/profile"} className="flex items-center gap-2">
         {session?.user?.image ? (
           <ImageWithFallback
             id={session.user.id}
@@ -31,7 +31,7 @@ export default async function Home() {
         <h1 className="text-2xl font-bold capitalize truncate max-w-60">
           Hi, {session ? session.user?.name : "guest"}
         </h1>
-      </Link> */}
+      </Link>
       {homePlaylists.map((item) => (
         <CardCollection
           key={item.id}
