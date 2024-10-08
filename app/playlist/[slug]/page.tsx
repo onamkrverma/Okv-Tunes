@@ -1,3 +1,4 @@
+import ImageWithFallback from "@/components/ImageWithFallback";
 import SongsCollection from "@/components/SongsCollection";
 import { getPlaylists } from "@/utils/api";
 import { Metadata } from "next";
@@ -32,10 +33,11 @@ const PlaylistSongs = async ({ params }: Props) => {
     <div className="inner-container flex flex-col gap-6">
       <div className="flex gap-4 flex-col flex-wrap sm:flex-row items-center ">
         <div className="w-[200px] h-[200px]">
-          <img
+          <ImageWithFallback
+            id={id}
             src={
               songs[0].image.find((item) => item.quality === "500x500")?.url ??
-              ""
+              "/logo-circle.svg"
             }
             alt={name + "okv tunes"}
             width={200}

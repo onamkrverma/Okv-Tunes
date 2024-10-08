@@ -17,6 +17,10 @@
   --side-nav-width: 200px;
 }
 
+::-ms-reveal {
+  filter: invert(100%);
+}
+
 body {
   background-color: #0d0d0d !important;
   -ms-overflow-style: none; /* Internet Explorer 10+ */

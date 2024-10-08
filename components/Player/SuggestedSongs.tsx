@@ -72,6 +72,7 @@ const SuggestedSongs = ({
             aria-label="autoplay"
             placeholder="autoplay"
             checked={playerState.autoPlay}
+            disabled={!suggestedSongsData?.success}
             onChange={() =>
               setPlayerState({
                 ...playerState,
@@ -100,34 +101,38 @@ const SuggestedSongs = ({
       </div>
       <div className="upnext-songs overflow-y-scroll ">
         {!isLoading ? (
-          suggestedSongsData?.data?.map((song, index) => (
-            <div
-              key={song.id}
-              className="relative flex items-center gap-4 p-2 cursor-pointer rounded-md hover:bg-secondary"
-              onClick={() => handleUpdateState(song)}
-            >
-              <ImageWithFallback
-                src={
-                  song.image.find((item) => item.quality === "500x500")?.url ??
-                  "/logo-circle.svg"
-                }
-                id={song.id}
-                alt={song.name + "okv tunes"}
-                width={50}
-                height={50}
-                className="w-[50px] h-[50px] object-cover rounded-md"
-              />
-              {currentSong.id === song.id ? (
-                <PlayIcon className="absolute left-6 w-5 h-5 p-1 rounded-full bg-action animate-spin" />
-              ) : null}
-              <p className="truncate w-80">
-                {song.name.replaceAll("&quot;", '"')}
-              </p>
-              <small className="text-neutral-400">
-                {secondsToTime(song.duration)}
-              </small>
-            </div>
-          ))
+          suggestedSongsData?.success ? (
+            suggestedSongsData?.data?.map((song, index) => (
+              <div
+                key={song.id}
+                className="relative flex items-center gap-4 p-2 cursor-pointer rounded-md hover:bg-secondary"
+                onClick={() => handleUpdateState(song)}
+              >
+                <ImageWithFallback
+                  src={
+                    song.image.find((item) => item.quality === "500x500")
+                      ?.url ?? "/logo-circle.svg"
+                  }
+                  id={song.id}
+                  alt={song.name + "okv tunes"}
+                  width={50}
+                  height={50}
+                  className="w-[50px] h-[50px] object-cover rounded-md"
+                />
+                {currentSong.id === song.id ? (
+                  <PlayIcon className="absolute left-6 w-5 h-5 p-1 rounded-full bg-action animate-spin" />
+                ) : null}
+                <p className="truncate w-80">
+                  {song.name.replaceAll("&quot;", '"')}
+                </p>
+                <small className="text-neutral-400">
+                  {secondsToTime(song.duration)}
+                </small>
+              </div>
+            ))
+          ) : (
+            <p>No suggestions found for the this song</p>
+          )
         ) : (
           <Loading loadingText="loading" />
         )}

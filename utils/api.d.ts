@@ -103,6 +103,21 @@ export interface Data<T> {
   data: T;
 }
 
+export interface LikedSong {
+  songId: string;
+  likedAt?: string;
+}
+
+export interface TUser {
+  _id: string;
+  name: string;
+  email: string;
+  image?: string;
+  likedSongs: LikedSong[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface TPlaylists extends Data<PlaylistData> {}
 export interface TSongs extends Data<TSong[]> {}
 export interface TSearchSongs extends Data<SearchSongs> {}

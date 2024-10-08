@@ -7,8 +7,11 @@ import ArtistsIcon from "@/public/icons/artists.svg";
 import ChartIcon from "@/public/icons/chart.svg";
 import HeartIcon from "@/public/icons/heart.svg";
 import { usePathname } from "next/navigation";
+import { useGlobalContext } from "@/app/GlobalContex";
+import UserIcon from "@/public/icons/user.svg";
 
 const SideNavbar = () => {
+  const { session, setGlobalState } = useGlobalContext();
   const navLinks = [
     {
       title: "Home",
@@ -26,9 +29,9 @@ const SideNavbar = () => {
       link: "/artists",
     },
     {
-      title: "Liked",
-      icon: HeartIcon,
-      link: "/liked",
+      title: "Profile",
+      icon: UserIcon,
+      link: "/profile",
     },
   ];
   const currentPath = usePathname();
@@ -39,23 +42,25 @@ const SideNavbar = () => {
         <Link href={"/"} title="Okv Tunes logo" className="flex items-center">
           <Logo />
         </Link>
-        <nav className="my-4">
-          <ul>
-            {navLinks.map((navLink, index) => (
-              <li key={index}>
-                <Link
-                  href={navLink.link}
-                  className={`flex items-center gap-2 my-1 hover:bg-neutral-700 p-2 px-3 rounded-lg ${
-                    currentPath === navLink.link ? "bg-neutral-800" : ""
-                  }`}
-                >
-                  {<navLink.icon className="w-6 h-6" />}
-                  <p>{navLink.title}</p>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        <div className="flex flex-col justify-between h-full">
+          <nav className="my-4">
+            <ul>
+              {navLinks.map((navLink, index) => (
+                <li key={index}>
+                  <Link
+                    href={navLink.link}
+                    className={`flex items-center gap-2 my-1 hover:bg-neutral-700 p-2 px-3 rounded-lg ${
+                      currentPath === navLink.link ? "bg-neutral-800" : ""
+                    }`}
+                  >
+                    {<navLink.icon className="w-6 h-6" />}
+                    <p>{navLink.title}</p>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
       </section>
 
       {/* for mobile navigation */}

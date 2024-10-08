@@ -6,6 +6,8 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { Session } from "next-auth";
+import { getLikedSongs } from "@/utils/api";
 
 type TCurrentSong = {
   id: string;
@@ -20,7 +22,8 @@ type TCurrentSong = {
 
 type TGlobalState = {
   currentSong: TCurrentSong;
-  likedSongs: string[];
+  likedSongsIds: string[];
+  session: Session | null;
 };
 const defaultState: TGlobalState = {
   currentSong: {
@@ -33,11 +36,13 @@ const defaultState: TGlobalState = {
     isRefetchSuggestion: false,
     volume: 1.0,
   },
-  likedSongs: [],
+  likedSongsIds: [],
+  session: null,
 };
 type TGlobalContext = {
   currentSong: TCurrentSong;
-  likedSongs: string[];
+  likedSongsIds: string[];
+  session: Session | null;
   setGlobalState: React.Dispatch<React.SetStateAction<TGlobalState>>;
 };
 
@@ -54,22 +59,41 @@ export const GlobalContextProvider = ({
 }: TGlobalProviderProps) => {
   const [globalState, setGlobalState] = useState(value || defaultState);
 
+  const getUserSession = async () => {
+    const response = await fetch(
+      `/api/auth/session?timestamp=${new Date().getTime()}`
+    );
+    const session: Session | null = await response.json();
+    if (session) {
+      const likedSongsIds = await getLikedSongs({ id: session.user?.id });
+      setGlobalState((prev) => ({
+        ...prev,
+        likedSongsIds: likedSongsIds,
+      }));
+    }
+
+    setGlobalState((prev) => ({
+      ...prev,
+      session: session,
+    }));
+  };
+
+  useEffect(() => {
+    getUserSession();
+  }, []);
+
   useEffect(() => {
     const localCurrentSongInfo = localStorage.getItem("currentSong");
-    const localLikedSongs = localStorage.getItem("likedSongs");
 
     const currentSongInfo: TCurrentSong = localCurrentSongInfo
       ? JSON.parse(localCurrentSongInfo ?? "{}")
       : defaultState.currentSong;
 
-    const likedSongs: string[] = localLikedSongs
-      ? JSON.parse(localLikedSongs)
-      : defaultState.likedSongs;
-
-    localCurrentSongInfo || localLikedSongs
+    localCurrentSongInfo
       ? setGlobalState({
           currentSong: currentSongInfo,
-          likedSongs: likedSongs,
+          likedSongsIds: [],
+          session: null,
         })
       : null;
   }, []);

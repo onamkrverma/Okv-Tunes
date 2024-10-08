@@ -5,6 +5,8 @@ import Navbar from "@/components/Navbar";
 import SideNavbar from "@/components/SideNavbar";
 import Footer from "@/components/Footer";
 import dynamic from "next/dynamic";
+import { usePathname } from "next/navigation";
+import registerSw from "@/public/registerSw";
 const Plalyer = dynamic(() => import("@/components/Player"), { ssr: false });
 
 const ClientLayout = ({
@@ -13,39 +15,11 @@ const ClientLayout = ({
   children: React.ReactNode;
 }>) => {
   useEffect(() => {
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker
-        .register("/sw.js")
-        .then((registration) => {
-          console.log(
-            "Service Worker registered with scope:",
-            registration.scope
-          );
-
-          registration.onupdatefound = () => {
-            const installingWorker = registration.installing;
-            if (installingWorker) {
-              installingWorker.onstatechange = () => {
-                if (installingWorker.state === "installed") {
-                  if (navigator.serviceWorker.controller) {
-                    // New update available
-                    if (confirm("New content is available; please refresh.")) {
-                      window.location.reload();
-                    }
-                  } else {
-                    // Content is cached for offline use
-                    console.log("Content is cached for offline use.");
-                  }
-                }
-              };
-            }
-          };
-        })
-        .catch((error) => {
-          console.error("Service Worker registration failed:", error);
-        });
-    }
+    registerSw();
   }, []);
+
+  const currentPath = usePathname();
+  const hideSideNavbarPaths = ["/login", "/signup"];
 
   return (
     <GlobalContextProvider>
@@ -53,11 +27,11 @@ const ClientLayout = ({
         <div className="absolute top-0 w-full h-48 -z-10 flex items-center justify-end rounded-full">
           <span className="bg-custom_gradient block w-3/4 h-full blur-3xl" />
         </div>
-        <Navbar />
-        <SideNavbar />
+        {!hideSideNavbarPaths.includes(currentPath) ? <Navbar /> : null}
+        {!hideSideNavbarPaths.includes(currentPath) ? <SideNavbar /> : null}
         {children}
-        <Plalyer />
-        <Footer />
+        {!hideSideNavbarPaths.includes(currentPath) ? <Plalyer /> : null}
+        {!hideSideNavbarPaths.includes(currentPath) ? <Footer /> : null}
       </main>
     </GlobalContextProvider>
   );

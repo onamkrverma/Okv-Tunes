@@ -1,11 +1,13 @@
 import Wretch from "wretch";
 import queryString from "wretch/addons/queryString";
 import {
+  LikedSong,
   TArtistRes,
   TPlaylists,
   TSearchArtist,
   TSearchSongs,
   TSongs,
+  TUser,
 } from "./api.d";
 
 const serverUrl =
@@ -89,6 +91,30 @@ export const getSearchArtists = async ({ query, limit = 10 }: TApiquery) => {
     .query(querParams)
     .get(`/artists/search`)
     .json()) as TSearchArtist;
+
+  return response;
+};
+
+export const getUserInfo = async ({ id }: TApiquery) => {
+  const response = (await api.get(`/users/${id}`).json()) as TUser;
+
+  return response;
+};
+export const getLikedSongs = async ({ id }: TApiquery) => {
+  // id = userid
+  const response = (await api
+    .get(`/users/${id}/liked-songs`)
+    .json()) as string[];
+  return response;
+};
+
+export const likeDislikeSong = async (userId: string, songId: string) => {
+  const response = (await api
+    .post({ songId }, `/users/${userId}/like-dislike`)
+    .json()) as {
+    message: string;
+    likedSongs: string[];
+  };
 
   return response;
 };

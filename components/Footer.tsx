@@ -7,6 +7,11 @@ import React, { useEffect } from "react";
 const Footer = () => {
   const pathname = usePathname();
 
+  const footerLinks = [
+    { title: "Privacy Policy", link: "/privacy" },
+    { title: "Terms of Use", link: "/terms" },
+  ];
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
@@ -41,6 +46,21 @@ const Footer = () => {
               <li key={item.id}>
                 <Link
                   href={urlSlug(item.title, item.id)}
+                  className={`flex items-center gap-2 my-1 text-sm text-neutral-400 hover:text-neutral-200`}
+                >
+                  {item.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <p className="text-lg">About</p>
+          <ul>
+            {footerLinks.map((item, index) => (
+              <li key={index}>
+                <Link
+                  href={item.link}
                   className={`flex items-center gap-2 my-1 text-sm text-neutral-400 hover:text-neutral-200`}
                 >
                   {item.title}

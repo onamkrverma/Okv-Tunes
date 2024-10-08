@@ -4,14 +4,16 @@ import { TSong } from "@/utils/api.d";
 import secondsToTime from "@/utils/secondsToTime";
 import { useGlobalContext } from "@/app/GlobalContex";
 import ImageWithFallback from "./ImageWithFallback";
-import HeartIcon from "@/public/icons/heart.svg";
+import dynamic from "next/dynamic";
+const LikeDislike = dynamic(() => import("./LikeDislike"), { ssr: false });
 
 type Props = {
   song: TSong;
+  likedSongsIds?: string[];
 };
 
-const SongsCollection = ({ song }: Props) => {
-  const { setGlobalState, likedSongs } = useGlobalContext();
+const SongsCollection = ({ song, likedSongsIds }: Props) => {
+  const { setGlobalState, session } = useGlobalContext();
 
   const { id, album, artists, downloadUrl, image, name, duration } = song;
 
@@ -34,26 +36,6 @@ const SongsCollection = ({ song }: Props) => {
         isMaximise: true,
         isRefetchSuggestion: true,
       },
-    }));
-  };
-
-  const isLikedSongId =
-    likedSongs && likedSongs.length > 0
-      ? likedSongs?.some((songId) => songId === id)
-      : false;
-
-  const handleLiked = (event: MouseEvent<HTMLSpanElement>) => {
-    event.stopPropagation();
-    if (isLikedSongId) {
-      const updateList = likedSongs.filter((songId) => songId !== id);
-      return setGlobalState((prev) => ({
-        ...prev,
-        likedSongs: updateList,
-      }));
-    }
-    setGlobalState((prev) => ({
-      ...prev,
-      likedSongs: [...likedSongs, id],
     }));
   };
 
@@ -80,13 +62,7 @@ const SongsCollection = ({ song }: Props) => {
       <small className="truncate w-60 text-neutral-400 hidden sm:block">
         {albumName.replaceAll("&quot;", '"')}
       </small>
-      <span role="button" onClick={(e) => handleLiked(e)}>
-        <HeartIcon
-          className={`w-6 h-6 fill-none ${
-            isLikedSongId ? "!fill-action stroke-action" : ""
-          }`}
-        />
-      </span>
+      <LikeDislike songId={id} />
       <small className="text-neutral-400">{secondsToTime(duration)}</small>
     </button>
   );
