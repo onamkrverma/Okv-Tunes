@@ -25,7 +25,7 @@ type TGlobalState = {
   likedSongsIds: string[];
   session: Session | null;
 };
-const defaultState: TGlobalState = {
+export const defaultState: TGlobalState = {
   currentSong: {
     id: "",
     title: "",

@@ -3,6 +3,7 @@ import { useGlobalContext } from "@/app/GlobalContex";
 import React from "react";
 import ImageWithFallback from "./ImageWithFallback";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 type Props = {
   id: string;
@@ -13,9 +14,14 @@ type Props = {
   type: "song" | "artist" | "playlist";
 };
 const Card = ({ title, imageUrl, artist, audioUrl, id, type }: Props) => {
-  const { setGlobalState } = useGlobalContext();
+  const { setGlobalState, session } = useGlobalContext();
+
+  const router = useRouter();
 
   const handleUpdateState = () => {
+    if (!session) {
+      return router.push("/login");
+    }
     if (!artist || !audioUrl || !imageUrl) return;
     setGlobalState((prev) => ({
       ...prev,

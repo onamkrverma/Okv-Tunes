@@ -2,16 +2,28 @@
 import { Session } from "next-auth";
 import React from "react";
 import LogoutIcon from "@/public/icons/logout.svg";
+import LoginIcon from "@/public/icons/login.svg";
 import { logoutAction } from "@/app/actions/auth";
 import Link from "next/link";
+import { defaultState, useGlobalContext } from "@/app/GlobalContex";
 
 const LoginLogout = ({ session }: { session: Session | null }) => {
-  const handleLogout = async () => {
+  const { setGlobalState } = useGlobalContext();
+
+  const clearAllCaches = async () => {
+    const cacheNames = await caches.keys();
+    await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
     if ("serviceWorker" in navigator) {
       const sw = await navigator.serviceWorker.getRegistration("/sw.js");
       await sw?.unregister();
     }
+    window.localStorage.clear();
+  };
+
+  const handleLogout = async () => {
+    await clearAllCaches();
     await logoutAction();
+    setGlobalState(defaultState);
     window.location.href = "/login";
   };
 
@@ -22,7 +34,7 @@ const LoginLogout = ({ session }: { session: Session | null }) => {
           <button
             type="submit"
             title="logout"
-            className="flex items-center gap-2 text-xs bg-neutral-800 hover:bg-secondary p-2 px-3 rounded-lg"
+            className="flex items-center gap-2 text-xs bg-neutral-800 hover:bg-secondary p-2 rounded-lg"
           >
             <LogoutIcon className="w-6 h-6" /> Logout
           </button>
@@ -31,9 +43,9 @@ const LoginLogout = ({ session }: { session: Session | null }) => {
         <Link
           href={"/login"}
           title="login"
-          className="flex items-center gap-2 text-xs bg-neutral-800 hover:bg-secondary p-2 px-3 rounded-lg"
+          className="flex items-center gap-2 text-xs bg-neutral-800 hover:bg-secondary p-2 rounded-lg"
         >
-          <LogoutIcon className="w-6 h-6 rotate-180" /> Login
+          <LoginIcon className="w-6 h-6" /> Login
         </Link>
       )}
     </div>

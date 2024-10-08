@@ -5,16 +5,16 @@ import secondsToTime from "@/utils/secondsToTime";
 import { useGlobalContext } from "@/app/GlobalContex";
 import ImageWithFallback from "./ImageWithFallback";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 const LikeDislike = dynamic(() => import("./LikeDislike"), { ssr: false });
 
 type Props = {
   song: TSong;
-  likedSongsIds?: string[];
 };
 
-const SongsCollection = ({ song, likedSongsIds }: Props) => {
+const SongsCollection = ({ song }: Props) => {
   const { setGlobalState, session } = useGlobalContext();
-
+  const router = useRouter();
   const { id, album, artists, downloadUrl, image, name, duration } = song;
 
   const artistName = artists.all.map((artist) => artist.name).join(" , ");
@@ -25,6 +25,9 @@ const SongsCollection = ({ song, likedSongsIds }: Props) => {
     downloadUrl.find((item) => item.quality === "320kbps")?.url ?? "";
 
   const handleUpdateState = () => {
+    if (!session) {
+      return router.push("/login");
+    }
     setGlobalState((prev) => ({
       ...prev,
       currentSong: {

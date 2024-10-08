@@ -3,7 +3,7 @@ import { getLikedSongs, getSongs, getUserInfo } from "@/utils/api";
 import { auth } from "@/auth";
 import LoginLogout from "@/components/LoginLogout";
 import Link from "next/link";
-import LogoutIcon from "@/public/icons/logout.svg";
+import LoginIcon from "@/public/icons/login.svg";
 import ImageWithFallback from "@/components/ImageWithFallback";
 import RefreshIcon from "@/public/icons/refresh.svg";
 
@@ -18,7 +18,7 @@ const Profile = async () => {
   return (
     <div className="inner-container flex flex-col gap-6 ">
       <div className="flex gap-4 flex-col flex-wrap sm:flex-row items-center relative">
-        <div className="absolute -top-4 right-1">
+        <div className="absolute -top-4 right-0">
           <LoginLogout session={session} />
         </div>
         <div className="w-[200px] h-[200px]">
@@ -62,11 +62,7 @@ const Profile = async () => {
         {session ? (
           likedSongsIds.length > 0 ? (
             likedSongs.map((song) => (
-              <SongsCollection
-                key={song.id}
-                song={song}
-                likedSongsIds={likedSongsIds}
-              />
+              <SongsCollection key={song.id} song={song} />
             ))
           ) : (
             <div className="text-center flex flex-col items-center justify-center gap-2 min-h-40">
@@ -86,9 +82,9 @@ const Profile = async () => {
             <Link
               href={"/login"}
               title="login"
-              className="flex items-center gap-2 text-xs bg-neutral-800 hover:bg-secondary hover:border p-2 px-3 rounded-lg"
+              className="flex items-center gap-2 text-xs bg-neutral-800 h-10 hover:bg-secondary hover:border p-2 px-3 rounded-lg"
             >
-              <LogoutIcon className="w-6 h-6 rotate-180" /> Login
+              <LoginIcon className="w-6 h-6" /> Login
             </Link>
           </div>
         )}
