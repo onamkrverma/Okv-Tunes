@@ -14,7 +14,7 @@ export default async function Home() {
 
   return (
     <div className="inner-container flex flex-col gap-6">
-      <Link href={"/profile"} className="flex items-center gap-2">
+      <Link href={"/profile"} className="flex items-center gap-2 w-fit">
         {session?.user?.image ? (
           <ImageWithFallback
             id={session.user.id}
