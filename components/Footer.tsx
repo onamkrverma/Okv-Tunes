@@ -8,6 +8,7 @@ const Footer = () => {
   const pathname = usePathname();
 
   const footerLinks = [
+    { title: "Contact Us", link: "/contact" },
     { title: "Privacy Policy", link: "/privacy" },
     { title: "Terms of Use", link: "/terms" },
   ];

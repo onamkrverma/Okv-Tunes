@@ -15,8 +15,10 @@ const LikeDislike = ({ songId }: Props) => {
   const isLiked = likedSongsIds.some((item) => item === songId);
 
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleLiked = async (event: MouseEvent<HTMLSpanElement>) => {
+    setIsLoading(true);
     event.stopPropagation();
     if (!userId) {
       return router.push("/login");
@@ -26,14 +28,15 @@ const LikeDislike = ({ songId }: Props) => {
       ...prev,
       likedSongsIds: res.likedSongs,
     }));
+    setIsLoading(false);
   };
 
   return (
     <span role="button" title="like/dislike" onClick={handleLiked}>
       <HeartIcon
-        className={`w-6 h-6 fill-none ${
-          isLiked ? "!fill-action stroke-action" : ""
-        }`}
+        className={`w-6 h-6 fill-none transition-transform ${
+          isLoading ? "animate-ping" : ""
+        } ${isLiked ? "!fill-action stroke-action" : ""} `}
       />
     </span>
   );

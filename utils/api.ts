@@ -103,6 +103,9 @@ export const getUserInfo = async ({ id }: TApiquery) => {
 export const getLikedSongs = async ({ id }: TApiquery) => {
   // id = userid
   const response = (await api
+    .options({
+      next: { revalidate: 0 },
+    })
     .get(`/users/${id}/liked-songs`)
     .json()) as string[];
   return response;

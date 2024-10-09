@@ -5,7 +5,6 @@ import LoginLogout from "@/components/LoginLogout";
 import Link from "next/link";
 import LoginIcon from "@/public/icons/login.svg";
 import ImageWithFallback from "@/components/ImageWithFallback";
-import RefreshIcon from "@/public/icons/refresh.svg";
 
 const Profile = async () => {
   const session = await auth();
@@ -26,7 +25,7 @@ const Profile = async () => {
         <div className="w-[200px] h-[200px]">
           {userImg ? (
             <ImageWithFallback
-              id={userId}
+              id={userId ? userId : undefined}
               src={userImg}
               alt="user"
               width={200}
@@ -57,9 +56,6 @@ const Profile = async () => {
           <h2 className="capitalize text-xl sm:text-2xl font-bold text-center sm:text-start">
             Your Liked Songs
           </h2>
-          {/* <button className="flex items-center gap-1 text-sm bg-neutral-800 p-1 px-2 rounded-md">
-            <RefreshIcon className="w-4 h-4" /> Refresh
-          </button> */}
         </div>
         {session ? (
           likedSongsIds.length > 0 ? (
