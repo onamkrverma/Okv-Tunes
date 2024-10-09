@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 
 const Privacy = () => {
@@ -50,8 +51,11 @@ const Privacy = () => {
 
       <h2 className="text-2xl font-semibold mb-2">6. Contact Us</h2>
       <p>
-        If you have any questions about this Privacy Policy, please contact us
-        at support@okvtunes.com.
+        If you have any questions about this Privacy Policy, please visit our
+        <Link href={"/contact"} className="underline mx-2">
+          contact us
+        </Link>
+        page and submit your query.
       </p>
     </div>
   );

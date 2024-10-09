@@ -15,6 +15,8 @@ const Profile = async () => {
 
   const likedSongs = (await getSongs({ id: likedSongsIds })).data;
 
+  const userImg = session?.user?.image || userInfo?.image;
+
   return (
     <div className="inner-container flex flex-col gap-6 ">
       <div className="flex gap-4 flex-col flex-wrap sm:flex-row items-center relative">
@@ -22,10 +24,10 @@ const Profile = async () => {
           <LoginLogout session={session} />
         </div>
         <div className="w-[200px] h-[200px]">
-          {userInfo?.image ? (
+          {userImg ? (
             <ImageWithFallback
-              id={userInfo._id}
-              src={userInfo.image}
+              id={userId}
+              src={userImg}
               alt="user"
               width={200}
               height={200}
