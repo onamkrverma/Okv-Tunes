@@ -12,6 +12,9 @@ Okv Tunes is a Progressive Web App (PWA) music streaming platform that allows us
 - **Top Songs**: Browse top songs in Hindi, English, Punjabi, Tamil, Telugu, and more.
 - **Popular Artists**: Explore music from popular artists like Arijit Singh, Neha Kakkar, Justin Bieber, and more.
 - **Controls player from notification**: Enables control of the music player directly from the notification panel.
+- **Authentication**: Securely log in using your Google account or Credentials with NextAuth.
+- **Contact Us Form**: Reach out for any queries or support.
+- **User Info and Liked Songs**: Store user information and liked songs in a MongoDB database.
 
 
 ### Don't forget to :star: the repo
@@ -23,7 +26,8 @@ Okv Tunes is a Progressive Web App (PWA) music streaming platform that allows us
 - **Tailwind CSS**
 - **Saavan API**
 - **Wretch**
-
+- **NextAuth**
+- **MongoDB**
 
 
 ## Getting Started with Nextjs App
