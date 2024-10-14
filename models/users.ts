@@ -28,6 +28,17 @@ const UsersSchema = new Schema(
         likedAt: { type: String, default: new Date().toISOString() },
       },
     ],
+    playlist: [
+      {
+        title: { type: String, required: true },
+        songIds: {
+          type: [String],
+          required: true,
+          unique: true,
+        },
+        createdAt: { type: String, default: new Date().toISOString() },
+      },
+    ],
   },
   { timestamps: true }
 );

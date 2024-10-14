@@ -23,15 +23,16 @@ export const POST = async (
       );
     }
     await connectDB();
-
-    let user = null;
-    try {
-      user = await Users.findById(id);
-    } catch (error) {
-      user = await Users.findOne({ googleId: id });
-    }
+    const user = await Users.findById(id).catch(() =>
+      Users.findOne({ googleId: id })
+    );
     if (!user) {
-      throw new Error("User not exists");
+      return NextResponse.json(
+        {
+          error: "User does not exists",
+        },
+        { status: 404 }
+      );
     }
     const songIndex: number = user.likedSongs.findIndex(
       (likedSong: { songId: string }) => likedSong.songId.toString() === songId
