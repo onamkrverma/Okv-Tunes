@@ -11,7 +11,8 @@ import ThreeDotsIcon from "@/public/icons/three-dots.svg";
 import ImageWithFallback from "@/components/ImageWithFallback";
 import InfoIcon from "@/public/icons/info.svg";
 import Popup from "./Popup";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+import ls from "localstorage-slim";
 
 export type TplayerState = {
   url: string;
@@ -25,7 +26,7 @@ export type TplayerState = {
 };
 
 const Plalyer = () => {
-  const { currentSong, setGlobalState } = useGlobalContext();
+  const { currentSong, setGlobalState, session } = useGlobalContext();
   const {
     id,
     imageUrl,
@@ -52,9 +53,10 @@ const Plalyer = () => {
   const pathName = usePathname();
 
   currentSong.id
-    ? localStorage.setItem(
+    ? ls.set(
         "currentSong",
-        JSON.stringify({ ...currentSong, volume: playerState.volume })
+        { ...currentSong, volume: playerState.volume },
+        { encrypt: true }
       )
     : null;
 
@@ -236,7 +238,7 @@ const Plalyer = () => {
 
   return (
     <div>
-      {id ? (
+      {session && id ? (
         <>
           <div
             className={`!mt-0 fixed top-0 right-0 left-0 bg-primary flex gap-4 sm:justify-evenly !pt-20 sm:!pt-0 flex-col md:flex-row items-center h-full z-[11] transition-transform duration-700 ${

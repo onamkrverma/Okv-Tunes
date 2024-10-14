@@ -8,6 +8,7 @@ import React, {
 } from "react";
 import { Session } from "next-auth";
 import { getLikedSongs } from "@/utils/api";
+import ls from "localstorage-slim";
 
 type TCurrentSong = {
   id: string;
@@ -83,10 +84,12 @@ export const GlobalContextProvider = ({
   }, []);
 
   useEffect(() => {
-    const localCurrentSongInfo = localStorage.getItem("currentSong");
+    const localCurrentSongInfo: TCurrentSong | null = ls.get("currentSong", {
+      decrypt: true,
+    });
 
     const currentSongInfo: TCurrentSong = localCurrentSongInfo
-      ? JSON.parse(localCurrentSongInfo ?? "{}")
+      ? localCurrentSongInfo
       : defaultState.currentSong;
 
     localCurrentSongInfo

@@ -25,9 +25,6 @@ const SongsCollection = ({ song }: Props) => {
     downloadUrl.find((item) => item.quality === "320kbps")?.url ?? "";
 
   const handleUpdateState = () => {
-    if (!session) {
-      return router.push("/login");
-    }
     setGlobalState((prev) => ({
       ...prev,
       currentSong: {
@@ -40,6 +37,9 @@ const SongsCollection = ({ song }: Props) => {
         isRefetchSuggestion: true,
       },
     }));
+    if (!session) {
+      return router.push("/login");
+    }
   };
 
   return (

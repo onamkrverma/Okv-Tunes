@@ -4,6 +4,7 @@ import React from "react";
 import ImageWithFallback from "./ImageWithFallback";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import ls from "localstorage-slim";
 
 type Props = {
   id: string;
@@ -19,9 +20,6 @@ const Card = ({ title, imageUrl, artist, audioUrl, id, type }: Props) => {
   const router = useRouter();
 
   const handleUpdateState = () => {
-    if (!session) {
-      return router.push("/login");
-    }
     if (!artist || !audioUrl || !imageUrl) return;
     setGlobalState((prev) => ({
       ...prev,
@@ -35,6 +33,9 @@ const Card = ({ title, imageUrl, artist, audioUrl, id, type }: Props) => {
         isRefetchSuggestion: true,
       },
     }));
+    if (!session) {
+      return router.push("/login");
+    }
   };
 
   const urlSlug =
