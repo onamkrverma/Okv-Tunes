@@ -17,16 +17,13 @@ export const GET = async (
       );
     }
     await connectDB();
-    const user = await Users.findById(id).catch(() =>
-      Users.findOne({ googleId: id })
-    );
+
+    const user = await Users.findById(id);
 
     if (!user) {
       return NextResponse.json(
-        {
-          error: "User does not exists",
-        },
-        { status: 404 }
+        { error: "User does not exists" },
+        { status: 400 }
       );
     }
 

@@ -25,15 +25,12 @@ export const POST = async (
     }
     await connectDB();
 
-    const user = await Users.findById(id).catch(() =>
-      Users.findOne({ googleId: id })
-    );
+    const user = await Users.findById(id);
+
     if (!user) {
       return NextResponse.json(
-        {
-          error: "User does not exists",
-        },
-        { status: 404 }
+        { error: "User does not exists" },
+        { status: 400 }
       );
     }
 
@@ -62,15 +59,12 @@ export const GET = async (
   try {
     await connectDB();
 
-    const user = await Users.findById(id).catch(() =>
-      Users.findOne({ googleId: id })
-    );
+    const user = await Users.findById(id);
+
     if (!user) {
       return NextResponse.json(
-        {
-          error: "User does not exists",
-        },
-        { status: 404 }
+        { error: "User does not exists" },
+        { status: 400 }
       );
     }
 
@@ -104,16 +98,12 @@ export const PUT = async (
     }
     await connectDB();
 
-    const user = await Users.findById(id).catch(() =>
-      Users.findOne({ googleId: id })
-    );
+    const user = await Users.findById(id);
 
     if (!user) {
       return NextResponse.json(
-        {
-          error: "User does not exists",
-        },
-        { status: 404 }
+        { error: "User does not exists" },
+        { status: 400 }
       );
     }
     const playlist = user.playlist.find(
@@ -176,17 +166,12 @@ export const DELETE = async (
       );
     }
     await connectDB();
-
-    const user = await Users.findById(id).catch(() =>
-      Users.findOne({ googleId: id })
-    );
+    const user = await Users.findById(id);
 
     if (!user) {
       return NextResponse.json(
-        {
-          error: "User does not exists",
-        },
-        { status: 404 }
+        { error: "User does not exists" },
+        { status: 400 }
       );
     }
 
