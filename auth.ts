@@ -58,16 +58,19 @@ const config: NextAuthConfig = {
         try {
           const { email, name, image, id } = user;
           await connectDB();
-          const isUserExist = await Users.findOne({ email });
-          if (!isUserExist) {
+          const userInfo = await Users.findOne({ email });
+          if (!userInfo) {
             await Users.create({
               name,
               email,
               image,
               googleId: id,
             });
-          } else {
-            await Users.findOneAndUpdate({ email }, { image, googleId: id });
+          } else if (!userInfo.googleId) {
+            await Users.findOneAndUpdate(
+              { email },
+              { $set: { image, googleId: id } }
+            );
           }
           return true;
         } catch (error) {
