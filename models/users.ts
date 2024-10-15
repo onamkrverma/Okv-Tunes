@@ -34,7 +34,11 @@ const UsersSchema = new Schema(
         songIds: {
           type: [String],
           required: true,
-          unique: true,
+        },
+        visibility: {
+          type: String,
+          enum: ["public", "private"],
+          default: "private",
         },
         createdAt: { type: String, default: new Date().toISOString() },
       },

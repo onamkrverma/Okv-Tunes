@@ -356,7 +356,12 @@ const Plalyer = () => {
             handlePrev={handlePrev}
           />
           {isPopup ? (
-            <Popup isPopup={isPopup} setIsPopup={setIsPopup} songId={id} />
+            <Popup
+              isPopup={isPopup}
+              setIsPopup={setIsPopup}
+              songId={id}
+              variant="song-info"
+            />
           ) : null}
         </>
       ) : null}

@@ -5,6 +5,7 @@ import { NextResponse, type NextRequest } from "next/server";
 interface RequestBody {
   songIds: string[];
   title: string;
+  visibility?: "public" | "private";
   playlistId?: string;
   isFullDeletePlaylist?: boolean;
 }
@@ -14,10 +15,10 @@ export const POST = async (
   { params }: { params: { id: string } }
 ) => {
   const { id } = params;
-  const { songIds, title }: RequestBody = await request.json();
+  const { songIds, title, visibility }: RequestBody = await request.json();
 
   try {
-    if (!songIds || !title) {
+    if (songIds.length < 0 || title.length < 0) {
       return NextResponse.json(
         { error: "The songIds must be an array and title must be a string" },
         { status: 400 }
@@ -34,7 +35,17 @@ export const POST = async (
       );
     }
 
-    user.playlist.push({ title: title, songIds: songIds });
+    const isPlaylistTitleExist = user.playlist.some((item: { title: string }) =>
+      title.toLowerCase().includes(item.title.toLowerCase())
+    );
+    if (isPlaylistTitleExist) {
+      return NextResponse.json(
+        { error: "Playlist title already exist" },
+        { status: 404 }
+      );
+    }
+
+    user.playlist.push({ title, songIds, visibility });
     await user.save();
 
     return NextResponse.json(
@@ -85,7 +96,7 @@ export const PUT = async (
   { params }: { params: { id: string } }
 ) => {
   const { id } = params;
-  const { songIds, playlistId }: RequestBody = await request.json();
+  const { songIds, playlistId, visibility }: RequestBody = await request.json();
 
   try {
     if (!Array.isArray(songIds) || typeof playlistId !== "string") {
@@ -113,6 +124,19 @@ export const PUT = async (
       return NextResponse.json(
         { error: "Playlist does not exist" },
         { status: 404 }
+      );
+    }
+
+    if (visibility) {
+      playlist.visibility = visibility;
+      await user.save();
+
+      return NextResponse.json(
+        {
+          message: `Playlist visibility change to ${visibility}`,
+          updatedPlaylist: user.playlist,
+        },
+        { status: 200 }
       );
     }
 
