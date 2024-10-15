@@ -20,14 +20,7 @@ const UsersSchema = new Schema(
       select: false,
     },
     image: { type: String },
-    googleId: { type: String },
-
-    likedSongs: [
-      {
-        songId: { type: String, required: true },
-        likedAt: { type: String, default: new Date().toISOString() },
-      },
-    ],
+    likedSongIds: { type: [String], required: true },
   },
   { timestamps: true }
 );

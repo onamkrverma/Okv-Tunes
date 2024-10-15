@@ -24,7 +24,7 @@ export const POST = async (
     }
     await connectDB();
 
-    const user = await Users.findById(id, { likedSongs: 1 });
+    const user = await Users.findById(id, { likedSongIds: 1 });
 
     if (!user) {
       return NextResponse.json(
@@ -32,27 +32,22 @@ export const POST = async (
         { status: 400 }
       );
     }
-    const songIndex: number = user.likedSongs.findIndex(
-      (likedSong: { songId: string }) => likedSong.songId.toString() === songId
+    const songIndex: number = user.likedSongIds.findIndex(
+      (likedSongId: string) => likedSongId === songId
     );
     if (songIndex === -1) {
-      user.likedSongs.push({ songId: songId });
+      user.likedSongIds.push(songId);
       await user.save();
-      const likedSongs = user.likedSongs.map(
-        (item: { songId: string }) => item.songId
-      );
       return NextResponse.json(
-        { message: "Song Liked", likedSongs },
+        { message: "Song Liked", likedSongIds: user.likedSongIds },
         { status: 200 }
       );
     } else {
-      user.likedSongs.splice(songIndex, 1);
+      user.likedSongIds.splice(songIndex, 1);
       await user.save();
-      const likedSongs = user.likedSongs.map(
-        (item: { songId: string }) => item.songId
-      );
+
       return NextResponse.json(
-        { message: "Song Disliked", likedSongs },
+        { message: "Song Disliked", likedSongIds: user.likedSongIds },
         { status: 200 }
       );
     }

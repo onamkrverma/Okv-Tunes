@@ -26,7 +26,7 @@ const LikeDislike = ({ songId }: Props) => {
     const res = await likeDislikeSong(userId, songId);
     setGlobalState((prev) => ({
       ...prev,
-      likedSongsIds: res.likedSongs,
+      likedSongsIds: res.likedSongIds,
     }));
     setIsLoading(false);
   };
