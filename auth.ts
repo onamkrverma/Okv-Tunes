@@ -64,13 +64,9 @@ const config: NextAuthConfig = {
               name,
               email,
               image,
-              googleId: id,
             });
-          } else if (!userInfo.googleId) {
-            await Users.findOneAndUpdate(
-              { email },
-              { $set: { image, googleId: id } }
-            );
+          } else if (!userInfo.image) {
+            await Users.findOneAndUpdate({ email }, { $set: { image } });
           }
           return true;
         } catch (error) {
@@ -88,8 +84,11 @@ const config: NextAuthConfig = {
       return session;
     },
     jwt: async ({ token, user, account }) => {
-      if (user) {
-        token.uid = user.id;
+      if (token.email) {
+        const dbUser = await Users.findOne({ email: token.email });
+        if (dbUser) {
+          token.sub = dbUser.id;
+        }
       }
       return token;
     },

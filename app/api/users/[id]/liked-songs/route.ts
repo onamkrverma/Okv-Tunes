@@ -18,14 +18,13 @@ export const GET = async (
     }
     await connectDB();
 
-    let user = null;
-    try {
-      user = await Users.findById(id);
-    } catch (error) {
-      user = await Users.findOne({ googleId: id });
-    }
+    const user = await Users.findById(id);
+
     if (!user) {
-      throw new Error("User not exists");
+      return NextResponse.json(
+        { error: "User does not exists" },
+        { status: 400 }
+      );
     }
     const likedSongs = user.likedSongs.map(
       (item: { songId: string }) => item.songId

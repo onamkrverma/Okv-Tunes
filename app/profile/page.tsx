@@ -22,18 +22,18 @@ const Profile = async () => {
         <div className="absolute -top-4 right-0">
           <LoginLogout session={session} />
         </div>
-        <div className="w-[200px] h-[200px]">
+        <div className=" w-24 h-24 sm:w-[150px] sm:h-[150px]">
           {userImg ? (
             <ImageWithFallback
               id={userId ? userId : undefined}
               src={userImg}
               alt="user"
-              width={200}
-              height={200}
+              width={150}
+              height={150}
               className="w-full h-full object-cover rounded-full shadow-lg shadow-neutral-700"
             />
           ) : (
-            <p className="uppercase bg-action text-primary rounded-full p-1 h-full w-full flex justify-center items-center text-[150px] font-bold">
+            <p className="uppercase bg-action text-primary rounded-full h-full w-full flex justify-center items-center text-[80px] sm:text-[120px] font-bold">
               {userInfo ? userInfo?.name?.at(0) : "G"}
             </p>
           )}
