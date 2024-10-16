@@ -85,9 +85,13 @@ const config: NextAuthConfig = {
     },
     jwt: async ({ token, user, account }) => {
       if (token.email) {
-        const dbUser = await Users.findOne({ email: token.email });
+        await connectDB();
+        const dbUser = (await Users.findOne(
+          { email: token.email },
+          { _id: 1 }
+        ).lean()) as { _id: string } | null;
         if (dbUser) {
-          token.sub = dbUser.id;
+          token.sub = dbUser._id;
         }
       }
       return token;

@@ -116,7 +116,7 @@ export const likeDislikeSong = async (userId: string, songId: string) => {
     .post({ songId }, `/users/${userId}/like-dislike`)
     .json()) as {
     message: string;
-    likedSongs: string[];
+    likedSongIds: string[];
   };
 
   return response;

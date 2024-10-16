@@ -18,7 +18,7 @@ export const GET = async (
     }
     await connectDB();
 
-    const user = await Users.findById(id);
+    const user = await Users.findById(id, { name: 1, email: 1, image: 1 });
 
     if (!user) {
       return NextResponse.json(

@@ -18,7 +18,7 @@ export const GET = async (
     }
     await connectDB();
 
-    const user = await Users.findById(id);
+    const user = await Users.findById(id, { likedSongIds: 1 });
 
     if (!user) {
       return NextResponse.json(
@@ -26,11 +26,8 @@ export const GET = async (
         { status: 400 }
       );
     }
-    const likedSongs = user.likedSongs.map(
-      (item: { songId: string }) => item.songId
-    );
 
-    return NextResponse.json(likedSongs, {
+    return NextResponse.json(user.likedSongIds, {
       status: 200,
       headers: {
         "Cache-Control":
