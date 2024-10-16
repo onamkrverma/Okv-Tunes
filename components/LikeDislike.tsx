@@ -23,7 +23,7 @@ const LikeDislike = ({ songId }: Props) => {
     if (!userId) {
       return router.push("/login");
     }
-    const res = await likeDislikeSong(userId, songId);
+    const res = await likeDislikeSong({ userId, songId });
     setGlobalState((prev) => ({
       ...prev,
       likedSongsIds: res.likedSongIds,

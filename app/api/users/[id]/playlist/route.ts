@@ -18,7 +18,12 @@ export const POST = async (
   const { songIds, title, visibility }: RequestBody = await request.json();
 
   try {
-    if (songIds.length < 0 || title.length < 0) {
+    if (
+      !Array.isArray(songIds) ||
+      typeof title !== "string" ||
+      songIds.length < 1 ||
+      !title
+    ) {
       return NextResponse.json(
         { error: "The songIds must be an array and title must be a string" },
         { status: 400 }
@@ -26,7 +31,7 @@ export const POST = async (
     }
     await connectDB();
 
-    const user = await Users.findById(id);
+    const user = await Users.findById(id, { playlist: 1 });
 
     if (!user) {
       return NextResponse.json(
@@ -70,7 +75,7 @@ export const GET = async (
   try {
     await connectDB();
 
-    const user = await Users.findById(id);
+    const user = await Users.findById(id, { playlist: 1 });
 
     if (!user) {
       return NextResponse.json(
@@ -96,10 +101,15 @@ export const PUT = async (
   { params }: { params: { id: string } }
 ) => {
   const { id } = params;
-  const { songIds, playlistId, visibility }: RequestBody = await request.json();
+  const { songIds, title, playlistId, visibility }: RequestBody =
+    await request.json();
 
   try {
-    if (!Array.isArray(songIds) || typeof playlistId !== "string") {
+    if (
+      !Array.isArray(songIds) ||
+      typeof playlistId !== "string" ||
+      !playlistId
+    ) {
       return NextResponse.json(
         {
           error: "The songIds must be an array and playlistId must be a string",
@@ -107,19 +117,22 @@ export const PUT = async (
         { status: 400 }
       );
     }
+
     await connectDB();
 
-    const user = await Users.findById(id);
+    const user = await Users.findById(id, { playlist: 1 });
 
     if (!user) {
       return NextResponse.json(
-        { error: "User does not exists" },
+        { error: "User does not exist" },
         { status: 400 }
       );
     }
+
     const playlist = user.playlist.find(
       (item: { id: string }) => item.id === playlistId
     );
+
     if (!playlist) {
       return NextResponse.json(
         { error: "Playlist does not exist" },
@@ -127,17 +140,13 @@ export const PUT = async (
       );
     }
 
+    // Update fields based on provided values
+    if (title) {
+      playlist.title = title;
+    }
+
     if (visibility) {
       playlist.visibility = visibility;
-      await user.save();
-
-      return NextResponse.json(
-        {
-          message: `Playlist visibility change to ${visibility}`,
-          updatedPlaylist: user.playlist,
-        },
-        { status: 200 }
-      );
     }
 
     const duplicateSongs = songIds.filter((songId) =>
@@ -147,15 +156,24 @@ export const PUT = async (
     if (duplicateSongs.length > 0) {
       return NextResponse.json(
         {
-          error: `The following song IDs already exist in the playlist: ${duplicateSongs.join(
-            ", "
-          )}`,
+          error: "The selected song IDs already exist in this playlist",
         },
         { status: 400 }
       );
     }
+
     playlist.songIds = [...playlist.songIds, ...songIds];
-    await user.save();
+
+    await Users.updateOne(
+      { _id: id, "playlist.id": playlistId },
+      {
+        $set: {
+          "playlist.$.title": playlist.title,
+          "playlist.$.visibility": playlist.visibility,
+          "playlist.$.songIds": playlist.songIds,
+        },
+      }
+    );
 
     return NextResponse.json(
       {
@@ -172,45 +190,45 @@ export const PUT = async (
     );
   }
 };
+
 export const DELETE = async (
   request: NextRequest,
   { params }: { params: { id: string } }
 ) => {
   const { id } = params;
-  const { songIds, playlistId, isFullDeletePlaylist }: RequestBody =
-    await request.json();
+  const songIds = request.nextUrl.searchParams.getAll("songid");
+  const playlistId = request.nextUrl.searchParams.get("playlistid");
+  const isFullDeletePlaylist =
+    request.nextUrl.searchParams.get("delete-playlist");
 
   try {
-    if (!Array.isArray(songIds) || typeof playlistId !== "string") {
+    if (!playlistId) {
       return NextResponse.json(
         {
-          error: "The songIds must be an array and playlistId must be a string",
+          error: "The playlistId must be a string",
         },
         { status: 400 }
       );
     }
+
     await connectDB();
-    const user = await Users.findById(id);
+
+    const user = await Users.findById(id, { playlist: 1 });
 
     if (!user) {
       return NextResponse.json(
-        { error: "User does not exists" },
+        { error: "User does not exist" },
         { status: 400 }
       );
     }
 
-    if (isFullDeletePlaylist) {
-      // delete complete playlist
-      user.playlist = user.playlist.filter(
-        (item: { id: string }) => item.id !== playlistId
+    if (isFullDeletePlaylist === "true") {
+      await Users.updateOne(
+        { _id: id },
+        { $pull: { playlist: { id: playlistId } } }
       );
-      await user.save();
-
       return NextResponse.json(
-        {
-          message: "Playlist deleted successfully",
-          updatedPlaylist: user.playlist,
-        },
+        { message: "Playlist deleted successfully" },
         { status: 200 }
       );
     }
@@ -218,6 +236,7 @@ export const DELETE = async (
     const playlist = user.playlist.find(
       (item: { id: string }) => item.id === playlistId
     );
+
     if (!playlist) {
       return NextResponse.json(
         { error: "Playlist does not exist" },
@@ -225,16 +244,17 @@ export const DELETE = async (
       );
     }
 
-    playlist.songIds = playlist.songIds.filter(
+    const updatedSongIds = playlist.songIds.filter(
       (songId: string) => !songIds.includes(songId)
     );
-    await user.save();
+
+    await Users.updateOne(
+      { _id: id, "playlist.id": playlistId },
+      { $set: { "playlist.$.songIds": updatedSongIds } }
+    );
 
     return NextResponse.json(
-      {
-        message: "Playlist song(s) deleted successfully",
-        updatedPlaylist: user.playlist,
-      },
+      { message: "Playlist song(s) deleted successfully" },
       { status: 200 }
     );
   } catch (error: unknown) {

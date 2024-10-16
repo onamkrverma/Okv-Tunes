@@ -35,12 +35,14 @@ body {
   width: 0;
   height: 0;
 }
-.upnext-songs::-webkit-scrollbar {
+.upnext-songs::-webkit-scrollbar,
+.select-playlists::-webkit-scrollbar {
   width: 2px;
   background: transparent;
   height: 0px;
 }
-.upnext-songs::-webkit-scrollbar-thumb {
+.upnext-songs::-webkit-scrollbar-thumb,
+.select-playlists::-webkit-scrollbar-thumb {
   background: whitesmoke;
   border-radius: 10px;
 }

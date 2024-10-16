@@ -66,7 +66,9 @@ export const GlobalContextProvider = ({
     );
     const session: Session | null = await response.json();
     if (session) {
-      const likedSongsIds = await getLikedSongs({ id: session.user?.id });
+      const userId = session.user?.id ? session.user.id : null;
+      if (!userId) return;
+      const likedSongsIds = await getLikedSongs({ userId });
       setGlobalState((prev) => ({
         ...prev,
         likedSongsIds: likedSongsIds,

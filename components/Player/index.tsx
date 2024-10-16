@@ -298,7 +298,7 @@ const Plalyer = () => {
                 id={currentSong.id}
                 src={imageUrl}
                 fallbackSrc={"/logo-circle.svg"}
-                alt={title + "okv tunes"}
+                alt={title + " okv tunes"}
                 width={500}
                 height={500}
                 className="w-full h-full object-cover"
@@ -325,7 +325,7 @@ const Plalyer = () => {
                   id={currentSong.id}
                   src={imageUrl}
                   fallbackSrc={"/logo-circle.svg"}
-                  alt={title + "okv tunes"}
+                  alt={title + " okv tunes"}
                   width={350}
                   height={350}
                   className="w-full h-auto  object-cover rounded-lg"

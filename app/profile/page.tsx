@@ -9,8 +9,8 @@ import ImageWithFallback from "@/components/ImageWithFallback";
 const Profile = async () => {
   const session = await auth();
   const userId = session?.user?.id;
-  const userInfo = userId ? await getUserInfo({ id: userId }) : null;
-  const likedSongsIds = userId ? await getLikedSongs({ id: userId }) : [];
+  const userInfo = userId ? await getUserInfo({ userId }) : null;
+  const likedSongsIds = userId ? await getLikedSongs({ userId }) : [];
 
   const likedSongs = (await getSongs({ id: likedSongsIds })).data;
 

@@ -113,7 +113,7 @@ const MiniPlayer = ({
             <ImageWithFallback
               id={id}
               src={imageUrl}
-              alt={title + "okv tunes"}
+              alt={title + " okv tunes"}
               width={50}
               height={50}
               className="w-[50px] h-[50px] object-cover rounded-md"
@@ -253,6 +253,7 @@ const MiniPlayer = ({
           setIsPopup={setIsPlaylistPopup}
           songId={id}
           variant="add-playlist"
+          session={session}
         />
       ) : null}
     </>
