@@ -39,7 +39,7 @@ const PlaylistSongs = async ({ params }: Props) => {
               songs[0].image.find((item) => item.quality === "500x500")?.url ??
               "/logo-circle.svg"
             }
-            alt={name + "okv tunes"}
+            alt={name + "-okv tunes"}
             width={200}
             height={200}
             className="w-full h-full object-cover rounded-md shadow-lg shadow-neutral-700"

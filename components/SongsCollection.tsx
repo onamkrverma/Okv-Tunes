@@ -1,20 +1,27 @@
 "use client";
-import React, { ChangeEvent, MouseEvent } from "react";
+import React, { ChangeEvent, MouseEvent, useState } from "react";
 import { TSong } from "@/utils/api.d";
 import secondsToTime from "@/utils/secondsToTime";
 import { useGlobalContext } from "@/app/GlobalContex";
 import ImageWithFallback from "./ImageWithFallback";
 import dynamic from "next/dynamic";
+import ThreeDotsIcon from "@/public/icons/three-dots.svg";
+import DeleteIcon from "@/public/icons/delete.svg";
 import { useRouter } from "next/navigation";
+import { deleteUserPlaylistSongs } from "@/utils/api";
 const LikeDislike = dynamic(() => import("./LikeDislike"), { ssr: false });
 
 type Props = {
   song: TSong;
+  playlistId?: string;
 };
 
-const SongsCollection = ({ song }: Props) => {
+const SongsCollection = ({ song, playlistId }: Props) => {
   const { setGlobalState, session } = useGlobalContext();
   const router = useRouter();
+
+  const [isMoreBtnClick, setIsMoreBtnClick] = useState(false);
+
   const { id, album, artists, downloadUrl, image, name, duration } = song;
 
   const artistName = artists.all.map((artist) => artist.name).join(" , ");
@@ -42,16 +49,28 @@ const SongsCollection = ({ song }: Props) => {
     }
   };
 
+  const handleRemoveSongs = async (event: MouseEvent<HTMLSpanElement>) => {
+    // setIsLoading(true);
+    event.stopPropagation();
+    const userId = session?.user?.id;
+    if (!userId || !playlistId) return;
+    const res = await deleteUserPlaylistSongs({
+      userId,
+      playlistSongIds: [song.id],
+      playlistId,
+    });
+    console.log(res);
+  };
+
   return (
-    <button
-      type="button"
+    <div
       onClick={handleUpdateState}
-      className="flex items-center gap-4 p-2 cursor-pointer hover:bg-secondary"
+      className="flex items-center gap-4 p-2 cursor-pointer hover:bg-secondary relative"
     >
       <ImageWithFallback
         id={id}
         src={imageUrl}
-        alt={name + "okv tunes"}
+        alt={name + "-okv tunes"}
         width={50}
         height={50}
         className="w-[50px] h-[50px] object-cover rounded-md"
@@ -67,7 +86,32 @@ const SongsCollection = ({ song }: Props) => {
       </small>
       <LikeDislike songId={id} />
       <small className="text-neutral-400">{secondsToTime(duration)}</small>
-    </button>
+      <button
+        type="button"
+        title="more"
+        className=""
+        onClick={(e) => {
+          e.stopPropagation();
+          setIsMoreBtnClick(!isMoreBtnClick);
+        }}
+      >
+        <ThreeDotsIcon className="w-6 h-6" />
+      </button>
+      <div
+        className={`absolute bottom-2 right-12 bg-primary border flex-col gap-2 p-2 rounded-md z-[5] hover:bg-secondary ${
+          isMoreBtnClick ? "flex" : "hidden"
+        } `}
+      >
+        <button
+          type="button"
+          className="flex items-center gap-1"
+          onClick={handleRemoveSongs}
+        >
+          <DeleteIcon className="w-4 h-4" />
+          Remove from playlist
+        </button>
+      </div>
+    </div>
   );
 };
 

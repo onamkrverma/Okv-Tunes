@@ -35,6 +35,7 @@ const UsersSchema = new Schema(
           enum: ["public", "private"],
           default: "private",
         },
+        createdBy: { type: String, require: true },
         createdAt: { type: String, default: new Date().toISOString() },
       },
     ],

@@ -113,6 +113,9 @@ export const getUserInfo = async ({ userId }: TUserApiQuery) => {
 };
 export const getLikedSongs = async ({ userId }: TUserApiQuery) => {
   const response = (await api
+    .options({
+      next: { revalidate: 0 },
+    })
     .get(`/users/${userId}/liked-songs`)
     .json()) as string[];
   return response;
@@ -128,10 +131,30 @@ export const likeDislikeSong = async ({ userId, songId }: TUserApiQuery) => {
 
   return response;
 };
-export const getUserPlaylist = async ({ userId }: TUserApiQuery) => {
+export const getUserAllPlaylist = async ({ userId }: TUserApiQuery) => {
   const response = (await api
+    .options({
+      next: { revalidate: 0 },
+    })
     .get(`/users/${userId}/playlist`)
     .json()) as TUserPlaylist[];
+  return response;
+};
+
+export const getUserPlaylist = async ({
+  userId,
+  playlistId,
+}: TUserApiQuery) => {
+  const querParams = {
+    playlistid: playlistId,
+  };
+  const response = (await api
+    .options({
+      next: { revalidate: 0 },
+    })
+    .query(querParams)
+    .get(`/users/${userId}/playlist`)
+    .json()) as TUserPlaylist;
   return response;
 };
 export const createUserPlaylist = async ({

@@ -48,7 +48,7 @@ const Plalyer = () => {
     autoPlay: false,
   });
   const playerRef = useRef<ReactPlayer>(null);
-  const [isMoreClick, setIsMoreClick] = useState(false);
+  const [isMoreBtnClick, setIsMoreBtnClick] = useState(false);
   const [isPopup, setIsPopup] = useState(false);
   const pathName = usePathname();
 
@@ -268,7 +268,7 @@ const Plalyer = () => {
                 type="button"
                 title="more"
                 className=""
-                onClick={() => setIsMoreClick(!isMoreClick)}
+                onClick={() => setIsMoreBtnClick(!isMoreBtnClick)}
               >
                 <ThreeDotsIcon className={`w-6 h-6 `} />
               </button>
@@ -276,7 +276,7 @@ const Plalyer = () => {
 
             <div
               className={` absolute top-0 right-10 bg-secondary flex flex-col gap-2 p-2 rounded-md transition-transform duration-500 ${
-                isMoreClick ? "translate-y-8" : "-translate-y-full"
+                isMoreBtnClick ? "translate-y-8" : "-translate-y-full"
               } `}
             >
               <button

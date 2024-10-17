@@ -118,11 +118,12 @@ export interface TUser {
   updatedAt: Date;
 }
 export interface TUserPlaylist {
+  _id: string;
   title: string;
   songIds: string[];
   visibility: "public" | "private";
   createdAt: Date;
-  _id: string;
+  createdBy: string;
 }
 
 export interface TPlaylists extends Data<PlaylistData> {}

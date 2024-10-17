@@ -2,6 +2,7 @@
 import {
   createUserPlaylist,
   getSongs,
+  getUserAllPlaylist,
   getUserPlaylist,
   updateUserPlaylistSongs,
 } from "@/utils/api";
@@ -45,7 +46,8 @@ const Popup = ({ isPopup, setIsPopup, songId, variant, session }: Props) => {
 
   const userId = session?.user?.id;
 
-  const playlistFetcher = () => (userId ? getUserPlaylist({ userId }) : null);
+  const playlistFetcher = () =>
+    userId ? getUserAllPlaylist({ userId }) : null;
   const { data: userPlaylistData, isLoading: isPlaylistLoading } = useSWR(
     isPopup && variant === "add-playlist" ? "/user-playlist" : null,
     playlistFetcher,

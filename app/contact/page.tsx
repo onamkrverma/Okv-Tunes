@@ -1,9 +1,13 @@
 "use client";
 import Input from "@/components/Input";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { contactAction } from "../actions/contact";
 
 const Contact = () => {
+  useEffect(() => {
+    document.title = "Contact Us • Okv-Tunes";
+  }, []);
+
   const [message, setMessage] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
 

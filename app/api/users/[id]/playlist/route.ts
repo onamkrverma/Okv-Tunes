@@ -50,7 +50,7 @@ export const POST = async (
       );
     }
 
-    user.playlist.push({ title, songIds, visibility });
+    user.playlist.push({ title, songIds, visibility, createdBy: user.name });
     await user.save();
 
     return NextResponse.json(
@@ -66,11 +66,13 @@ export const POST = async (
   }
 };
 
+// get single playlist with playlistid search param else get all playlist
 export const GET = async (
   request: NextRequest,
   { params }: { params: { id: string } }
 ) => {
   const { id } = params;
+  const playlistId = request.nextUrl.searchParams.get("playlistid");
 
   try {
     await connectDB();
@@ -84,9 +86,20 @@ export const GET = async (
       );
     }
 
-    const playlist = user.playlist;
+    const playlist = playlistId
+      ? user.playlist.find((item: { id: string }) => item.id === playlistId)
+      : user.playlist;
 
-    return NextResponse.json(playlist, { status: 200 });
+    return NextResponse.json(playlist, {
+      status: 200,
+      headers: {
+        "Cache-Control":
+          "no-store, no-cache, must-revalidate, proxy-revalidate",
+        Pragma: "no-cache",
+        Expires: "0",
+        "Surrogate-Control": "no-store",
+      },
+    });
   } catch (error: unknown) {
     console.error(error instanceof Error ? error.message : error);
     return NextResponse.json(
@@ -165,7 +178,7 @@ export const PUT = async (
     playlist.songIds = [...playlist.songIds, ...songIds];
 
     await Users.updateOne(
-      { _id: id, "playlist.id": playlistId },
+      { _id: id, "playlist._id": playlistId },
       {
         $set: {
           "playlist.$.title": playlist.title,
@@ -178,7 +191,7 @@ export const PUT = async (
     return NextResponse.json(
       {
         message: "Playlist updated successfully",
-        updatedPlaylist: user.playlist,
+        updatedPlaylist: playlist,
       },
       { status: 200 }
     );
@@ -225,7 +238,7 @@ export const DELETE = async (
     if (isFullDeletePlaylist === "true") {
       await Users.updateOne(
         { _id: id },
-        { $pull: { playlist: { id: playlistId } } }
+        { $pull: { playlist: { _id: playlistId } } }
       );
       return NextResponse.json(
         { message: "Playlist deleted successfully" },
@@ -249,12 +262,14 @@ export const DELETE = async (
     );
 
     await Users.updateOne(
-      { _id: id, "playlist.id": playlistId },
+      { _id: id, "playlist._id": playlistId },
       { $set: { "playlist.$.songIds": updatedSongIds } }
     );
 
     return NextResponse.json(
-      { message: "Playlist song(s) deleted successfully" },
+      {
+        message: "Playlist song(s) deleted successfully",
+      },
       { status: 200 }
     );
   } catch (error: unknown) {

@@ -4,7 +4,6 @@ import React from "react";
 import ImageWithFallback from "./ImageWithFallback";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import ls from "localstorage-slim";
 
 type Props = {
   id: string;
@@ -12,15 +11,16 @@ type Props = {
   imageUrl?: string;
   artist?: string;
   audioUrl?: string;
-  type: "song" | "artist" | "playlist";
+  link?: string;
+  type: "song" | "artist" | "playlist" | "user";
 };
-const Card = ({ title, imageUrl, artist, audioUrl, id, type }: Props) => {
+const Card = ({ title, imageUrl, artist, audioUrl, id, type, link }: Props) => {
   const { setGlobalState, session } = useGlobalContext();
 
   const router = useRouter();
 
   const handleUpdateState = () => {
-    if (!artist || !audioUrl || !imageUrl) return;
+    if (!id || !artist || !audioUrl || !imageUrl) return;
     setGlobalState((prev) => ({
       ...prev,
       currentSong: {
@@ -43,9 +43,11 @@ const Card = ({ title, imageUrl, artist, audioUrl, id, type }: Props) => {
       ? `artists/${encodeURIComponent(
           title.replaceAll(" ", "-").toLowerCase()
         )}-${id}`
-      : `/playlist/${encodeURIComponent(
+      : type === "playlist"
+      ? `/playlist/${encodeURIComponent(
           title.replaceAll(" ", "-").toLowerCase()
-        )}-${id}`;
+        )}-${id}`
+      : link;
 
   return (
     <>
@@ -81,7 +83,7 @@ const Card = ({ title, imageUrl, artist, audioUrl, id, type }: Props) => {
         </button>
       ) : type === "artist" && imageUrl ? (
         <Link
-          href={urlSlug}
+          href={urlSlug ?? ""}
           className="flex flex-col gap-2 w-[150px] sm:w-[180px] rounded-full cursor-pointer group"
         >
           <div className="w-[150px] sm:w-[180px] relative">
@@ -108,8 +110,8 @@ const Card = ({ title, imageUrl, artist, audioUrl, id, type }: Props) => {
         </Link>
       ) : (
         <Link
-          href={urlSlug}
-          className="flex flex-col items-center justify-center gap-2 p-2 w-[150px] h-[150px] sm:w-[180px] sm:h-[180px] rounded-md cursor-pointer bg-custom_gradient relative"
+          href={urlSlug ?? ""}
+          className="flex flex-col items-center justify-center gap-2 p-2 w-[150px] h-[150px] sm:w-[180px] sm:h-[180px] rounded-md cursor-pointer bg-custom_gradient relative hover:underline underline-offset-2"
         >
           <img
             src="/logo-circle.svg"
@@ -119,7 +121,9 @@ const Card = ({ title, imageUrl, artist, audioUrl, id, type }: Props) => {
             className="w-8 h-8 absolute bottom-2 left-2"
           />
 
-          <p className="w-full text-center text-xl font-bold">{title}</p>
+          <p className="w-[150px] sm:w-[180px] text-center text-xl font-bold">
+            {title}
+          </p>
           <span className="absolute top-0 left-0 w-full h-28 bg-action/50 -z-10 rounded-t-md rounded-br-[100%]"></span>
         </Link>
       )}

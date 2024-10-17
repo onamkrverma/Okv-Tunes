@@ -36,7 +36,7 @@ const ArtistInfo = async ({ params }: Props) => {
                   item.quality === "500x500" && item.url.includes("/c.saavncdn")
               )?.url ?? "/logo-circle.svg"
             }
-            alt={name + " okv tunes"}
+            alt={name + "-okv tunes"}
             width={200}
             height={200}
             className="w-full h-full object-cover rounded-full shadow-lg shadow-neutral-700"
