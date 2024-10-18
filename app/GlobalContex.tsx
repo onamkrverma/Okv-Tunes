@@ -21,10 +21,16 @@ type TCurrentSong = {
   volume?: number;
 };
 
+type TAlertMessage = {
+  isAlertVisible: boolean;
+  message: string;
+};
+
 type TGlobalState = {
   currentSong: TCurrentSong;
   likedSongsIds: string[];
   session: Session | null;
+  alertMessage?: TAlertMessage;
 };
 export const defaultState: TGlobalState = {
   currentSong: {
@@ -39,11 +45,16 @@ export const defaultState: TGlobalState = {
   },
   likedSongsIds: [],
   session: null,
+  alertMessage: {
+    isAlertVisible: false,
+    message: "",
+  },
 };
 type TGlobalContext = {
   currentSong: TCurrentSong;
   likedSongsIds: string[];
   session: Session | null;
+  alertMessage?: TAlertMessage;
   setGlobalState: React.Dispatch<React.SetStateAction<TGlobalState>>;
 };
 
@@ -99,6 +110,7 @@ export const GlobalContextProvider = ({
           currentSong: currentSongInfo,
           likedSongsIds: [],
           session: null,
+          alertMessage: defaultState.alertMessage,
         })
       : null;
   }, []);

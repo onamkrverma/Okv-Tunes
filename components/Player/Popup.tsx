@@ -111,7 +111,7 @@ const Popup = ({ isPopup, setIsPopup, songId, variant, session }: Props) => {
   };
 
   return (
-    <div className="fixed top-0 left-0 w-full h-full z-20 backdrop-blur-sm flex items-center justify-center">
+    <div className="fixed top-0 left-0 w-full h-full z-20 backdrop-blur-sm border flex items-center justify-center">
       {/* close popup */}
       <div
         className="h-full w-full absolute top-0"

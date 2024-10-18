@@ -17,7 +17,7 @@ type Props = {
 };
 
 const SongsCollection = ({ song, playlistId }: Props) => {
-  const { setGlobalState, session } = useGlobalContext();
+  const { setGlobalState, alertMessage, session } = useGlobalContext();
   const router = useRouter();
 
   const [isMoreBtnClick, setIsMoreBtnClick] = useState(false);
@@ -50,16 +50,28 @@ const SongsCollection = ({ song, playlistId }: Props) => {
   };
 
   const handleRemoveSongs = async (event: MouseEvent<HTMLSpanElement>) => {
-    // setIsLoading(true);
     event.stopPropagation();
-    const userId = session?.user?.id;
-    if (!userId || !playlistId) return;
-    const res = await deleteUserPlaylistSongs({
-      userId,
-      playlistSongIds: [song.id],
-      playlistId,
-    });
-    console.log(res);
+    try {
+      const userId = session?.user?.id;
+      if (!userId || !playlistId) return;
+      const res = await deleteUserPlaylistSongs({
+        userId,
+        playlistSongIds: [song.id],
+        playlistId,
+      });
+      console.log(res);
+      setGlobalState((prev) => ({
+        ...prev,
+        alertMessage: { isAlertVisible: true, message: res.message },
+      }));
+      setIsMoreBtnClick(false);
+    } catch (error) {
+      if (error instanceof Error)
+        setGlobalState((prev) => ({
+          ...prev,
+          alertMessage: { isAlertVisible: true, message: error.message },
+        }));
+    }
   };
 
   return (
@@ -98,7 +110,7 @@ const SongsCollection = ({ song, playlistId }: Props) => {
         <ThreeDotsIcon className="w-6 h-6" />
       </button>
       <div
-        className={`absolute bottom-2 right-12 bg-primary border flex-col gap-2 p-2 rounded-md z-[5] hover:bg-secondary ${
+        className={`absolute bottom-2 right-12 bg-neutral-800 border flex-col gap-2 p-2 rounded-md z-[5] hover:bg-secondary ${
           isMoreBtnClick ? "flex" : "hidden"
         } `}
       >

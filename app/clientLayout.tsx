@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import registerSw from "@/public/registerSw";
+import AlertNotification from "@/components/AlertNotification";
 const Plalyer = dynamic(() => import("@/components/Player"), { ssr: false });
 
 const ClientLayout = ({
@@ -30,6 +31,9 @@ const ClientLayout = ({
         {!hideSideNavbarPaths.includes(currentPath) ? <Navbar /> : null}
         {!hideSideNavbarPaths.includes(currentPath) ? <SideNavbar /> : null}
         {children}
+        {!hideSideNavbarPaths.includes(currentPath) ? (
+          <AlertNotification />
+        ) : null}
         {!hideSideNavbarPaths.includes(currentPath) ? <Plalyer /> : null}
         {!hideSideNavbarPaths.includes(currentPath) ? <Footer /> : null}
       </main>

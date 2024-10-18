@@ -246,7 +246,7 @@ const MiniPlayer = ({
             </button>
           </div>
         </div>
-      </div>{" "}
+      </div>
       {isPlaylistPopup ? (
         <Popup
           isPopup={isPlaylistPopup}
