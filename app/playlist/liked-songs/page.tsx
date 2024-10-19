@@ -1,35 +1,66 @@
-import { auth } from "@/auth";
+"use client";
+import { useGlobalContext } from "@/app/GlobalContex";
 import ImageWithFallback from "@/components/ImageWithFallback";
+import Loading from "@/components/Loading";
 import SongsCollection from "@/components/SongsCollection";
-import { getLikedSongs, getPlaylists, getSongs } from "@/utils/api";
-import { Metadata } from "next";
-import Link from "next/link";
-import React from "react";
 import LoginIcon from "@/public/icons/login.svg";
-import RefreshClient from "@/components/RefreshClient";
+import RefreshIcon from "@/public/icons/refresh.svg";
+import { getLikedSongs, getSongs } from "@/utils/api";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import useSWR, { mutate } from "swr";
 
-export const metadata: Metadata = {
-  title: "Liked Songs • Okv-Tunes",
-};
+const LikedSongs = () => {
+  const { session } = useGlobalContext();
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
-const LikedSongs = async () => {
-  const session = await auth();
+  useEffect(() => {
+    document.title = "Liked Songs • Okv-Tunes";
+  }, []);
+
   const userId = session?.user?.id;
-  const likedSongsIds = userId ? await getLikedSongs({ userId }) : [];
 
-  const likedSongs = (await getSongs({ id: likedSongsIds })).data;
+  const likedSongsIdsFetcher = () =>
+    userId ? getLikedSongs({ userId }) : null;
+  const { data: likedSongsIds } = useSWR(
+    userId ? "/liked-id" : null,
+    likedSongsIdsFetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
+
+  const likedSongsFetcher = () =>
+    likedSongsIds ? getSongs({ id: likedSongsIds }) : null;
+  const { data: likedSongs, isLoading } = useSWR(
+    likedSongsIds?.length ? "/liked-songs" : null,
+    likedSongsFetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
+
+  const hanldeRefresh = async () => {
+    setIsRefreshing(true);
+    await mutate("/liked-id");
+    await mutate("/liked-songs");
+    setIsRefreshing(false);
+  };
 
   return (
     <div className="inner-container flex flex-col gap-6">
       <div className="flex gap-4 flex-col flex-wrap sm:flex-row items-center ">
         <div className="w-[200px] h-[200px]">
           <ImageWithFallback
-            id={likedSongs?.[0].id}
+            id={likedSongs?.data?.[0].id}
             src={
-              likedSongs?.[0].image.find((item) => item.quality === "500x500")
-                ?.url ?? "/logo-circle.svg"
+              likedSongs?.data?.[0].image.find(
+                (item) => item.quality === "500x500"
+              )?.url ?? "/logo-circle.svg"
             }
-            alt={likedSongs?.[0].name + "-okv tunes"}
+            alt={likedSongs?.data?.[0].name + "-okv tunes"}
             width={200}
             height={200}
             className="w-full h-full object-cover rounded-md shadow-lg shadow-neutral-700"
@@ -46,39 +77,34 @@ const LikedSongs = async () => {
       </div>
 
       <div className="flex flex-col gap-4 my-4">
-        {session ? (
-          <>
-            <div className="flex justify-end items-center">
-              <RefreshClient />
+        <div className="flex justify-end items-center">
+          <button
+            type="button"
+            onClick={hanldeRefresh}
+            className="flex items-center justify-center gap-2 border bg-neutral-800 hover:bg-secondary rounded-md p-1 px-2"
+          >
+            <RefreshIcon
+              className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`}
+            />
+            Refresh
+          </button>
+        </div>
+        {!isLoading && likedSongsIds ? (
+          likedSongsIds.length > 0 ? (
+            likedSongs?.data?.map((song) => (
+              <SongsCollection key={song.id} song={song} />
+            ))
+          ) : (
+            <div className="text-center flex flex-col items-center justify-center gap-2 min-h-40">
+              <p className="text-lg font-bold">Liked Song Not Found</p>
+              <p className="text-neutral-400 text-sm">
+                Your liked songs will be displayed here. Please like any songs
+                to see them appear.
+              </p>
             </div>
-            {likedSongsIds.length > 0 ? (
-              likedSongs.map((song) => (
-                <SongsCollection key={song.id} song={song} />
-              ))
-            ) : (
-              <div className="text-center flex flex-col items-center justify-center gap-2 min-h-40">
-                <p className="text-lg font-bold">Liked Song Not Found</p>
-                <p className="text-neutral-400 text-sm">
-                  Your liked songs will be displayed here. Please like any songs
-                  to see them appear.
-                </p>
-              </div>
-            )}
-          </>
+          )
         ) : (
-          <div className="text-center flex flex-col items-center justify-center gap-2 min-h-40">
-            <p className="text-neutral-400 text-sm">
-              Your liked songs will be displayed here. Please Login to see them
-              appear.
-            </p>
-            <Link
-              href={"/login"}
-              title="login"
-              className="flex items-center gap-2 text-xs bg-neutral-800 h-10 hover:bg-secondary hover:border p-2 px-3 rounded-lg"
-            >
-              <LoginIcon className="w-6 h-6" /> Login
-            </Link>
-          </div>
+          <Loading loadingText="Loading" />
         )}
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+"use client";
 import ImageWithFallback from "@/components/ImageWithFallback";
 import SongsCollection from "@/components/SongsCollection";
 import {
@@ -9,40 +9,69 @@ import {
 } from "@/utils/api";
 import { Metadata } from "next";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import LoginIcon from "@/public/icons/login.svg";
 import RefreshClient from "@/components/RefreshClient";
+import { useGlobalContext } from "@/app/GlobalContex";
+import useSWR, { mutate } from "swr";
+import RefreshIcon from "@/public/icons/refresh.svg";
+import Loading from "@/components/Loading";
 
 type Props = {
   params: { playlistslug: string };
 };
 
-export const metadata: Metadata = {
-  title: "User Playlist • Okv-Tunes",
-};
-
-const UserPlaylistSongs = async ({ params }: Props) => {
+const UserPlaylistSongs = ({ params }: Props) => {
   const id = params.playlistslug.split("-").pop() as string;
   const title = params.playlistslug.split("-").slice(0, -1).join(" ");
-  const session = await auth();
+  const { session } = useGlobalContext();
   const userId = session?.user?.id;
-  let userPlaylist = userId
-    ? await getUserPlaylist({ userId, playlistId: id })
-    : null;
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const playlistSongs = (await getSongs({ id: userPlaylist?.songIds })).data;
+  useEffect(() => {
+    document.title = "User Playlist • Okv-Tunes";
+  }, []);
+
+  const userPlaylistFetcher = () =>
+    userId ? getUserPlaylist({ userId, playlistId: id }) : null;
+  const { data: userPlaylist } = useSWR(
+    userId ? "/user-playlist" : null,
+    userPlaylistFetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
+  const playlistSongsFetcher = () =>
+    userPlaylist ? getSongs({ id: userPlaylist.songIds }) : null;
+  const { data: playlistSongs, isLoading } = useSWR(
+    userPlaylist ? "/playlist-songs" : null,
+    playlistSongsFetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
+
+  const hanldeRefresh = async () => {
+    setIsRefreshing(true);
+    await mutate("/user-playlist");
+    await mutate("/playlist-songs");
+    setIsRefreshing(false);
+  };
 
   return (
     <div className="inner-container flex flex-col gap-6">
       <div className="flex gap-4 flex-col flex-wrap sm:flex-row items-center ">
         <div className="w-[200px] h-[200px]">
           <ImageWithFallback
-            id={playlistSongs[0].id}
+            id={playlistSongs?.data[0].id}
             src={
-              playlistSongs[0].image.find((item) => item.quality === "500x500")
-                ?.url ?? "/logo-circle.svg"
+              playlistSongs?.data[0].image.find(
+                (item) => item.quality === "500x500"
+              )?.url ?? "/logo-circle.svg"
             }
-            alt={playlistSongs[0].name + "-okv tunes"}
+            alt={playlistSongs?.data[0].name + "-okv tunes"}
             width={200}
             height={200}
             className="w-full h-full object-cover rounded-md shadow-lg shadow-neutral-700"
@@ -70,26 +99,39 @@ const UserPlaylistSongs = async ({ params }: Props) => {
         {session ? (
           <>
             <div className="flex justify-end items-center">
-              <RefreshClient />
-            </div>
-            {userPlaylist && userPlaylist.songIds.length > 0 ? (
-              playlistSongs.map((song) => (
-                <SongsCollection
-                  key={song.id}
-                  song={song}
-                  playlistId={userPlaylist._id}
+              <button
+                type="button"
+                onClick={hanldeRefresh}
+                className="flex items-center justify-center gap-2 border bg-neutral-800 hover:bg-secondary rounded-md p-1 px-2"
+              >
+                <RefreshIcon
+                  className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`}
                 />
-              ))
+                Refresh
+              </button>
+            </div>
+            {!isLoading && userPlaylist ? (
+              userPlaylist.songIds.length > 0 ? (
+                playlistSongs?.data.map((song) => (
+                  <SongsCollection
+                    key={song.id}
+                    song={song}
+                    playlistId={userPlaylist._id}
+                  />
+                ))
+              ) : (
+                <div className="text-center flex flex-col items-center justify-center gap-2 min-h-40">
+                  <p className="text-lg font-bold">
+                    No song found in this playlist
+                  </p>
+                  <small className="text-neutral-400">
+                    User saved playlist songs will be displayed here. If this is
+                    your playlist, please add songs to see them appear.
+                  </small>
+                </div>
+              )
             ) : (
-              <div className="text-center flex flex-col items-center justify-center gap-2 min-h-40">
-                <p className="text-lg font-bold">
-                  No song found in this playlist
-                </p>
-                <small className="text-neutral-400">
-                  User saved playlist songs will be displayed here. If this is
-                  your playlist, please add songs to see them appear.
-                </small>
-              </div>
+              <Loading loadingText="Loading" />
             )}
           </>
         ) : (
