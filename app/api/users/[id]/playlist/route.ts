@@ -118,11 +118,7 @@ export const PUT = async (
     await request.json();
 
   try {
-    if (
-      !Array.isArray(songIds) ||
-      typeof playlistId !== "string" ||
-      !playlistId
-    ) {
+    if (typeof playlistId !== "string" || !playlistId) {
       return NextResponse.json(
         {
           error: "The songIds must be an array and playlistId must be a string",
@@ -162,20 +158,22 @@ export const PUT = async (
       playlist.visibility = visibility;
     }
 
-    const duplicateSongs = songIds.filter((songId) =>
-      playlist.songIds.includes(songId)
-    );
-
-    if (duplicateSongs.length > 0) {
-      return NextResponse.json(
-        {
-          error: "The selected song IDs already exist in this playlist",
-        },
-        { status: 400 }
+    if (songIds) {
+      const duplicateSongs = songIds.filter((songId) =>
+        playlist.songIds.includes(songId)
       );
-    }
 
-    playlist.songIds = [...playlist.songIds, ...songIds];
+      if (duplicateSongs.length > 0) {
+        return NextResponse.json(
+          {
+            error: "The selected song IDs already exist in this playlist",
+          },
+          { status: 400 }
+        );
+      }
+
+      playlist.songIds = [...playlist.songIds, ...songIds];
+    }
 
     await Users.updateOne(
       { _id: id, "playlist._id": playlistId },
