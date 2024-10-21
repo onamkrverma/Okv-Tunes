@@ -2,28 +2,39 @@ import { auth } from "@/auth";
 import Card from "@/components/Card";
 import ImageWithFallback from "@/components/ImageWithFallback";
 import LoginLogout from "@/components/LoginLogout";
-import { getUserAllPlaylist, getUserInfo } from "@/utils/api";
+import {
+  getUserAllPlaylist,
+  getUserInfo,
+  getUserPublicPlaylists,
+} from "@/utils/api";
 import Link from "next/link";
 import LoginIcon from "@/public/icons/login.svg";
 import { Metadata } from "next";
+import { NextRequest } from "next/server";
+import { cookies } from "next/headers";
 
 export const metadata: Metadata = {
   title: "Profile • Okv-Tunes",
 };
 
 const Profile = async () => {
-  const session = await auth();
-  const userId = session?.user?.id;
-  const userInfo = userId ? await getUserInfo({ userId }) : null;
-  const userPlaylists = userId ? await getUserAllPlaylist({ userId }) : [];
+  const authToken = cookies().get("authjs.session-token")?.value;
+  const userInfo = authToken ? await getUserInfo({ authToken }) : null;
+  const userPlaylists = authToken
+    ? await getUserAllPlaylist({ authToken })
+    : [];
+  const publicPlaylists = authToken
+    ? await getUserPublicPlaylists({ authToken })
+    : [];
 
+  const session = await auth();
   const userImg = session?.user?.image || userInfo?.image;
 
   const urlSlug = (title: string, id: string) =>
     `/playlist/user-playlist/${encodeURIComponent(
       title.replaceAll(" ", "-").toLowerCase()
     )}-${id}`;
-
+  console.log(publicPlaylists);
   return (
     <div className="inner-container flex flex-col gap-6 ">
       <div className="flex gap-4 flex-col flex-wrap sm:flex-row items-center relative">
@@ -33,7 +44,6 @@ const Profile = async () => {
         <div className=" w-24 h-24 sm:w-[150px] sm:h-[150px]">
           {userImg ? (
             <ImageWithFallback
-              id={userId ? userId : undefined}
               src={userImg}
               alt="user"
               width={150}
@@ -57,30 +67,47 @@ const Profile = async () => {
         </div>
       </div>
       <div className="flex flex-col gap-4 border-t py-2">
-        <div className="flex justify-between items-center">
-          <h2 className="capitalize text-xl sm:text-2xl font-bold text-center sm:text-start">
-            Your Save Playlist
-          </h2>
-        </div>
+        <h2 className="capitalize text-xl sm:text-2xl font-bold text-center sm:text-start">
+          Your Save Playlist
+        </h2>
         {session ? (
-          <div className="flex items-center gap-4 overflow-x-auto">
-            <Card
-              id={"1"}
-              title={"Liked Songs"}
-              type="user"
-              link="/playlist/liked-songs"
-            />
-
-            {userPlaylists.map((playlist) => (
+          <>
+            <div className="flex items-center gap-4 overflow-x-auto">
               <Card
-                key={playlist._id}
-                id={playlist._id}
-                title={playlist.title}
+                id={"1"}
+                title={"Liked Songs"}
                 type="user"
-                link={urlSlug(playlist.title, playlist._id)}
+                link="/playlist/liked-songs"
               />
-            ))}
-          </div>
+
+              {userPlaylists?.map((playlist) => (
+                <Card
+                  key={playlist._id}
+                  id={playlist._id}
+                  title={playlist.title}
+                  type="user"
+                  link={urlSlug(playlist.title, playlist._id)}
+                />
+              ))}
+            </div>
+
+            <div className="flex flex-col gap-4 border-t py-2">
+              <h2 className="capitalize text-xl sm:text-2xl font-bold text-center sm:text-start">
+                Public Playlists
+              </h2>
+              <div className="flex items-center gap-4 overflow-x-auto">
+                {publicPlaylists?.map((playlist) => (
+                  <Card
+                    key={playlist._id}
+                    id={playlist._id}
+                    title={playlist.title}
+                    type="user"
+                    link={urlSlug(playlist.title, playlist._id)}
+                  />
+                ))}
+              </div>
+            </div>
+          </>
         ) : (
           <div className="text-center flex flex-col items-center justify-center gap-2 min-h-40">
             <p className="text-neutral-400 text-sm">

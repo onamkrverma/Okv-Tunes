@@ -9,6 +9,7 @@ import React, {
 import { Session } from "next-auth";
 import { getLikedSongs } from "@/utils/api";
 import ls from "localstorage-slim";
+import { getSession } from "next-auth/react";
 
 type TCurrentSong = {
   id: string;
@@ -75,6 +76,7 @@ export const GlobalContextProvider = ({
     const response = await fetch(
       `/api/auth/session?timestamp=${new Date().getTime()}`
     );
+
     const session: Session | null = await response.json();
     if (session) {
       const userId = session.user?.id ? session.user.id : null;

@@ -1,60 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
-import { decode, getToken } from "next-auth/jwt";
+import { getToken } from "next-auth/jwt";
+
+const { AUTH_SECRET } = process.env;
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const httpMethod = req.method;
-  const token = await getToken({ req, secret: process.env.AUTH_SECRET });
-  // console.log(token);
-
-  console.log({ pathname });
-
+  const token = await getToken({ req, secret: AUTH_SECRET });
+  console.log(pathname);
   if (!token) {
     if (
-      pathname === "/playlist/liked-songs" ||
+      pathname.startsWith("/playlist/liked-songs") ||
       pathname.startsWith("/playlist/user-playlist")
     ) {
       return NextResponse.redirect(new URL("/login", req.url));
     }
-    if (
-      pathname.startsWith("/api/users") &&
-      pathname.includes("/public-playlist")
-    ) {
-      return NextResponse.json(
-        { error: "Unauthorized!" },
-        {
-          status: 401,
-        }
-      );
-    }
-    if (pathname.startsWith("/api/users") && pathname.endsWith("/playlist")) {
-      // return NextResponse.json(
-      //   { error: "Unauthorized!" },
-      //   {
-      //     status: 401,
-      //   }
-      // );
-      console.log(token);
-    }
-    if (
-      pathname.startsWith("/api/users") &&
-      pathname.includes("/liked-songs")
-    ) {
-      return NextResponse.json(
-        { error: "Unauthorized!" },
-        {
-          status: 401,
-        }
-      );
+    if (pathname.startsWith("/api/users")) {
+      return NextResponse.json({ error: "Unauthorized!" }, { status: 401 });
     }
   } else {
     if (
-      pathname.startsWith("/api/users/") &&
-      pathname.includes("/playlist") &&
-      httpMethod !== "GET"
+      !pathname.startsWith(`/api/users/${token.sub}`) &&
+      pathname !== "/api/users/public-playlist"
     ) {
       return NextResponse.json(
-        { error: "You do not have access to this playlist" },
+        { error: "You do not have access" },
         { status: 403 }
       );
     }

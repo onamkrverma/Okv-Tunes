@@ -1,5 +1,7 @@
+import { auth } from "@/auth";
 import Users from "@/models/users";
 import connectDB from "@/utils/db";
+import { getToken } from "next-auth/jwt";
 import { NextResponse, type NextRequest } from "next/server";
 
 interface RequestBody {

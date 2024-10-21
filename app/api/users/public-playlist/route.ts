@@ -1,14 +1,24 @@
 import Users from "@/models/users";
 import connectDB from "@/utils/db";
+import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
 
 // get single playlist with playlistid search param else get all playlist
 export const GET = async (request: NextRequest) => {
   const playlistId = request.nextUrl.searchParams.get("playlistid");
   try {
+    const token = await getToken({
+      req: request,
+      secret: process.env.AUTH_SECRET,
+    });
+    if (!token?.sub) return;
+
     await connectDB();
 
-    const users = await Users.find({}, { playlist: 1 });
+    const users = await Users.find(
+      { _id: { $ne: token.sub } },
+      { playlist: 1 }
+    );
 
     if (!users || users.length === 0) {
       return NextResponse.json(
