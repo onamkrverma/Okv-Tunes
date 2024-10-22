@@ -1,28 +1,27 @@
 "use client";
+import { useGlobalContext } from "@/app/GlobalContex";
+import CrossIcon from "@/public/icons/cross.svg";
 import {
   createUserPlaylist,
   getSongs,
   getUserAllPlaylist,
-  getUserPlaylist,
   updateUserPlaylistSongs,
 } from "@/utils/api";
+import Link from "next/link";
 import React, { ChangeEvent, useRef, useState } from "react";
 import useSWR from "swr";
-import CrossIcon from "@/public/icons/cross.svg";
-import Link from "next/link";
-import Loading from "../Loading";
 import Input from "../Input";
-import { Session } from "next-auth";
+import Loading from "../Loading";
 
 type Props = {
   isPopup: boolean;
   setIsPopup: React.Dispatch<React.SetStateAction<boolean>>;
   songId: string;
   variant: "song-info" | "add-playlist";
-  session?: Session | null;
 };
 
-const Popup = ({ isPopup, setIsPopup, songId, variant, session }: Props) => {
+const Popup = ({ isPopup, setIsPopup, songId, variant }: Props) => {
+  const { authToken } = useGlobalContext();
   const [isAddNewPlaylist, setIsAddNewPlaylist] = useState(false);
 
   const [isPlaylistSaving, setIsPlaylistSaving] = useState(false);
@@ -44,10 +43,8 @@ const Popup = ({ isPopup, setIsPopup, songId, variant, session }: Props) => {
     }
   );
 
-  const userId = session?.user?.id;
-
   const playlistFetcher = () =>
-    userId ? getUserAllPlaylist({ userId }) : null;
+    authToken ? getUserAllPlaylist({ authToken }) : null;
   const { data: userPlaylistData, isLoading: isPlaylistLoading } = useSWR(
     isPopup && variant === "add-playlist" ? "/user-playlist" : null,
     playlistFetcher,
@@ -64,18 +61,18 @@ const Popup = ({ isPopup, setIsPopup, songId, variant, session }: Props) => {
 
   const handleSaveToPlaylist = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!saveFormRef.current || !userId) return;
+    if (!saveFormRef.current || !authToken) return;
     try {
       setIsPlaylistSaving(true);
       setAlertMessage(null);
       const formData = new FormData(saveFormRef.current);
       const playlistId = formData.get("playlist")?.toString();
       const res = await updateUserPlaylistSongs({
-        userId,
+        authToken,
         playlistId,
         playlistSongIds: [songId],
       });
-      setAlertMessage({ message: res.message, type: "success" });
+      setAlertMessage({ message: res?.message ?? "success", type: "success" });
     } catch (error) {
       if (error instanceof Error) {
         setAlertMessage({ message: error.message, type: "error" });
@@ -86,20 +83,21 @@ const Popup = ({ isPopup, setIsPopup, songId, variant, session }: Props) => {
   };
   const handleCreatePlaylist = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!createFormRef.current || !userId) return;
+    if (!createFormRef.current || !authToken) return;
     try {
       setIsPlaylistSaving(true);
       setAlertMessage(null);
       const formData = new FormData(createFormRef.current);
       const title = formData.get("title")?.toString();
       const visibility = formData.get("visibility")?.toString();
+      if (!authToken) return;
       const res = await createUserPlaylist({
-        userId,
+        authToken,
         playlistTitle: title,
         playlistSongIds: [songId],
         playlistVisibility: visibility,
       });
-      setAlertMessage({ message: res.message, type: "success" });
+      setAlertMessage({ message: res?.message ?? "success", type: "success" });
       console.log(title, visibility);
     } catch (error) {
       if (error instanceof Error) {

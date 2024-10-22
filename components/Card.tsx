@@ -15,7 +15,7 @@ type Props = {
   type: "song" | "artist" | "playlist" | "user";
 };
 const Card = ({ title, imageUrl, artist, audioUrl, id, type, link }: Props) => {
-  const { setGlobalState, session } = useGlobalContext();
+  const { setGlobalState, authToken } = useGlobalContext();
 
   const router = useRouter();
 
@@ -33,7 +33,7 @@ const Card = ({ title, imageUrl, artist, audioUrl, id, type, link }: Props) => {
         isRefetchSuggestion: true,
       },
     }));
-    if (!session) {
+    if (!authToken) {
       return router.push("/login");
     }
   };
@@ -121,7 +121,7 @@ const Card = ({ title, imageUrl, artist, audioUrl, id, type, link }: Props) => {
             className="w-8 h-8 absolute bottom-2 left-2"
           />
 
-          <p className="w-[150px] sm:w-[180px] text-center text-xl font-bold">
+          <p className="w-[150px] sm:w-[180px] text-center text-xl font-bold line-clamp-3">
             {title}
           </p>
           <span className="absolute top-0 left-0 w-full h-28 bg-action/50 -z-10 rounded-t-md rounded-br-[100%]"></span>

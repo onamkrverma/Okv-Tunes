@@ -10,7 +10,6 @@ import {
 import Link from "next/link";
 import LoginIcon from "@/public/icons/login.svg";
 import { Metadata } from "next";
-import { NextRequest } from "next/server";
 import { cookies } from "next/headers";
 
 export const metadata: Metadata = {
@@ -30,11 +29,11 @@ const Profile = async () => {
   const session = await auth();
   const userImg = session?.user?.image || userInfo?.image;
 
-  const urlSlug = (title: string, id: string) =>
+  const urlSlug = (title: string, id: string, type: "public" | "private") =>
     `/playlist/user-playlist/${encodeURIComponent(
       title.replaceAll(" ", "-").toLowerCase()
-    )}-${id}`;
-  console.log(publicPlaylists);
+    )}-${id}?type=${type}`;
+
   return (
     <div className="inner-container flex flex-col gap-6 ">
       <div className="flex gap-4 flex-col flex-wrap sm:flex-row items-center relative">
@@ -67,7 +66,7 @@ const Profile = async () => {
         </div>
       </div>
       <div className="flex flex-col gap-4 border-t py-2">
-        <h2 className="capitalize text-xl sm:text-2xl font-bold text-center sm:text-start">
+        <h2 className="capitalize text-xl sm:text-2xl font-bold  sm:text-start">
           Your Save Playlist
         </h2>
         {session ? (
@@ -86,27 +85,28 @@ const Profile = async () => {
                   id={playlist._id}
                   title={playlist.title}
                   type="user"
-                  link={urlSlug(playlist.title, playlist._id)}
+                  link={urlSlug(playlist.title, playlist._id, "private")}
                 />
               ))}
             </div>
-
-            <div className="flex flex-col gap-4 border-t py-2">
-              <h2 className="capitalize text-xl sm:text-2xl font-bold text-center sm:text-start">
-                Public Playlists
-              </h2>
-              <div className="flex items-center gap-4 overflow-x-auto">
-                {publicPlaylists?.map((playlist) => (
-                  <Card
-                    key={playlist._id}
-                    id={playlist._id}
-                    title={playlist.title}
-                    type="user"
-                    link={urlSlug(playlist.title, playlist._id)}
-                  />
-                ))}
+            {publicPlaylists && publicPlaylists.length > 0 ? (
+              <div className="flex flex-col gap-4 border-t py-2">
+                <h2 className="capitalize text-xl sm:text-2xl font-bold  sm:text-start">
+                  Public Playlists
+                </h2>
+                <div className="flex items-center gap-4 overflow-x-auto">
+                  {publicPlaylists.map((playlist) => (
+                    <Card
+                      key={playlist._id}
+                      id={playlist._id}
+                      title={playlist.title}
+                      type="user"
+                      link={urlSlug(playlist.title, playlist._id, "public")}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
+            ) : null}
           </>
         ) : (
           <div className="text-center flex flex-col items-center justify-center gap-2 min-h-40">

@@ -13,6 +13,8 @@ import InfoIcon from "@/public/icons/info.svg";
 import Popup from "./Popup";
 import { usePathname } from "next/navigation";
 import ls from "localstorage-slim";
+import { Session } from "next-auth";
+import { getSession } from "next-auth/react";
 
 export type TplayerState = {
   url: string;

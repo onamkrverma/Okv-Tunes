@@ -1,41 +1,38 @@
 "use client";
-import ImageWithFallback from "@/components/ImageWithFallback";
-import SongsCollection from "@/components/SongsCollection";
-import {
-  getLikedSongs,
-  getPlaylists,
-  getSongs,
-  getUserPlaylist,
-} from "@/utils/api";
-import { Metadata } from "next";
-import Link from "next/link";
-import React, { useEffect, useState } from "react";
-import LoginIcon from "@/public/icons/login.svg";
-import RefreshClient from "@/components/RefreshClient";
 import { useGlobalContext } from "@/app/GlobalContex";
-import useSWR, { mutate } from "swr";
-import RefreshIcon from "@/public/icons/refresh.svg";
+import ImageWithFallback from "@/components/ImageWithFallback";
 import Loading from "@/components/Loading";
+import SongsCollection from "@/components/SongsCollection";
+import RefreshIcon from "@/public/icons/refresh.svg";
+import { getSongs, getUserPlaylist, getUserPublicPlaylist } from "@/utils/api";
+import { useEffect, useState } from "react";
+import useSWR, { mutate } from "swr";
 
 type Props = {
   params: { playlistslug: string };
+  searchParams: { [key: string]: string | string[] | undefined };
 };
 
-const UserPlaylistSongs = ({ params }: Props) => {
+const UserPlaylistSongs = ({ params, searchParams }: Props) => {
   const id = params.playlistslug.split("-").pop() as string;
+  const type = searchParams["type"];
   const title = params.playlistslug.split("-").slice(0, -1).join(" ");
-  const { session } = useGlobalContext();
-  const userId = session?.user?.id;
+  const { authToken } = useGlobalContext();
+
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
-    document.title = "User Playlist • Okv-Tunes";
+    document.title = `User ${type} playlist • Okv-Tunes"`;
   }, []);
 
   const userPlaylistFetcher = () =>
-    userId ? getUserPlaylist({ userId, playlistId: id }) : null;
+    authToken
+      ? type === "public"
+        ? getUserPublicPlaylist({ authToken, playlistId: id })
+        : getUserPlaylist({ authToken, playlistId: id })
+      : null;
   const { data: userPlaylist } = useSWR(
-    userId ? "/user-playlist" : null,
+    authToken ? `/user-playlist?id=${id}` : null,
     userPlaylistFetcher,
     {
       revalidateOnFocus: false,
@@ -96,58 +93,40 @@ const UserPlaylistSongs = ({ params }: Props) => {
       </div>
 
       <div className="flex flex-col gap-4 my-4">
-        {session ? (
-          <>
-            <div className="flex justify-end items-center">
-              <button
-                type="button"
-                onClick={hanldeRefresh}
-                className="flex items-center justify-center gap-2 border bg-neutral-800 hover:bg-secondary rounded-md p-1 px-2"
-              >
-                <RefreshIcon
-                  className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`}
-                />
-                Refresh
-              </button>
+        <div className="flex justify-end items-center">
+          <button
+            type="button"
+            onClick={hanldeRefresh}
+            className="flex items-center justify-center gap-2 border bg-neutral-800 hover:bg-secondary rounded-md p-1 px-2"
+          >
+            <RefreshIcon
+              className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`}
+            />
+            Refresh
+          </button>
+        </div>
+        {!isLoading && userPlaylist ? (
+          userPlaylist.songIds.length > 0 ? (
+            playlistSongs?.data.map((song) => (
+              <SongsCollection
+                key={song.id}
+                song={song}
+                playlistId={userPlaylist._id}
+              />
+            ))
+          ) : (
+            <div className="text-center flex flex-col items-center justify-center gap-2 min-h-40">
+              <p className="text-lg font-bold">
+                No song found in this playlist
+              </p>
+              <small className="text-neutral-400">
+                User saved playlist songs will be displayed here. If this is
+                your playlist, please add songs to see them appear.
+              </small>
             </div>
-            {!isLoading && userPlaylist ? (
-              userPlaylist.songIds.length > 0 ? (
-                playlistSongs?.data.map((song) => (
-                  <SongsCollection
-                    key={song.id}
-                    song={song}
-                    playlistId={userPlaylist._id}
-                  />
-                ))
-              ) : (
-                <div className="text-center flex flex-col items-center justify-center gap-2 min-h-40">
-                  <p className="text-lg font-bold">
-                    No song found in this playlist
-                  </p>
-                  <small className="text-neutral-400">
-                    User saved playlist songs will be displayed here. If this is
-                    your playlist, please add songs to see them appear.
-                  </small>
-                </div>
-              )
-            ) : (
-              <Loading loadingText="Loading" />
-            )}
-          </>
+          )
         ) : (
-          <div className="text-center flex flex-col items-center justify-center gap-2 min-h-40">
-            <small className="text-neutral-400">
-              User saved playlist songs will be displayed here. Please Login to
-              see them appear.
-            </small>
-            <Link
-              href={"/login"}
-              title="login"
-              className="flex items-center gap-2 text-xs bg-neutral-800 h-10 hover:bg-secondary hover:border p-2 px-3 rounded-lg"
-            >
-              <LoginIcon className="w-6 h-6" /> Login
-            </Link>
-          </div>
+          <Loading loadingText="Loading" />
         )}
       </div>
     </div>

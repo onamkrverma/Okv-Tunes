@@ -17,7 +17,7 @@ type Props = {
 };
 
 const SongsCollection = ({ song, playlistId }: Props) => {
-  const { setGlobalState, alertMessage, session } = useGlobalContext();
+  const { setGlobalState, alertMessage, authToken } = useGlobalContext();
   const router = useRouter();
 
   const [isMoreBtnClick, setIsMoreBtnClick] = useState(false);
@@ -44,7 +44,7 @@ const SongsCollection = ({ song, playlistId }: Props) => {
         isRefetchSuggestion: true,
       },
     }));
-    if (!session) {
+    if (!authToken) {
       return router.push("/login");
     }
   };
@@ -52,17 +52,18 @@ const SongsCollection = ({ song, playlistId }: Props) => {
   const handleRemoveSongs = async (event: MouseEvent<HTMLSpanElement>) => {
     event.stopPropagation();
     try {
-      const userId = session?.user?.id;
-      if (!userId || !playlistId) return;
+      if (!authToken || !playlistId) return;
       const res = await deleteUserPlaylistSongs({
-        userId,
+        authToken,
         playlistSongIds: [song.id],
         playlistId,
       });
-      console.log(res);
       setGlobalState((prev) => ({
         ...prev,
-        alertMessage: { isAlertVisible: true, message: res.message },
+        alertMessage: {
+          isAlertVisible: true,
+          message: res?.message ?? "Success",
+        },
       }));
       setIsMoreBtnClick(false);
     } catch (error) {

@@ -1,4 +1,7 @@
 "use client";
+import { getLikedSongs } from "@/utils/api";
+import ls from "localstorage-slim";
+import { Session } from "next-auth";
 import React, {
   createContext,
   ReactNode,
@@ -6,10 +9,6 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { Session } from "next-auth";
-import { getLikedSongs } from "@/utils/api";
-import ls from "localstorage-slim";
-import { getSession } from "next-auth/react";
 
 type TCurrentSong = {
   id: string;
@@ -30,8 +29,9 @@ type TAlertMessage = {
 type TGlobalState = {
   currentSong: TCurrentSong;
   likedSongsIds: string[];
-  session: Session | null;
   alertMessage?: TAlertMessage;
+  authToken?: string;
+  session?: Session | null;
 };
 export const defaultState: TGlobalState = {
   currentSong: {
@@ -45,23 +45,26 @@ export const defaultState: TGlobalState = {
     volume: 1.0,
   },
   likedSongsIds: [],
-  session: null,
   alertMessage: {
     isAlertVisible: false,
     message: "",
   },
+  authToken: "",
+  session: null,
 };
 type TGlobalContext = {
   currentSong: TCurrentSong;
   likedSongsIds: string[];
-  session: Session | null;
   alertMessage?: TAlertMessage;
+  authToken?: string;
+  session?: Session | null;
   setGlobalState: React.Dispatch<React.SetStateAction<TGlobalState>>;
 };
 
 type TGlobalProviderProps = {
   children: ReactNode;
   value?: TGlobalState;
+  authToken?: string;
 };
 
 export const GlobalContext = createContext<TGlobalContext | null>(null);
@@ -69,28 +72,30 @@ export const GlobalContext = createContext<TGlobalContext | null>(null);
 export const GlobalContextProvider = ({
   children,
   value,
+  authToken,
 }: TGlobalProviderProps) => {
   const [globalState, setGlobalState] = useState(value || defaultState);
 
   const getUserSession = async () => {
-    const response = await fetch(
+    const res = await fetch(
       `/api/auth/session?timestamp=${new Date().getTime()}`
     );
 
-    const session: Session | null = await response.json();
-    if (session) {
-      const userId = session.user?.id ? session.user.id : null;
-      if (!userId) return;
-      const likedSongsIds = await getLikedSongs({ userId });
-      setGlobalState((prev) => ({
-        ...prev,
-        likedSongsIds: likedSongsIds,
-      }));
-    }
-
+    const session: Session | null = await res.json();
     setGlobalState((prev) => ({
       ...prev,
       session: session,
+    }));
+    if (!authToken) return;
+    const likedSongsIds = await getLikedSongs({
+      authToken: authToken,
+    });
+
+    if (!likedSongsIds) return;
+    setGlobalState((prev) => ({
+      ...prev,
+      likedSongsIds: likedSongsIds,
+      authToken: authToken,
     }));
   };
 
@@ -111,7 +116,6 @@ export const GlobalContextProvider = ({
       ? setGlobalState({
           currentSong: currentSongInfo,
           likedSongsIds: [],
-          session: null,
           alertMessage: defaultState.alertMessage,
         })
       : null;

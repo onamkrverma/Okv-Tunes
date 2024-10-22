@@ -40,7 +40,7 @@ const MiniPlayer = ({
   handleNext,
   handlePrev,
 }: Props) => {
-  const { currentSong, setGlobalState, session } = useGlobalContext();
+  const { currentSong, setGlobalState } = useGlobalContext();
   const { artist, audioUrl, id, imageUrl, title, isMaximise } = currentSong;
 
   const [isPlaylistPopup, setIsPlaylistPopup] = useState(false);
@@ -253,7 +253,6 @@ const MiniPlayer = ({
           setIsPopup={setIsPlaylistPopup}
           songId={id}
           variant="add-playlist"
-          session={session}
         />
       ) : null}
     </>

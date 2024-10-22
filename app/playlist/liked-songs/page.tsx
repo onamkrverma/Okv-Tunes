@@ -3,27 +3,23 @@ import { useGlobalContext } from "@/app/GlobalContex";
 import ImageWithFallback from "@/components/ImageWithFallback";
 import Loading from "@/components/Loading";
 import SongsCollection from "@/components/SongsCollection";
-import LoginIcon from "@/public/icons/login.svg";
 import RefreshIcon from "@/public/icons/refresh.svg";
 import { getLikedSongs, getSongs } from "@/utils/api";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import useSWR, { mutate } from "swr";
 
 const LikedSongs = () => {
-  const { session } = useGlobalContext();
+  const { authToken } = useGlobalContext();
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
     document.title = "Liked Songs • Okv-Tunes";
   }, []);
 
-  const userId = session?.user?.id;
-
   const likedSongsIdsFetcher = () =>
-    userId ? getLikedSongs({ userId }) : null;
+    authToken ? getLikedSongs({ authToken }) : null;
   const { data: likedSongsIds } = useSWR(
-    userId ? "/liked-id" : null,
+    authToken ? "/liked-id" : null,
     likedSongsIdsFetcher,
     {
       revalidateOnFocus: false,
