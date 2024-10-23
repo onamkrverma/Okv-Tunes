@@ -4,7 +4,7 @@ import HeartIcon from "@/public/icons/heart.svg";
 import { getLikedSongs, likeDislikeSong } from "@/utils/api";
 import useSWR, { mutate } from "swr";
 import { useGlobalContext } from "@/app/GlobalContex";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 type Props = {
   songId: string;
@@ -15,13 +15,15 @@ const LikeDislike = ({ songId }: Props) => {
   const isLiked = likedSongsIds.some((item) => item === songId);
 
   const router = useRouter();
+  const pathname = usePathname();
+
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLiked = async (event: MouseEvent<HTMLSpanElement>) => {
     setIsLoading(true);
     event.stopPropagation();
     if (!userId) {
-      return router.push("/login");
+      return router.push(`/login?next=${pathname}`);
     }
     const res = await likeDislikeSong(userId, songId);
     setGlobalState((prev) => ({

@@ -5,7 +5,7 @@ import secondsToTime from "@/utils/secondsToTime";
 import { useGlobalContext } from "@/app/GlobalContex";
 import ImageWithFallback from "./ImageWithFallback";
 import dynamic from "next/dynamic";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 const LikeDislike = dynamic(() => import("./LikeDislike"), { ssr: false });
 
 type Props = {
@@ -15,6 +15,8 @@ type Props = {
 const SongsCollection = ({ song }: Props) => {
   const { setGlobalState, session } = useGlobalContext();
   const router = useRouter();
+  const pathname = usePathname();
+
   const { id, album, artists, downloadUrl, image, name, duration } = song;
 
   const artistName = artists.all.map((artist) => artist.name).join(" , ");
@@ -38,7 +40,7 @@ const SongsCollection = ({ song }: Props) => {
       },
     }));
     if (!session) {
-      return router.push("/login");
+      return router.push(`/login?next=${pathname}`);
     }
   };
 
