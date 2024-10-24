@@ -11,6 +11,7 @@ const Footer = () => {
     { title: "Contact Us", link: "/contact" },
     { title: "Privacy Policy", link: "/privacy" },
     { title: "Terms of Use", link: "/terms" },
+    { title: "Sitemap", link: "/sitemap.xml" },
   ];
 
   useEffect(() => {

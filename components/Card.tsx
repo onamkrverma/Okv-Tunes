@@ -3,7 +3,8 @@ import { useGlobalContext } from "@/app/GlobalContex";
 import React from "react";
 import ImageWithFallback from "./ImageWithFallback";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import ls from "localstorage-slim";
 
 type Props = {
   id: string;
@@ -18,6 +19,7 @@ const Card = ({ title, imageUrl, artist, audioUrl, id, type, link }: Props) => {
   const { setGlobalState, authToken } = useGlobalContext();
 
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleUpdateState = () => {
     if (!id || !artist || !audioUrl || !imageUrl) return;
@@ -34,7 +36,7 @@ const Card = ({ title, imageUrl, artist, audioUrl, id, type, link }: Props) => {
       },
     }));
     if (!authToken) {
-      return router.push("/login");
+      return router.push(`/login?next=${pathname}`);
     }
   };
 

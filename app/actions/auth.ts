@@ -19,6 +19,8 @@ export const logoutAction = async () => {
   await signOut({ redirect: false });
 };
 
-export const gooogleLoginAction = async () => {
-  await signIn("google", { redirectTo: "/" });
+export const gooogleLoginAction = async (redirectPath?: string) => {
+  await signIn("google", {
+    redirectTo: redirectPath ? `/${redirectPath}` : "/",
+  });
 };

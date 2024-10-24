@@ -5,15 +5,22 @@ import { useState } from "react";
 import Link from "next/link";
 import GoogleIcon from "@/public/icons/google.svg";
 
-const Login = () => {
+type Props = {
+  searchParams: { [key: string]: string | undefined };
+};
+
+const Login = ({ searchParams }: Props) => {
   const [errorMessage, setErrorMessage] = useState("");
+  const redirectNext = searchParams["next"];
 
   const removeSwAndRedirect = async () => {
     if ("serviceWorker" in navigator) {
       const sw = await navigator.serviceWorker.getRegistration("/sw.js");
       await sw?.unregister();
     }
-    window.location.href = "/";
+    window.location.href = redirectNext
+      ? `${window.location.origin}/${redirectNext}`
+      : "/";
   };
 
   const handleLogin = async (formData: FormData) => {
@@ -31,7 +38,7 @@ const Login = () => {
   };
 
   const handleGoogleLogin = async () => {
-    await gooogleLoginAction();
+    await gooogleLoginAction(redirectNext);
     await removeSwAndRedirect();
   };
 

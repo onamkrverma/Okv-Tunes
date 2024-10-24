@@ -7,7 +7,7 @@ import ImageWithFallback from "./ImageWithFallback";
 import dynamic from "next/dynamic";
 import ThreeDotsIcon from "@/public/icons/three-dots.svg";
 import DeleteIcon from "@/public/icons/delete.svg";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { deleteUserPlaylistSongs } from "@/utils/api";
 const LikeDislike = dynamic(() => import("./LikeDislike"), { ssr: false });
 
@@ -19,6 +19,7 @@ type Props = {
 const SongsCollection = ({ song, playlistId }: Props) => {
   const { setGlobalState, alertMessage, authToken } = useGlobalContext();
   const router = useRouter();
+  const pathname = usePathname();
 
   const [isMoreBtnClick, setIsMoreBtnClick] = useState(false);
 
@@ -45,7 +46,7 @@ const SongsCollection = ({ song, playlistId }: Props) => {
       },
     }));
     if (!authToken) {
-      return router.push("/login");
+      return router.push(`/login?next=${pathname}`);
     }
   };
 
