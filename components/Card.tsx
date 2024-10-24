@@ -13,7 +13,7 @@ type Props = {
   artist?: string;
   audioUrl?: string;
   link?: string;
-  type: "song" | "artist" | "playlist" | "user";
+  type: "song" | "artist" | "playlist" | "album" | "user";
 };
 const Card = ({ title, imageUrl, artist, audioUrl, id, type, link }: Props) => {
   const { setGlobalState, authToken } = useGlobalContext();
@@ -47,6 +47,10 @@ const Card = ({ title, imageUrl, artist, audioUrl, id, type, link }: Props) => {
         )}-${id}`
       : type === "playlist"
       ? `/playlist/${encodeURIComponent(
+          title.replaceAll(" ", "-").toLowerCase()
+        )}-${id}`
+      : type === "album"
+      ? `/album/${encodeURIComponent(
           title.replaceAll(" ", "-").toLowerCase()
         )}-${id}`
       : link;
@@ -83,6 +87,25 @@ const Card = ({ title, imageUrl, artist, audioUrl, id, type, link }: Props) => {
             {title.replaceAll("&quot;", '"')}
           </p>
         </button>
+      ) : type === "album" && imageUrl ? (
+        <Link
+          href={urlSlug ?? ""}
+          className="flex flex-col gap-2 w-[150px] sm:w-[180px] rounded-md cursor-pointer group"
+        >
+          <div className="w-[150px] sm:w-[180px] relative">
+            <ImageWithFallback
+              id={id}
+              src={imageUrl}
+              alt={title + " okv tunes"}
+              width={180}
+              height={180}
+              className="w-full h-auto object-cover rounded-md"
+            />
+          </div>
+          <p className="truncate w-full px-2 pb-2 text-center">
+            {title.replaceAll("&quot;", '"')}
+          </p>
+        </Link>
       ) : type === "artist" && imageUrl ? (
         <Link
           href={urlSlug ?? ""}
@@ -97,16 +120,6 @@ const Card = ({ title, imageUrl, artist, audioUrl, id, type, link }: Props) => {
               height={180}
               className="w-full h-auto object-cover rounded-full"
             />
-            <span className="hidden group-hover:flex transition-colors duration-500 rounded-full absolute top-0 w-full h-full items-center justify-center backdrop-brightness-50">
-              <img
-                src="/logo-circle.svg"
-                alt="logo"
-                width={32}
-                height={32}
-                className="w-8 h-8 z-[1]"
-              />
-              <span className="absolute w-14 h-14 rounded-full bg-primary/80 transition-transform duration-500 scale-100 hover:scale-150"></span>
-            </span>
           </div>
           <p className="truncate w-full px-2 pb-2 text-center">{title}</p>
         </Link>

@@ -3,7 +3,12 @@ import Card from "@/components/Card";
 import Loading from "@/components/Loading";
 import SongsCollection from "@/components/SongsCollection";
 import Toggle from "@/components/Toggle";
-import { getArtist, getSearchArtists, getSearchSongs } from "@/utils/api";
+import {
+  getArtist,
+  getSearchAlbums,
+  getSearchArtists,
+  getSearchSongs,
+} from "@/utils/api";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import useSWR, { mutate } from "swr";
@@ -11,12 +16,14 @@ import useSWR, { mutate } from "swr";
 const SearchComponent = () => {
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get("search");
-  const toggleList = ["songs", "artists"];
+  const toggleList = ["songs", "albums", "artists"];
   const [activeToggle, setActiveToggle] = useState("songs");
 
   const songsFetcher = () => getSearchSongs({ query: searchQuery, limit: 50 });
   const artistsFetcher = () =>
     getSearchArtists({ query: searchQuery, limit: 50 });
+
+  const albumFetcher = () => getSearchAlbums({ query: searchQuery, limit: 50 });
 
   const { data: songResults, isLoading } = useSWR(
     searchQuery && activeToggle === "songs" ? "/search-songs" : null,
@@ -34,11 +41,21 @@ const SearchComponent = () => {
       revalidateOnReconnect: false,
     }
   );
+  const { data: albumsResults, isLoading: albumsLoading } = useSWR(
+    searchQuery && activeToggle === "albums" ? "/search-albums" : null,
+    albumFetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
 
   useEffect(() => {
     if (searchQuery && searchQuery.length === 0) return;
     activeToggle === "songs"
       ? mutate("/search-songs")
+      : activeToggle === "albums"
+      ? mutate("/search-albums")
       : mutate("/search-artists");
 
     document.title = `${searchQuery}-Search • Okv-Tunes`;
@@ -56,7 +73,7 @@ const SearchComponent = () => {
           activeToggle={activeToggle}
           setActiveToggle={setActiveToggle}
         />
-        {!isLoading && !artistsLoading ? (
+        {!isLoading && !artistsLoading && !albumsLoading ? (
           activeToggle === "songs" && songResults ? (
             songResults?.data?.total > 0 ? (
               songResults?.data.results.map((song, index) => (
@@ -65,6 +82,28 @@ const SearchComponent = () => {
             ) : (
               <p>No songs found for this query</p>
             )
+          ) : activeToggle === "albums" && albumsResults ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 md:gap-2 justify-items-center">
+              {albumsResults && albumsResults?.data.total > 0 ? (
+                albumsResults?.data.results.map((album) => (
+                  <Card
+                    key={album.id}
+                    id={album.id}
+                    title={album.name}
+                    imageUrl={
+                      album.image.find(
+                        (item) =>
+                          item.quality === "500x500" &&
+                          item.url.includes("/c.saavncdn")
+                      )?.url ?? "/logo-circle.svg"
+                    }
+                    type="album"
+                  />
+                ))
+              ) : (
+                <p>No artists found for this query</p>
+              )}
+            </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 md:gap-2 justify-items-center">
               {artistsResults && artistsResults?.data.total > 0 ? (

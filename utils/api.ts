@@ -108,6 +108,29 @@ export const getSearchArtists = async ({ query, limit = 10 }: TApiQuery) => {
 
   return response;
 };
+export const getSearchAlbums = async ({ query, limit = 10 }: TApiQuery) => {
+  const querParams = {
+    query,
+    limit,
+  };
+  const response = (await api
+    .query(querParams)
+    .get(`/album/search`)
+    .json()) as TSearchArtist;
+
+  return response;
+};
+export const getAlbum = async ({ id }: TApiQuery) => {
+  const querParams = {
+    id,
+  };
+  const response = (await api
+    .query(querParams)
+    .get(`/album`)
+    .json()) as TPlaylists;
+
+  return response;
+};
 
 // Users API
 const parseAuthToken = async (authToken: string) => {
