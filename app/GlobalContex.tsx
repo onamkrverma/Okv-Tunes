@@ -19,6 +19,7 @@ type TCurrentSong = {
   isMaximise: boolean;
   isRefetchSuggestion: boolean;
   volume?: number;
+  suggessionSongIds?: string[];
 };
 
 type TAlertMessage = {
@@ -107,7 +108,6 @@ export const GlobalContextProvider = ({
     const localCurrentSongInfo: TCurrentSong | null = ls.get("currentSong", {
       decrypt: true,
     });
-
     const currentSongInfo: TCurrentSong = localCurrentSongInfo
       ? localCurrentSongInfo
       : defaultState.currentSong;

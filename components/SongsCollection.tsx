@@ -14,9 +14,10 @@ const LikeDislike = dynamic(() => import("./LikeDislike"), { ssr: false });
 type Props = {
   song: TSong;
   playlistId?: string;
+  index: number;
 };
 
-const SongsCollection = ({ song, playlistId }: Props) => {
+const SongsCollection = ({ song, playlistId, index }: Props) => {
   const { setGlobalState, alertMessage, authToken } = useGlobalContext();
   const router = useRouter();
   const pathname = usePathname();
@@ -79,8 +80,9 @@ const SongsCollection = ({ song, playlistId }: Props) => {
   return (
     <div
       onClick={handleUpdateState}
-      className="flex items-center gap-4 p-2 cursor-pointer hover:bg-secondary relative"
+      className="flex items-center gap-4 p-2 cursor-pointer hover:bg-secondary relative rounded-md"
     >
+      <span className="text-neutral-400 text-sm">{index + 1}</span>
       <ImageWithFallback
         id={id}
         src={imageUrl}

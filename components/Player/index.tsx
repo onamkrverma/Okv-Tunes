@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useGlobalContext } from "@/app/GlobalContex";
 import SuggestedSongs from "./SuggestedSongs";
-import { getSuggestedSongs } from "@/utils/api";
+import { getSongs, getSuggestedSongs } from "@/utils/api";
 import useSWR, { mutate } from "swr";
 import MiniPlayer from "./MiniPlayer";
 import ReactPlayer from "react-player";
@@ -38,6 +38,7 @@ const Plalyer = () => {
     audioUrl,
     isRefetchSuggestion,
     volume,
+    suggessionSongIds,
   } = currentSong;
   const [playerState, setPlayerState] = useState<TplayerState>({
     url: "",
@@ -66,9 +67,12 @@ const Plalyer = () => {
     document.body.style.overflow = isMaximise ? "hidden" : "auto";
   }, [isMaximise]);
 
-  const dataFetcher = () => getSuggestedSongs({ id: id, limit: 20 });
+  const dataFetcher = () =>
+    suggessionSongIds?.length
+      ? getSongs({ id: suggessionSongIds })
+      : getSuggestedSongs({ id: id, limit: 20 });
   const { data: suggestedSongsData, isLoading } = useSWR(
-    id ? "/suggested-songs" : null,
+    id || suggessionSongIds ? "/suggested-songs" : null,
     dataFetcher,
     {
       revalidateOnFocus: false,

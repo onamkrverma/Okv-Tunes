@@ -2,6 +2,7 @@
 import { useGlobalContext } from "@/app/GlobalContex";
 import ImageWithFallback from "@/components/ImageWithFallback";
 import Loading from "@/components/Loading";
+import PlayAllSongs from "@/components/PlayAllSongs";
 import SongsCollection from "@/components/SongsCollection";
 import RefreshIcon from "@/public/icons/refresh.svg";
 import { getLikedSongs, getSongs } from "@/utils/api";
@@ -62,13 +63,21 @@ const LikedSongs = () => {
             className="w-full h-full object-cover rounded-md shadow-lg shadow-neutral-700"
           />
         </div>
-        <div className="flex flex-col gap-2 w-full max-w-sm">
+        <div className="flex flex-col gap-2 items-center sm:items-start w-full max-w-sm">
           <h1 className="capitalize text-xl sm:text-2xl font-bold text-center sm:text-start">
             Liked Songs
           </h1>
           <small className="text-neutral-300 text-center sm:text-start">
             List of your liked songs
           </small>
+          {likedSongs ? (
+            <PlayAllSongs
+              firstSong={likedSongs?.data[0]}
+              suggessionSongIds={likedSongs?.data
+                .slice(1, 16)
+                .map((item) => item.id)}
+            />
+          ) : null}
         </div>
       </div>
 
@@ -87,8 +96,8 @@ const LikedSongs = () => {
         </div>
         {!isLoading && likedSongsIds ? (
           likedSongsIds.length > 0 ? (
-            likedSongs?.data?.map((song) => (
-              <SongsCollection key={song.id} song={song} />
+            likedSongs?.data?.map((song, index) => (
+              <SongsCollection key={song.id} song={song} index={index} />
             ))
           ) : (
             <div className="text-center flex flex-col items-center justify-center gap-2 min-h-40">

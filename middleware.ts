@@ -7,23 +7,29 @@ export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const token = await getToken({ req, secret: AUTH_SECRET });
 
+  const protectedPaths = [
+    "/playlist/liked-songs",
+    "/playlist/user-playlist",
+    "/api/users",
+  ];
+
+  const userPaths = [
+    `/api/users/${token?.sub}`,
+    "/api/users/public-playlist",
+    "/playlist/liked-songs",
+    "/playlist/user-playlist",
+    "/playlist",
+  ];
+
   if (!token) {
-    if (
-      pathname.startsWith("/playlist/liked-songs") ||
-      pathname.startsWith("/playlist/user-playlist")
-    ) {
+    if (protectedPaths.some((path) => pathname.startsWith(path))) {
+      if (pathname.startsWith("/api/users")) {
+        return NextResponse.json({ error: "Unauthorized!" }, { status: 401 });
+      }
       return NextResponse.redirect(new URL("/login", req.url));
     }
-    if (pathname.startsWith("/api/users")) {
-      return NextResponse.json({ error: "Unauthorized!" }, { status: 401 });
-    }
   } else {
-    if (
-      !pathname.startsWith(`/api/users/${token.sub}`) &&
-      pathname !== "/api/users/public-playlist" &&
-      pathname !== "/playlist/liked-songs" &&
-      !pathname.startsWith("/playlist/user-playlist")
-    ) {
+    if (!userPaths.some((path) => pathname.startsWith(path))) {
       return NextResponse.json(
         { error: "You do not have access" },
         { status: 403 }

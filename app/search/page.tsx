@@ -59,8 +59,8 @@ const SearchComponent = () => {
         {!isLoading && !artistsLoading ? (
           activeToggle === "songs" && songResults ? (
             songResults?.data?.total > 0 ? (
-              songResults?.data.results.map((song) => (
-                <SongsCollection key={song.id} song={song} />
+              songResults?.data.results.map((song, index) => (
+                <SongsCollection key={song.id} song={song} index={index} />
               ))
             ) : (
               <p>No songs found for this query</p>

@@ -2,6 +2,7 @@
 import { useGlobalContext } from "@/app/GlobalContex";
 import ImageWithFallback from "@/components/ImageWithFallback";
 import Loading from "@/components/Loading";
+import PlayAllSongs from "@/components/PlayAllSongs";
 import SongsCollection from "@/components/SongsCollection";
 import RefreshIcon from "@/public/icons/refresh.svg";
 import { getSongs, getUserPlaylist, getUserPublicPlaylist } from "@/utils/api";
@@ -74,7 +75,7 @@ const UserPlaylistSongs = ({ params, searchParams }: Props) => {
             className="w-full h-full object-cover rounded-md shadow-lg shadow-neutral-700"
           />
         </div>
-        <div className="flex flex-col gap-2 w-full max-w-sm">
+        <div className="flex flex-col gap-2 items-center sm:items-start w-full max-w-sm">
           <h1 className="capitalize text-xl sm:text-2xl font-bold text-center sm:text-start">
             {title}
           </h1>
@@ -82,13 +83,21 @@ const UserPlaylistSongs = ({ params, searchParams }: Props) => {
             <small className="text-neutral-300 text-center sm:text-start capitalize">
               Visibility: {userPlaylist?.visibility}
             </small>
-            <small className="text-neutral-300 text-center sm:text-start capitalize">
+            <small className="text-neutral-300 text-center sm:text-start capitalize flex items-center gap-2">
+              <span className="uppercase bg-neutral-800 border text-primary rounded-full flex justify-center items-center h-8 w-8 text-center font-bold">
+                {userPlaylist?.createdBy.at(0) ?? "G"}
+              </span>
               Playlist Created By: {userPlaylist?.createdBy}
             </small>
-            <span className="uppercase bg-action text-primary rounded-full flex justify-center items-center h-8 w-8 text-center font-bold">
-              {userPlaylist?.createdBy.at(0) ?? "G"}
-            </span>
           </div>
+          {playlistSongs ? (
+            <PlayAllSongs
+              firstSong={playlistSongs?.data[0]}
+              suggessionSongIds={playlistSongs?.data
+                .slice(1, 16)
+                .map((item) => item.id)}
+            />
+          ) : null}
         </div>
       </div>
 
@@ -107,11 +116,12 @@ const UserPlaylistSongs = ({ params, searchParams }: Props) => {
         </div>
         {!isLoading && userPlaylist ? (
           userPlaylist.songIds.length > 0 ? (
-            playlistSongs?.data.map((song) => (
+            playlistSongs?.data.map((song, index) => (
               <SongsCollection
                 key={song.id}
                 song={song}
                 playlistId={userPlaylist._id}
+                index={index}
               />
             ))
           ) : (

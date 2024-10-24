@@ -1,4 +1,5 @@
 import ImageWithFallback from "@/components/ImageWithFallback";
+import PlayAllSongs from "@/components/PlayAllSongs";
 import SongsCollection from "@/components/SongsCollection";
 import { getPlaylists } from "@/utils/api";
 import { Metadata } from "next";
@@ -45,19 +46,23 @@ const PlaylistSongs = async ({ params }: Props) => {
             className="w-full h-full object-cover rounded-md shadow-lg shadow-neutral-700"
           />
         </div>
-        <div className="flex flex-col gap-2 w-full max-w-sm">
+        <div className="flex flex-col items-center sm:items-start gap-2 w-full max-w-sm">
           <h1 className="capitalize text-xl sm:text-2xl font-bold text-center sm:text-start">
             {title}
           </h1>
           <small className="text-neutral-300 text-center sm:text-start">
             {description}
           </small>
+          <PlayAllSongs
+            firstSong={songs[0]}
+            suggessionSongIds={songs.slice(1, 16).map((item) => item.id)}
+          />
         </div>
       </div>
 
       <div className="flex flex-col gap-4 my-4">
-        {songs.map((song) => (
-          <SongsCollection key={song.id} song={song} />
+        {songs.map((song, index) => (
+          <SongsCollection key={song.id} song={song} index={index} />
         ))}
       </div>
     </div>
