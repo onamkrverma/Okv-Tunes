@@ -1,7 +1,6 @@
 import Wretch from "wretch";
 import queryString from "wretch/addons/queryString";
 import {
-  LikedSong,
   TArtistRes,
   TPlaylists,
   TSearchArtist,
@@ -11,7 +10,6 @@ import {
   TUserPlaylist,
 } from "./api.d";
 import { decode, JWT } from "next-auth/jwt";
-import { getSession } from "next-auth/react";
 import { Session, User } from "next-auth";
 
 const serverUrl =
