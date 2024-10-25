@@ -17,7 +17,11 @@ export const metadata: Metadata = {
 };
 
 const Profile = async () => {
-  const authToken = cookies().get("authjs.session-token")?.value;
+  const authCookiesName =
+    process.env.NODE_ENV === "production"
+      ? "__Secure-authjs.session-token"
+      : "authjs.session-token";
+  const authToken = cookies().get(authCookiesName)?.value;
   const userInfo = authToken ? await getUserInfo({ authToken }) : null;
   const userPlaylists = authToken
     ? await getUserAllPlaylist({ authToken })

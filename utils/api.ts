@@ -133,10 +133,13 @@ export const getAlbum = async ({ id }: TApiQuery) => {
 // Users API
 const parseAuthToken = async (authToken: string) => {
   let token: JWT | Session | null = null;
-
+  const salt =
+    process.env.NODE_ENV === "production"
+      ? "__Secure-authjs.session-token"
+      : "authjs.session-token";
   if (process.env.AUTH_SECRET)
     token = await decode({
-      salt: "authjs.session-token",
+      salt: salt,
       token: authToken,
       secret: process.env.AUTH_SECRET,
     });
