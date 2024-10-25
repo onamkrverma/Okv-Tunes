@@ -239,7 +239,7 @@ const Popup = ({ isPopup, setIsPopup, songId, variant }: Props) => {
                 <option value="public">Public</option>
               </select>
             </label>
-            <div className="flex flex-col">
+            <div className="flex flex-col text-neutral-400">
               <small>Private playlist: Only you can see it.</small>
               <small>Public playlist: Anyone can see it.</small>
             </div>

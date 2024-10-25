@@ -33,7 +33,7 @@ export const POST = async (
     }
     await connectDB();
 
-    const user = await Users.findById(id, { playlist: 1 });
+    const user = await Users.findById(id, { name: 1, playlist: 1 });
 
     if (!user) {
       return NextResponse.json(

@@ -56,7 +56,7 @@ const Profile = async () => {
           )}
         </div>
         <div className="flex flex-col gap-2">
-          <h1 className="capitalize text-xl sm:text-2xl font-bold text-center sm:text-start">
+          <h1 className="capitalize text-xl font-bold text-center sm:text-start">
             {userInfo?.name ?? "Guest"}
           </h1>
 
@@ -66,7 +66,7 @@ const Profile = async () => {
         </div>
       </div>
       <div className="flex flex-col gap-4 border-t py-2">
-        <h2 className="capitalize text-xl sm:text-2xl font-bold  sm:text-start">
+        <h2 className="capitalize text-xl font-bold  sm:text-start">
           Your Save Playlist
         </h2>
         {session ? (
@@ -91,7 +91,7 @@ const Profile = async () => {
             </div>
             {publicPlaylists && publicPlaylists.length > 0 ? (
               <div className="flex flex-col gap-4 border-t py-2">
-                <h2 className="capitalize text-xl sm:text-2xl font-bold  sm:text-start">
+                <h2 className="capitalize text-xl font-bold  sm:text-start">
                   Public Playlists
                 </h2>
                 <div className="flex items-center gap-4 overflow-x-auto">
