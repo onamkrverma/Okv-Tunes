@@ -147,7 +147,7 @@ const parseAuthToken = async (authToken: string) => {
     const res = await fetch(
       `/api/auth/session?timestamp=${new Date().getTime()}`
     );
-
+    console.log({ token });
     token = await res.json();
   }
   return token;

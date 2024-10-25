@@ -23,15 +23,15 @@ const Profile = async () => {
       : "authjs.session-token";
   const authToken = cookies().get(authCookiesName)?.value;
   const userInfo = authToken ? await getUserInfo({ authToken }) : null;
-  const userPlaylists = authToken
-    ? await getUserAllPlaylist({ authToken })
-    : [];
-  const publicPlaylists = authToken
-    ? await getUserPublicPlaylists({ authToken })
-    : [];
-
+  // const userPlaylists = authToken
+  //   ? await getUserAllPlaylist({ authToken })
+  //   : [];
+  // const publicPlaylists = authToken
+  //   ? await getUserPublicPlaylists({ authToken })
+  //   : [];
+  console.log(userInfo);
   const session = await auth();
-  const userImg = session?.user?.image || userInfo?.image;
+  // const userImg = session?.user?.image || userInfo?.image;
 
   const urlSlug = (title: string, id: string, type: "public" | "private") =>
     `/playlist/user-playlist/${encodeURIComponent(
@@ -40,7 +40,8 @@ const Profile = async () => {
 
   return (
     <div className="inner-container flex flex-col gap-6 ">
-      <div className="flex gap-4 flex-col flex-wrap sm:flex-row items-center relative">
+      <p>{authToken}</p>
+      {/* <div className="flex gap-4 flex-col flex-wrap sm:flex-row items-center relative">
         <div className="absolute -top-4 right-0">
           <LoginLogout session={session} />
         </div>
@@ -68,8 +69,8 @@ const Profile = async () => {
             {userInfo?.email}
           </p>
         </div>
-      </div>
-      <div className="flex flex-col gap-4 border-t py-2">
+      </div> */}
+      {/* <div className="flex flex-col gap-4 border-t py-2">
         <h2 className="capitalize text-xl font-bold  sm:text-start">
           Your Save Playlist
         </h2>
@@ -127,7 +128,7 @@ const Profile = async () => {
             </Link>
           </div>
         )}
-      </div>
+      </div> */}
     </div>
   );
 };

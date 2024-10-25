@@ -97,6 +97,7 @@ const config: NextAuthConfig = {
       return token;
     },
   },
+  secret: process.env.AUTH_SECRET,
   session: {
     strategy: "jwt",
   },
