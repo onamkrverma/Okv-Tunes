@@ -1,3 +1,5 @@
+"use client";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { Dispatch, SetStateAction } from "react";
 type Props = {
   toggleList: string[];
@@ -5,6 +7,17 @@ type Props = {
   setActiveToggle: Dispatch<SetStateAction<string>>;
 };
 const Toggle = ({ toggleList, activeToggle, setActiveToggle }: Props) => {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const handleActiveToggle = (item: string) => {
+    setActiveToggle(item);
+    const current = new URLSearchParams(searchParams);
+    current.set("type", item);
+    router.replace(`${pathname}?${current.toString()}`);
+  };
+
   return (
     <div className="flex gap-4 items-center ">
       {toggleList.map((item, index) => (
@@ -12,8 +25,8 @@ const Toggle = ({ toggleList, activeToggle, setActiveToggle }: Props) => {
           key={index}
           type="button"
           title={item}
-          onClick={() => setActiveToggle(item)}
-          className={`bg-secondary p-2 px-3 rounded-lg shadow shadow-neutral-700 hover:bg-neutral-700 ${
+          onClick={() => handleActiveToggle(item)}
+          className={`p-1.5 px-3 rounded-lg capitalize  border bg-secondary hover:bg-neutral-800 ${
             activeToggle === item ? "!bg-neutral-100 !text-neutral-900" : ""
           }`}
         >

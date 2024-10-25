@@ -1,7 +1,7 @@
 import ImageWithFallback from "@/components/ImageWithFallback";
 import PlayAllSongs from "@/components/PlayAllSongs";
 import SongsCollection from "@/components/SongsCollection";
-import { getPlaylists } from "@/utils/api";
+import { getAlbum, getPlaylists } from "@/utils/api";
 import { Metadata } from "next";
 import React from "react";
 type Props = {
@@ -10,8 +10,8 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const id = params.slug.split("-").pop();
-  const playlist = await getPlaylists({ id: id });
-  const { name, description } = playlist.data;
+  const album = await getAlbum({ id: id });
+  const { name, description } = album.data;
 
   return {
     title: `${name} • Okv-Tunes`,
@@ -19,16 +19,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-const PlaylistSongs = async ({ params }: Props) => {
+const AlbumSongs = async ({ params }: Props) => {
   const id = params.slug.split("-").pop() as string;
   const title = params.slug.split("-").slice(0, -1).join(" ");
 
-  const playlist = await getPlaylists({
+  const album = await getAlbum({
     id: id,
-    limit: 50,
   });
 
-  const { name, description, songs } = playlist.data;
+  const { name, description, songs } = album.data;
 
   return (
     <div className="inner-container flex flex-col gap-6">
@@ -69,4 +68,4 @@ const PlaylistSongs = async ({ params }: Props) => {
   );
 };
 
-export default PlaylistSongs;
+export default AlbumSongs;

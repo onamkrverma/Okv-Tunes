@@ -1,17 +1,15 @@
 "use client";
-import React, { MouseEvent, useEffect, useState } from "react";
-import HeartIcon from "@/public/icons/heart.svg";
-import { getLikedSongs, likeDislikeSong } from "@/utils/api";
-import useSWR, { mutate } from "swr";
 import { useGlobalContext } from "@/app/GlobalContex";
+import HeartIcon from "@/public/icons/heart.svg";
+import { likeDislikeSong } from "@/utils/api";
+import { MouseEvent, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 type Props = {
   songId: string;
 };
 const LikeDislike = ({ songId }: Props) => {
-  const { session, likedSongsIds, setGlobalState } = useGlobalContext();
-  const userId = session?.user?.id;
+  const { likedSongsIds, setGlobalState, authToken } = useGlobalContext();
   const isLiked = likedSongsIds.some((item) => item === songId);
 
   const router = useRouter();
@@ -22,10 +20,11 @@ const LikeDislike = ({ songId }: Props) => {
   const handleLiked = async (event: MouseEvent<HTMLSpanElement>) => {
     setIsLoading(true);
     event.stopPropagation();
-    if (!userId) {
+    if (!authToken) {
       return router.push(`/login?next=${pathname}`);
     }
-    const res = await likeDislikeSong(userId, songId);
+    const res = await likeDislikeSong({ authToken, songId });
+    if (!res) return;
     setGlobalState((prev) => ({
       ...prev,
       likedSongsIds: res.likedSongIds,

@@ -34,9 +34,21 @@ const nextConfig = {
         source: "/(.*)",
         headers: [
           {
+            key: "X-Frame-Options",
+            value: "DENY",
+          },
+          {
+            key: "Referrer-Policy",
+            value: "strict-origin-when-cross-origin",
+          },
+        ],
+      },
+      {
+        source: "/sw.js",
+        headers: [
+          {
             key: "Cache-Control",
-            value:
-              "public, max-age=86400, stale-while-revalidate=43200, immutable",
+            value: "no-cache, no-store, must-revalidate",
           },
         ],
       },

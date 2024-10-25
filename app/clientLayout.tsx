@@ -7,12 +7,15 @@ import Footer from "@/components/Footer";
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import registerSw from "@/public/registerSw";
+import AlertNotification from "@/components/AlertNotification";
 const Plalyer = dynamic(() => import("@/components/Player"), { ssr: false });
 
 const ClientLayout = ({
   children,
+  authToken,
 }: Readonly<{
   children: React.ReactNode;
+  authToken?: string;
 }>) => {
   useEffect(() => {
     registerSw();
@@ -22,7 +25,7 @@ const ClientLayout = ({
   const hideSideNavbarPaths = ["/login", "/signup"];
 
   return (
-    <GlobalContextProvider>
+    <GlobalContextProvider authToken={authToken}>
       <main className="container relative">
         <div className="absolute top-0 w-full h-48 -z-10 flex items-center justify-end rounded-full">
           <span className="bg-custom_gradient block w-3/4 h-full blur-3xl" />
@@ -30,6 +33,9 @@ const ClientLayout = ({
         {!hideSideNavbarPaths.includes(currentPath) ? <Navbar /> : null}
         {!hideSideNavbarPaths.includes(currentPath) ? <SideNavbar /> : null}
         {children}
+        {!hideSideNavbarPaths.includes(currentPath) ? (
+          <AlertNotification />
+        ) : null}
         {!hideSideNavbarPaths.includes(currentPath) ? <Plalyer /> : null}
         {!hideSideNavbarPaths.includes(currentPath) ? <Footer /> : null}
       </main>

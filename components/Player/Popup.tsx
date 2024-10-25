@@ -1,21 +1,53 @@
 "use client";
-import { getSongs } from "@/utils/api";
-import React from "react";
-import useSWR from "swr";
+import { useGlobalContext } from "@/app/GlobalContex";
 import CrossIcon from "@/public/icons/cross.svg";
+import {
+  createUserPlaylist,
+  getSongs,
+  getUserAllPlaylist,
+  updateUserPlaylistSongs,
+} from "@/utils/api";
 import Link from "next/link";
+import React, { ChangeEvent, useRef, useState } from "react";
+import useSWR from "swr";
+import Input from "../Input";
 import Loading from "../Loading";
 
 type Props = {
   isPopup: boolean;
   setIsPopup: React.Dispatch<React.SetStateAction<boolean>>;
   songId: string;
+  variant: "song-info" | "add-playlist";
 };
-const Popup = ({ isPopup, setIsPopup, songId }: Props) => {
-  const dataFetcher = () => getSongs({ id: songId });
+
+const Popup = ({ isPopup, setIsPopup, songId, variant }: Props) => {
+  const { authToken } = useGlobalContext();
+  const [isAddNewPlaylist, setIsAddNewPlaylist] = useState(false);
+
+  const [isPlaylistSaving, setIsPlaylistSaving] = useState(false);
+  const [alertMessage, setAlertMessage] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
+
+  const saveFormRef = useRef<HTMLFormElement>(null);
+  const createFormRef = useRef<HTMLFormElement>(null);
+
+  const songFetcher = () => getSongs({ id: songId });
   const { data: songData, isLoading } = useSWR(
-    isPopup ? "/song-info" : null,
-    dataFetcher,
+    isPopup && variant === "song-info" ? "/song-info" : null,
+    songFetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
+
+  const playlistFetcher = () =>
+    authToken ? getUserAllPlaylist({ authToken }) : null;
+  const { data: userPlaylistData, isLoading: isPlaylistLoading } = useSWR(
+    isPopup && variant === "add-playlist" ? "/user-playlist" : null,
+    playlistFetcher,
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
@@ -27,8 +59,57 @@ const Popup = ({ isPopup, setIsPopup, songId }: Props) => {
       title.replaceAll(" ", "-").toLowerCase()
     )}-${id}`;
 
+  const handleSaveToPlaylist = async (e: ChangeEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!saveFormRef.current || !authToken) return;
+    try {
+      setIsPlaylistSaving(true);
+      setAlertMessage(null);
+      const formData = new FormData(saveFormRef.current);
+      const playlistId = formData.get("playlist")?.toString();
+      const res = await updateUserPlaylistSongs({
+        authToken,
+        playlistId,
+        playlistSongIds: [songId],
+      });
+      setAlertMessage({ message: res?.message ?? "success", type: "success" });
+    } catch (error) {
+      if (error instanceof Error) {
+        setAlertMessage({ message: error.message, type: "error" });
+      }
+    } finally {
+      setIsPlaylistSaving(false);
+    }
+  };
+  const handleCreatePlaylist = async (e: ChangeEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!createFormRef.current || !authToken) return;
+    try {
+      setIsPlaylistSaving(true);
+      setAlertMessage(null);
+      const formData = new FormData(createFormRef.current);
+      const title = formData.get("title")?.toString();
+      const visibility = formData.get("visibility")?.toString();
+      if (!authToken) return;
+      const res = await createUserPlaylist({
+        authToken,
+        playlistTitle: title,
+        playlistSongIds: [songId],
+        playlistVisibility: visibility,
+      });
+      setAlertMessage({ message: res?.message ?? "success", type: "success" });
+      console.log(title, visibility);
+    } catch (error) {
+      if (error instanceof Error) {
+        setAlertMessage({ message: error.message, type: "error" });
+      }
+    } finally {
+      setIsPlaylistSaving(false);
+    }
+  };
+
   return (
-    <div className="fixed top-0 left-0 w-full h-full z-20 backdrop-blur-sm flex items-center justify-center">
+    <div className="fixed top-0 left-0 w-full h-full z-20 backdrop-blur-sm border flex items-center justify-center">
       {/* close popup */}
       <div
         className="h-full w-full absolute top-0"
@@ -37,7 +118,13 @@ const Popup = ({ isPopup, setIsPopup, songId }: Props) => {
 
       <div className="flex flex-col gap-2 p-4 bg-primary rounded-md w-10/12 max-w-md min-h-40 max-h-[500px] z-[2] overflow-scroll">
         <div className="border-b pb-2 flex justify-between items-center">
-          <p className="text-lg font-semibold">Song Info</p>
+          <p className="text-lg font-semibold">
+            {variant === "song-info"
+              ? "Song Info"
+              : isAddNewPlaylist
+              ? "Create New Playlist"
+              : "Add to Playlist"}
+          </p>
           <button
             type="button"
             title="close"
@@ -47,35 +134,134 @@ const Popup = ({ isPopup, setIsPopup, songId }: Props) => {
             <CrossIcon className="w-4 h-4" />
           </button>
         </div>
-        {!isLoading ? (
-          songData?.data.map((song) => (
-            <div key={song.id} className="flex flex-col gap-2">
-              <p>Song Title: {song.name}</p>
-              <p>ReleaseAt: {song.releaseDate} </p>
-              <p>Language: {song.language} </p>
-              <p>Lable: {song.label}</p>
-              <p>Copyright: {song.copyright}</p>
-              <div className="border-t pt-2 flex flex-col gap-2">
-                <p>Artists info:</p>
-                {song.artists.all.map((artist, index) => (
-                  <div key={index}>
-                    <Link
-                      href={urlSlug(artist.name, artist.id)}
-                      className="underline underline-offset-4"
-                    >
-                      {artist.name}
-                    </Link>
-                    <small className="text-neutral-400 pl-1">
-                      {artist.role}
-                    </small>
+        {!isLoading && !isPlaylistLoading ? (
+          variant === "song-info" ? (
+            <div>
+              {songData?.data.map((song) => (
+                <div key={song.id} className="flex flex-col gap-2">
+                  <p>Song Title: {song.name}</p>
+                  <p>ReleaseAt: {song.releaseDate} </p>
+                  <p>Language: {song.language} </p>
+                  <p>Lable: {song.label}</p>
+                  <p>Copyright: {song.copyright}</p>
+                  <div className="border-t pt-2 flex flex-col gap-2">
+                    <p>Artists info:</p>
+                    {song.artists.all.map((artist, index) => (
+                      <div key={index}>
+                        <Link
+                          href={urlSlug(artist.name, artist.id)}
+                          className="underline underline-offset-4"
+                        >
+                          {artist.name}
+                        </Link>
+                        <small className="text-neutral-400 pl-1">
+                          {artist.role}
+                        </small>
+                      </div>
+                    ))}
                   </div>
+                </div>
+              ))}
+            </div>
+          ) : // add to playlist
+          !isAddNewPlaylist ? (
+            <form
+              className="flex flex-col gap-2"
+              ref={saveFormRef}
+              onSubmit={handleSaveToPlaylist}
+            >
+              <div className="flex justify-end items-center">
+                <button
+                  type="button"
+                  title="create new"
+                  onClick={() => {
+                    setIsAddNewPlaylist(true),
+                      setAlertMessage(null),
+                      setIsPlaylistSaving(false);
+                  }}
+                  className="text-primary hover:text-action "
+                >
+                  {`+ Create New`}
+                </button>
+              </div>
+
+              <p className="text-lg">Select Playlist</p>
+              <div className="select-playlists flex flex-col gap-1 overflow-y-scroll max-h-52">
+                {userPlaylistData?.map((playlist) => (
+                  <label
+                    key={playlist._id}
+                    className="flex items-center gap-2 cursor-pointer"
+                  >
+                    <input
+                      type="radio"
+                      name="playlist"
+                      value={playlist._id}
+                      className="w-4 h-4 accent-action cursor-pointer"
+                    />
+                    {playlist.title}
+                  </label>
                 ))}
               </div>
-            </div>
-          ))
+
+              <button
+                type="submit"
+                title="save"
+                className="bg-neutral-800 w-full mt-2 text-primary rounded-lg p-1.5 border hover:bg-action"
+              >
+                {isPlaylistSaving ? <Loading width="6" height="6" /> : "Save"}
+              </button>
+            </form>
+          ) : null
         ) : (
           <Loading loadingText="Loading" />
         )}
+
+        {isAddNewPlaylist ? (
+          <form
+            className="flex flex-col gap-2"
+            ref={createFormRef}
+            onSubmit={handleCreatePlaylist}
+          >
+            <Input
+              type="text"
+              name="title"
+              label="Playlist Title"
+              minLength={3}
+              required
+            />
+            <label className="flex flex-col gap-2">
+              Visibility
+              <select
+                name="visibility"
+                className="bg-secondary p-2 px-3 rounded-lg cursor-pointer focus:ring-1 focus:ring-inset focus-visible:outline-none"
+              >
+                <option value="private">Private</option>
+                <option value="public">Public</option>
+              </select>
+            </label>
+            <div className="flex flex-col text-neutral-400">
+              <small>Private playlist: Only you can see it.</small>
+              <small>Public playlist: Anyone can see it.</small>
+            </div>
+            <button
+              type="submit"
+              title="create"
+              className="bg-neutral-800 w-full mt-2 text-primary rounded-lg p-1.5 border hover:bg-action"
+            >
+              {isPlaylistSaving ? <Loading width="6" height="6" /> : "Create"}
+            </button>
+          </form>
+        ) : null}
+
+        {alertMessage ? (
+          <p
+            className={`text-sm my-2 bg-neutral-50 p-1 px-4 rounded-md text-center ${
+              alertMessage.type === "error" ? "text-action" : "text-indigo-800"
+            }`}
+          >
+            {alertMessage.message}
+          </p>
+        ) : null}
       </div>
     </div>
   );
