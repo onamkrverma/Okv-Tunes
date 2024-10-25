@@ -11,7 +11,7 @@ export const GET = async (request: NextRequest) => {
         { status: 404 }
       );
     }
-    const res = await fetch(`${mainServerUrl}/api/albums/?id=${id}`);
+    const res = await fetch(`${mainServerUrl}/api/albums?id=${id}`);
     const data = await res.json();
     return NextResponse.json(data, { status: 200 });
   } catch (error: unknown) {

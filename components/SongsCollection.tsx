@@ -91,9 +91,12 @@ const SongsCollection = ({ song, playlistId, index }: Props) => {
         height={50}
         className="w-[50px] h-[50px] object-cover rounded-md"
       />
-      <p className="truncate w-80 text-start">
-        {name.replaceAll("&quot;", '"')}
-      </p>
+      <div className="w-60 sm:w-20 lg:w-80">
+        <p className="truncate text-start">{name.replaceAll("&quot;", '"')}</p>
+        <small className="truncate text-neutral-400 block sm:hidden">
+          {artistName}
+        </small>
+      </div>
       <small className="truncate w-60 text-neutral-400 hidden sm:block">
         {artistName}
       </small>
@@ -118,14 +121,16 @@ const SongsCollection = ({ song, playlistId, index }: Props) => {
           isMoreBtnClick ? "flex" : "hidden"
         } `}
       >
-        <button
-          type="button"
-          className="flex items-center gap-1"
-          onClick={handleRemoveSongs}
-        >
-          <DeleteIcon className="w-4 h-4" />
-          Remove from playlist
-        </button>
+        {playlistId ? (
+          <button
+            type="button"
+            className="flex items-center gap-1"
+            onClick={handleRemoveSongs}
+          >
+            <DeleteIcon className="w-4 h-4" />
+            Remove from playlist
+          </button>
+        ) : null}
       </div>
     </div>
   );

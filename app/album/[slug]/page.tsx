@@ -10,8 +10,8 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const id = params.slug.split("-").pop();
-  const playlist = await getPlaylists({ id: id });
-  const { name, description } = playlist.data;
+  const album = await getAlbum({ id: id });
+  const { name, description } = album.data;
 
   return {
     title: `${name} • Okv-Tunes`,

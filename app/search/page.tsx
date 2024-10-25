@@ -9,15 +9,18 @@ import {
   getSearchArtists,
   getSearchSongs,
 } from "@/utils/api";
-import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import useSWR, { mutate } from "swr";
 
-const SearchComponent = () => {
-  const searchParams = useSearchParams();
-  const searchQuery = searchParams.get("search");
+type Props = {
+  searchParams: { [key: string]: string | undefined };
+};
+
+const SearchComponent = ({ searchParams }: Props) => {
+  const searchQuery = searchParams["query"];
+  const typeQuery = searchParams["type"];
   const toggleList = ["songs", "albums", "artists"];
-  const [activeToggle, setActiveToggle] = useState("songs");
+  const [activeToggle, setActiveToggle] = useState(typeQuery ?? toggleList[0]);
 
   const songsFetcher = () => getSearchSongs({ query: searchQuery, limit: 50 });
   const artistsFetcher = () =>
@@ -26,7 +29,9 @@ const SearchComponent = () => {
   const albumFetcher = () => getSearchAlbums({ query: searchQuery, limit: 50 });
 
   const { data: songResults, isLoading } = useSWR(
-    searchQuery && activeToggle === "songs" ? "/search-songs" : null,
+    searchQuery && activeToggle === "songs"
+      ? `/search-songs?q=${searchQuery}`
+      : null,
     songsFetcher,
     {
       revalidateOnFocus: false,
@@ -34,7 +39,9 @@ const SearchComponent = () => {
     }
   );
   const { data: artistsResults, isLoading: artistsLoading } = useSWR(
-    searchQuery && activeToggle === "artists" ? "/search-artists" : null,
+    searchQuery && activeToggle === "artists"
+      ? `/search-artists?q=${searchQuery}`
+      : null,
     artistsFetcher,
     {
       revalidateOnFocus: false,
@@ -42,7 +49,9 @@ const SearchComponent = () => {
     }
   );
   const { data: albumsResults, isLoading: albumsLoading } = useSWR(
-    searchQuery && activeToggle === "albums" ? "/search-albums" : null,
+    searchQuery && activeToggle === "albums"
+      ? `/search-albums?q=${searchQuery}`
+      : null,
     albumFetcher,
     {
       revalidateOnFocus: false,
@@ -51,13 +60,6 @@ const SearchComponent = () => {
   );
 
   useEffect(() => {
-    if (searchQuery && searchQuery.length === 0) return;
-    activeToggle === "songs"
-      ? mutate("/search-songs")
-      : activeToggle === "albums"
-      ? mutate("/search-albums")
-      : mutate("/search-artists");
-
     document.title = `${searchQuery}-Search • Okv-Tunes`;
     // eslint-disable-next-line
   }, [searchQuery]);
@@ -135,9 +137,9 @@ const SearchComponent = () => {
   );
 };
 
-const Search = () => (
+const Search = ({ searchParams }: Props) => (
   <Suspense fallback={<Loading loadingText="Loading" />}>
-    <SearchComponent />
+    <SearchComponent searchParams={searchParams} />
   </Suspense>
 );
 
