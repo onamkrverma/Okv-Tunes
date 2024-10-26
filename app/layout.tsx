@@ -70,16 +70,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const authCookiesName =
-    process.env.NODE_ENV === "production"
-      ? "__Secure-authjs.session-token"
-      : "authjs.session-token";
-  const authToken = cookies().get(authCookiesName)?.value;
   return (
     <html lang="en">
       <GoogleTagManager gtmId="GTM-5G23KL35" />
       <body className={poppins.className}>
-        <ClientLayout authToken={authToken}>{children}</ClientLayout>
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );

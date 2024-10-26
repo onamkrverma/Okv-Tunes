@@ -26,7 +26,7 @@ const UserPlaylistSongs = ({ params, searchParams }: Props) => {
   const id = params.playlistslug.split("-").pop() as string;
   const type = searchParams["type"];
   const title = params.playlistslug.split("-").slice(0, -1).join(" ");
-  const { authToken, alertMessage, setGlobalState } = useGlobalContext();
+  const { session, alertMessage, setGlobalState } = useGlobalContext();
 
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isMoreBtnClick, setIsMoreBtnClick] = useState(false);
@@ -36,14 +36,16 @@ const UserPlaylistSongs = ({ params, searchParams }: Props) => {
     document.title = `User ${type} playlist • Okv-Tunes"`;
   }, []);
 
+  const userId = session?.user?.id ?? "";
+
   const userPlaylistFetcher = () =>
-    authToken
+    session
       ? type === "public"
-        ? getUserPublicPlaylist({ authToken, playlistId: id })
-        : getUserPlaylist({ authToken, playlistId: id })
+        ? getUserPublicPlaylist({ userId, playlistId: id })
+        : getUserPlaylist({ userId, playlistId: id })
       : null;
   const { data: userPlaylist } = useSWR(
-    authToken ? `/user-playlist?id=${id}` : null,
+    session ? `/user-playlist?id=${id}` : null,
     userPlaylistFetcher,
     {
       revalidateOnFocus: false,
@@ -72,9 +74,11 @@ const UserPlaylistSongs = ({ params, searchParams }: Props) => {
 
   const handleDeletePlaylist = async () => {
     try {
-      if (!authToken || !id) return;
+      if (!session || !id) return;
+      const userId = session?.user?.id ?? "";
+
       const res = await deleteUserPlaylistSongs({
-        authToken,
+        userId,
         playlistId: id,
         isFullDeletePlaylist: true,
       });
@@ -95,7 +99,6 @@ const UserPlaylistSongs = ({ params, searchParams }: Props) => {
         }));
     }
   };
-  console.log(playlistSongs);
 
   return (
     <div className="inner-container flex flex-col gap-6 relative">

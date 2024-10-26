@@ -10,17 +10,17 @@ import { useEffect, useState } from "react";
 import useSWR, { mutate } from "swr";
 
 const LikedSongs = () => {
-  const { authToken } = useGlobalContext();
+  const { session } = useGlobalContext();
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
     document.title = "Liked Songs • Okv-Tunes";
   }, []);
-
+  const userId = session?.user?.id ?? "";
   const likedSongsIdsFetcher = () =>
-    authToken ? getLikedSongs({ authToken }) : null;
+    session ? getLikedSongs({ userId }) : null;
   const { data: likedSongsIds } = useSWR(
-    authToken ? "/liked-id" : null,
+    session ? "/liked-id" : null,
     likedSongsIdsFetcher,
     {
       revalidateOnFocus: false,

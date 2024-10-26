@@ -18,7 +18,7 @@ type Props = {
 };
 
 const SongsCollection = ({ song, playlistId, index }: Props) => {
-  const { setGlobalState, alertMessage, authToken } = useGlobalContext();
+  const { setGlobalState, alertMessage, session } = useGlobalContext();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -46,7 +46,7 @@ const SongsCollection = ({ song, playlistId, index }: Props) => {
         isRefetchSuggestion: true,
       },
     }));
-    if (!authToken) {
+    if (!session) {
       return router.push(`/login?next=${pathname}`);
     }
   };
@@ -54,9 +54,11 @@ const SongsCollection = ({ song, playlistId, index }: Props) => {
   const handleRemoveSongs = async (event: MouseEvent<HTMLSpanElement>) => {
     event.stopPropagation();
     try {
-      if (!authToken || !playlistId) return;
+      if (!session || !playlistId) return;
+      const userId = session?.user?.id ?? "";
+
       const res = await deleteUserPlaylistSongs({
-        authToken,
+        userId,
         playlistSongIds: [song.id],
         playlistId,
       });

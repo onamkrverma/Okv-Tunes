@@ -31,7 +31,6 @@ type TGlobalState = {
   currentSong: TCurrentSong;
   likedSongsIds: string[];
   alertMessage?: TAlertMessage;
-  authToken?: string;
   session?: Session | null;
 };
 export const defaultState: TGlobalState = {
@@ -50,14 +49,12 @@ export const defaultState: TGlobalState = {
     isAlertVisible: false,
     message: "",
   },
-  authToken: "",
   session: null,
 };
 type TGlobalContext = {
   currentSong: TCurrentSong;
   likedSongsIds: string[];
   alertMessage?: TAlertMessage;
-  authToken?: string;
   session?: Session | null;
   setGlobalState: React.Dispatch<React.SetStateAction<TGlobalState>>;
 };
@@ -65,7 +62,6 @@ type TGlobalContext = {
 type TGlobalProviderProps = {
   children: ReactNode;
   value?: TGlobalState;
-  authToken?: string;
 };
 
 export const GlobalContext = createContext<TGlobalContext | null>(null);
@@ -73,7 +69,6 @@ export const GlobalContext = createContext<TGlobalContext | null>(null);
 export const GlobalContextProvider = ({
   children,
   value,
-  authToken,
 }: TGlobalProviderProps) => {
   const [globalState, setGlobalState] = useState(value || defaultState);
 
@@ -87,16 +82,14 @@ export const GlobalContextProvider = ({
       ...prev,
       session: session,
     }));
-    if (!authToken) return;
-    const likedSongsIds = await getLikedSongs({
-      authToken: authToken,
-    });
+    if (!session) return;
+    if (!session.user?.id) return;
+    const likedSongsIds = await getLikedSongs({ userId: session.user.id });
 
     if (!likedSongsIds) return;
     setGlobalState((prev) => ({
       ...prev,
       likedSongsIds: likedSongsIds,
-      authToken: authToken,
     }));
   };
 

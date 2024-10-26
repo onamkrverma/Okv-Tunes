@@ -9,7 +9,7 @@ type Props = {
   songId: string;
 };
 const LikeDislike = ({ songId }: Props) => {
-  const { likedSongsIds, setGlobalState, authToken } = useGlobalContext();
+  const { likedSongsIds, setGlobalState, session } = useGlobalContext();
   const isLiked = likedSongsIds.some((item) => item === songId);
 
   const router = useRouter();
@@ -20,10 +20,12 @@ const LikeDislike = ({ songId }: Props) => {
   const handleLiked = async (event: MouseEvent<HTMLSpanElement>) => {
     setIsLoading(true);
     event.stopPropagation();
-    if (!authToken) {
+    if (!session) {
       return router.push(`/login?next=${pathname}`);
     }
-    const res = await likeDislikeSong({ authToken, songId });
+    const userId = session?.user?.id ?? "";
+
+    const res = await likeDislikeSong({ userId, songId });
     if (!res) return;
     setGlobalState((prev) => ({
       ...prev,

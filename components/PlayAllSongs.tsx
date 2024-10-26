@@ -11,7 +11,7 @@ type Props = {
 };
 
 const PlayAllSongs = ({ firstSong, suggessionSongIds }: Props) => {
-  const { setGlobalState, authToken } = useGlobalContext();
+  const { setGlobalState, session } = useGlobalContext();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -37,7 +37,7 @@ const PlayAllSongs = ({ firstSong, suggessionSongIds }: Props) => {
         suggessionSongIds: suggessionSongIds,
       },
     }));
-    if (!authToken) {
+    if (!session) {
       return router.push(`/login?next=${pathname}`);
     }
   };

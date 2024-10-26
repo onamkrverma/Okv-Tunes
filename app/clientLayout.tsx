@@ -12,10 +12,8 @@ const Plalyer = dynamic(() => import("@/components/Player"), { ssr: false });
 
 const ClientLayout = ({
   children,
-  authToken,
 }: Readonly<{
   children: React.ReactNode;
-  authToken?: string;
 }>) => {
   useEffect(() => {
     registerSw();
@@ -25,7 +23,7 @@ const ClientLayout = ({
   const hideSideNavbarPaths = ["/login", "/signup"];
 
   return (
-    <GlobalContextProvider authToken={authToken}>
+    <GlobalContextProvider>
       <main className="container relative">
         <div className="absolute top-0 w-full h-48 -z-10 flex items-center justify-end rounded-full">
           <span className="bg-custom_gradient block w-3/4 h-full blur-3xl" />
