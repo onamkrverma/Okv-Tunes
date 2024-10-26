@@ -9,8 +9,6 @@ import {
   TUser,
   TUserPlaylist,
 } from "./api.d";
-import { decode, JWT } from "next-auth/jwt";
-import { Session, User } from "next-auth";
 
 const serverUrl =
   process.env.NODE_ENV === "development"
@@ -27,8 +25,8 @@ type TApiQuery = {
   limit?: number;
 };
 type TUserApiQuery = {
-  authToken: string;
-  userId?: string;
+  userId: string;
+  cookies?: string;
   songId?: string;
   playlistTitle?: string;
   playlistSongIds?: string[];
@@ -130,47 +128,19 @@ export const getAlbum = async ({ id }: TApiQuery) => {
   return response;
 };
 
-// Users API
-const parseAuthToken = async (authToken: string) => {
-  let token: JWT | Session | null = null;
-  const salt =
-    process.env.NODE_ENV === "production"
-      ? "__Secure-authjs.session-token"
-      : "authjs.session-token";
-  if (process.env.AUTH_SECRET)
-    token = await decode({
-      salt: salt,
-      token: authToken,
-      secret: process.env.AUTH_SECRET,
-    });
-  else {
-    const res = await fetch(
-      `/api/auth/session?timestamp=${new Date().getTime()}`
-    );
-    console.log({ token });
-    token = await res.json();
-  }
-  return token;
-};
-
-export const getUserInfo = async ({ authToken }: TUserApiQuery) => {
-  const user = await parseAuthToken(authToken);
-  if (!user) return null;
-  const userId = "sub" in user ? user.sub : (user.user as User).id;
-  if (!userId) return null;
+// User apis
+export const getUserInfo = async ({ userId, cookies }: TUserApiQuery) => {
   const response = (await api
-    .auth(`Bearer ${authToken}`)
+    .headers({
+      Cookie: cookies ?? "",
+    })
     .get(`/users/${userId}`)
     .json()) as TUser;
   return response;
 };
-export const getLikedSongs = async ({ authToken }: TUserApiQuery) => {
-  const user = await parseAuthToken(authToken);
-  if (!user) return null;
-  const userId = "sub" in user ? user.sub : (user.user as User).id;
-  if (!userId) return null;
+
+export const getLikedSongs = async ({ userId }: TUserApiQuery) => {
   const response = (await api
-    .auth(`Bearer ${authToken}`)
     .options({
       next: { revalidate: 0 },
     })
@@ -179,14 +149,8 @@ export const getLikedSongs = async ({ authToken }: TUserApiQuery) => {
   return response;
 };
 
-export const likeDislikeSong = async ({ authToken, songId }: TUserApiQuery) => {
-  const user = await parseAuthToken(authToken);
-  if (!user) return null;
-  const userId = "sub" in user ? user.sub : (user.user as User).id;
-  if (!userId) return null;
+export const likeDislikeSong = async ({ userId, songId }: TUserApiQuery) => {
   const response = (await api
-    .auth(`Bearer ${authToken}`)
-
     .post({ songId }, `/users/${userId}/like-dislike`)
     .json()) as {
     message: string;
@@ -195,32 +159,30 @@ export const likeDislikeSong = async ({ authToken, songId }: TUserApiQuery) => {
 
   return response;
 };
-export const getUserAllPlaylist = async ({ authToken }: TUserApiQuery) => {
-  const user = await parseAuthToken(authToken);
-  if (!user) return null;
-  const userId = "sub" in user ? user.sub : (user.user as User).id;
-  if (!userId) return null;
+export const getUserAllPlaylist = async ({
+  userId,
+  cookies,
+}: TUserApiQuery) => {
   const response = (await api
+    .headers({
+      Cookie: cookies ?? "",
+    })
     .options({
       next: { revalidate: 0 },
     })
-    .auth(`Bearer ${authToken}`)
     .get(`/users/${userId}/playlist`)
     .json()) as TUserPlaylist[];
   return response;
 };
 
 export const getUserPlaylist = async ({
-  authToken,
+  userId,
   playlistId,
 }: TUserApiQuery) => {
   const querParams = {
     playlistid: playlistId,
   };
-  const user = await parseAuthToken(authToken);
-  if (!user) return null;
-  const userId = "sub" in user ? user.sub : (user.user as User).id;
-  if (!userId) return null;
+
   const response = (await api
     .options({
       next: { revalidate: 0 },
@@ -231,7 +193,7 @@ export const getUserPlaylist = async ({
   return response;
 };
 export const createUserPlaylist = async ({
-  authToken,
+  userId,
   playlistSongIds,
   playlistTitle,
   playlistVisibility,
@@ -241,17 +203,14 @@ export const createUserPlaylist = async ({
     songIds: playlistSongIds,
     visibility: playlistVisibility,
   };
-  const user = await parseAuthToken(authToken);
-  if (!user) return null;
-  const userId = "sub" in user ? user.sub : (user.user as User).id;
-  if (!userId) return null;
+
   const response = (await api
     .post(reqBody, `/users/${userId}/playlist`)
     .json()) as { message: string };
   return response;
 };
 export const updateUserPlaylistSongs = async ({
-  authToken,
+  userId,
   playlistSongIds,
   playlistTitle,
   playlistId,
@@ -263,10 +222,7 @@ export const updateUserPlaylistSongs = async ({
     songIds: playlistSongIds,
     visibility: playlistVisibility,
   };
-  const user = await parseAuthToken(authToken);
-  if (!user) return null;
-  const userId = "sub" in user ? user.sub : (user.user as User).id;
-  if (!userId) return null;
+
   const response = (await api
     .put(reqBody, `/users/${userId}/playlist`)
     .json()) as { message: string };
@@ -274,7 +230,7 @@ export const updateUserPlaylistSongs = async ({
 };
 
 export const deleteUserPlaylistSongs = async ({
-  authToken,
+  userId,
   playlistSongIds,
   playlistId,
   isFullDeletePlaylist,
@@ -284,10 +240,7 @@ export const deleteUserPlaylistSongs = async ({
     songid: playlistSongIds,
     "delete-playlist": isFullDeletePlaylist ? "true" : "false",
   };
-  const user = await parseAuthToken(authToken);
-  if (!user) return null;
-  const userId = "sub" in user ? user.sub : (user.user as User).id;
-  if (!userId) return null;
+
   const response = (await api
     .query(querParams)
     .delete(`/users/${userId}/playlist`)
@@ -295,29 +248,37 @@ export const deleteUserPlaylistSongs = async ({
   return response;
 };
 
-export const getUserPublicPlaylists = async ({ authToken }: TUserApiQuery) => {
+export const getUserPublicPlaylists = async ({
+  cookies,
+}: {
+  cookies: string;
+}) => {
   const response = (await api
+    .headers({
+      Cookie: cookies ?? "",
+    })
     .options({
       next: { revalidate: 0 },
     })
-    .auth(`Bearer ${authToken}`)
     .get(`/users/public-playlist`)
     .json()) as TUserPlaylist[];
   return response;
 };
 
 export const getUserPublicPlaylist = async ({
-  authToken,
   playlistId,
+  cookies,
 }: TUserApiQuery) => {
   const querParams = {
     playlistid: playlistId,
   };
   const response = (await api
+    .headers({
+      Cookie: cookies ?? "",
+    })
     .options({
       next: { revalidate: 0 },
     })
-    .auth(`Bearer ${authToken}`)
     .query(querParams)
     .get(`/users/public-playlist`)
     .json()) as TUserPlaylist;

@@ -5,7 +5,10 @@ const { AUTH_SECRET } = process.env;
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const token = await getToken({ req, secret: AUTH_SECRET });
+  const token = await getToken({
+    req,
+    secret: AUTH_SECRET,
+  });
 
   const protectedPaths = [
     "/playlist/liked-songs",
