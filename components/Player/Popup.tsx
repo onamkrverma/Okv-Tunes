@@ -21,7 +21,7 @@ type Props = {
 };
 
 const Popup = ({ isPopup, setIsPopup, songId, variant }: Props) => {
-  const { session } = useGlobalContext();
+  const { session, authToken } = useGlobalContext();
   const [isAddNewPlaylist, setIsAddNewPlaylist] = useState(false);
 
   const [isPlaylistSaving, setIsPlaylistSaving] = useState(false);
@@ -45,7 +45,7 @@ const Popup = ({ isPopup, setIsPopup, songId, variant }: Props) => {
   const userId = session?.user?.id ?? "";
 
   const playlistFetcher = () =>
-    session ? getUserAllPlaylist({ userId }) : null;
+    session && authToken ? getUserAllPlaylist({ authToken, userId }) : null;
   const { data: userPlaylistData, isLoading: isPlaylistLoading } = useSWR(
     isPopup && variant === "add-playlist" ? "/user-playlist" : null,
     playlistFetcher,
@@ -62,13 +62,14 @@ const Popup = ({ isPopup, setIsPopup, songId, variant }: Props) => {
 
   const handleSaveToPlaylist = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!saveFormRef.current || !session) return;
+    if (!saveFormRef.current || !session || !authToken) return;
     try {
       setIsPlaylistSaving(true);
       setAlertMessage(null);
       const formData = new FormData(saveFormRef.current);
       const playlistId = formData.get("playlist")?.toString();
       const res = await updateUserPlaylistSongs({
+        authToken,
         userId,
         playlistId,
         playlistSongIds: [songId],
@@ -84,7 +85,7 @@ const Popup = ({ isPopup, setIsPopup, songId, variant }: Props) => {
   };
   const handleCreatePlaylist = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!createFormRef.current || !session) return;
+    if (!createFormRef.current || !session || !authToken) return;
     try {
       setIsPlaylistSaving(true);
       setAlertMessage(null);
@@ -93,6 +94,7 @@ const Popup = ({ isPopup, setIsPopup, songId, variant }: Props) => {
       const visibility = formData.get("visibility")?.toString();
 
       const res = await createUserPlaylist({
+        authToken,
         userId,
         playlistTitle: title,
         playlistSongIds: [songId],

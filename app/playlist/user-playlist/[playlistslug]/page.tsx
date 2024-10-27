@@ -26,7 +26,7 @@ const UserPlaylistSongs = ({ params, searchParams }: Props) => {
   const id = params.playlistslug.split("-").pop() as string;
   const type = searchParams["type"];
   const title = params.playlistslug.split("-").slice(0, -1).join(" ");
-  const { session, alertMessage, setGlobalState } = useGlobalContext();
+  const { session, authToken, setGlobalState } = useGlobalContext();
 
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isMoreBtnClick, setIsMoreBtnClick] = useState(false);
@@ -39,10 +39,10 @@ const UserPlaylistSongs = ({ params, searchParams }: Props) => {
   const userId = session?.user?.id ?? "";
 
   const userPlaylistFetcher = () =>
-    session
+    authToken
       ? type === "public"
-        ? getUserPublicPlaylist({ userId, playlistId: id })
-        : getUserPlaylist({ userId, playlistId: id })
+        ? getUserPublicPlaylist({ authToken, userId, playlistId: id })
+        : getUserPlaylist({ authToken, userId, playlistId: id })
       : null;
   const { data: userPlaylist } = useSWR(
     session ? `/user-playlist?id=${id}` : null,
@@ -74,10 +74,11 @@ const UserPlaylistSongs = ({ params, searchParams }: Props) => {
 
   const handleDeletePlaylist = async () => {
     try {
-      if (!session || !id) return;
+      if (!session || !id || !authToken) return;
       const userId = session?.user?.id ?? "";
 
       const res = await deleteUserPlaylistSongs({
+        authToken,
         userId,
         playlistId: id,
         isFullDeletePlaylist: true,
