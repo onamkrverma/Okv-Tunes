@@ -167,7 +167,9 @@ const Popup = ({ isPopup, setIsPopup, songId, variant }: Props) => {
               ))}
             </div>
           ) : // add to playlist
-          !isAddNewPlaylist ? (
+          !isAddNewPlaylist &&
+            userPlaylistData &&
+            userPlaylistData.length > 0 ? (
             <form
               className="flex flex-col gap-2"
               ref={saveFormRef}
@@ -209,6 +211,7 @@ const Popup = ({ isPopup, setIsPopup, songId, variant }: Props) => {
               <button
                 type="submit"
                 title="save"
+                disabled={userPlaylistData?.length === 0}
                 className="bg-neutral-800 w-full mt-2 text-primary rounded-lg p-1.5 border hover:bg-action"
               >
                 {isPlaylistSaving ? <Loading width="6" height="6" /> : "Save"}
@@ -219,7 +222,8 @@ const Popup = ({ isPopup, setIsPopup, songId, variant }: Props) => {
           <Loading loadingText="Loading" />
         )}
 
-        {isAddNewPlaylist ? (
+        {isAddNewPlaylist ||
+        (userPlaylistData && userPlaylistData.length === 0) ? (
           <form
             className="flex flex-col gap-2"
             ref={createFormRef}
