@@ -94,10 +94,12 @@ const SongsCollection = ({ song, playlistId, index }: Props) => {
         height={50}
         className="w-[50px] h-[50px] object-cover rounded-md"
       />
-      <div className="w-60 sm:w-20 lg:w-80">
-        <p className="truncate text-start">{name.replaceAll("&quot;", '"')}</p>
+      <div className="song-title-wrapper w-16 sm:w-20 lg:w-80">
+        <p className="truncate text-start max-w-[90%]">
+          {name.replaceAll("&quot;", '"')}
+        </p>
         <small className="truncate text-neutral-400 block sm:hidden">
-          {artistName}
+          {artistName.slice(0, 30)}
         </small>
       </div>
       <small className="truncate w-60 text-neutral-400 hidden sm:block">

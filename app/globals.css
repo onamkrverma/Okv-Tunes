@@ -60,6 +60,22 @@ body {
   max-width: 1200px;
 }
 
+@media (min-width: 321px) and (max-width: 376px) {
+  .song-title-wrapper {
+    width: 7rem;
+  }
+}
+@media (min-width: 377px) and (max-width: 426px) {
+  .song-title-wrapper {
+    width: 10rem;
+  }
+}
+@media (min-width: 427px) and (max-width: 637px) {
+  .song-title-wrapper {
+    width: 20rem;
+  }
+}
+
 @media (min-width: 1441px) {
   .inner-container {
     margin: 2rem auto;

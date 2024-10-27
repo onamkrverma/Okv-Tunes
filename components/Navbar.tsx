@@ -17,8 +17,10 @@ const Navbar = () => {
     e.preventDefault();
     const formInput = e.target.elements[0] as HTMLInputElement;
     const searchQuery = formInput.value;
-    navigate.push(`/search?query=${searchQuery}`);
-    e.target.reset();
+    if (searchQuery) {
+      navigate.push(`/search?query=${searchQuery}`);
+      e.target.reset();
+    }
   };
 
   useEffect(() => {

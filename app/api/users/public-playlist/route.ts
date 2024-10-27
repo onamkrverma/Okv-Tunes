@@ -7,11 +7,22 @@ import { NextRequest, NextResponse } from "next/server";
 export const GET = async (request: NextRequest) => {
   const playlistId = request.nextUrl.searchParams.get("playlistid");
   try {
+    const authCookiesName =
+      process.env.NODE_ENV === "production"
+        ? "__Secure-authjs.session-token"
+        : "authjs.session-token";
+
     const token = await getToken({
       req: request,
       secret: process.env.AUTH_SECRET,
+      cookieName: authCookiesName,
     });
-    if (!token?.sub) return;
+    if (!token?.sub) {
+      return NextResponse.json(
+        { error: "User id not found in token" },
+        { status: 400 }
+      );
+    }
 
     await connectDB();
 
