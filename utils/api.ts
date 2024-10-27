@@ -26,7 +26,7 @@ type TApiQuery = {
 };
 type TUserApiQuery = {
   userId: string;
-  cookies?: string;
+  authToken: string;
   songId?: string;
   playlistTitle?: string;
   playlistSongIds?: string[];
@@ -129,18 +129,17 @@ export const getAlbum = async ({ id }: TApiQuery) => {
 };
 
 // User apis
-export const getUserInfo = async ({ userId, cookies }: TUserApiQuery) => {
+export const getUserInfo = async ({ userId, authToken }: TUserApiQuery) => {
   const response = (await api
-    .headers({
-      Cookie: cookies ?? "",
-    })
+    .auth(`Bearer ${authToken}`)
     .get(`/users/${userId}`)
     .json()) as TUser;
   return response;
 };
 
-export const getLikedSongs = async ({ userId }: TUserApiQuery) => {
+export const getLikedSongs = async ({ userId, authToken }: TUserApiQuery) => {
   const response = (await api
+    .auth(`Bearer ${authToken}`)
     .options({
       next: { revalidate: 0 },
     })
@@ -161,12 +160,10 @@ export const likeDislikeSong = async ({ userId, songId }: TUserApiQuery) => {
 };
 export const getUserAllPlaylist = async ({
   userId,
-  cookies,
+  authToken,
 }: TUserApiQuery) => {
   const response = (await api
-    .headers({
-      Cookie: cookies ?? "",
-    })
+    .auth(`Bearer ${authToken}`)
     .options({
       next: { revalidate: 0 },
     })
@@ -249,14 +246,12 @@ export const deleteUserPlaylistSongs = async ({
 };
 
 export const getUserPublicPlaylists = async ({
-  cookies,
+  authToken,
 }: {
-  cookies: string;
+  authToken: string;
 }) => {
   const response = (await api
-    .headers({
-      Cookie: cookies ?? "",
-    })
+    .auth(`Bearer ${authToken}`)
     .options({
       next: { revalidate: 0 },
     })
@@ -267,15 +262,13 @@ export const getUserPublicPlaylists = async ({
 
 export const getUserPublicPlaylist = async ({
   playlistId,
-  cookies,
+  authToken,
 }: TUserApiQuery) => {
   const querParams = {
     playlistid: playlistId,
   };
   const response = (await api
-    .headers({
-      Cookie: cookies ?? "",
-    })
+    .auth(`Bearer ${authToken}`)
     .options({
       next: { revalidate: 0 },
     })

@@ -19,16 +19,18 @@ export const metadata: Metadata = {
 const Profile = async () => {
   const session = await auth();
   const userId = session?.user?.id ?? "";
-  const cookie = cookies().toString();
-  const userInfo = session
-    ? await getUserInfo({ userId, cookies: cookie })
-    : null;
-  const userPlaylists = session
-    ? await getUserAllPlaylist({ userId, cookies: cookie })
-    : [];
-  const publicPlaylists = session
-    ? await getUserPublicPlaylists({ cookies: cookie })
-    : [];
+  const authCookiesName =
+    process.env.NODE_ENV === "production"
+      ? "__Secure-authjs.session-token"
+      : "authjs.session-token";
+  const authToken = cookies().get(authCookiesName)?.value;
+  const userInfo = authToken ? await getUserInfo({ userId, authToken }) : null;
+  // const userPlaylists = authToken
+  //   ? await getUserAllPlaylist({ userId,authToken })
+  //   : [];
+  // const publicPlaylists = authToken
+  //   ? await getUserPublicPlaylists({ authToken })
+  //   : [];
 
   const userImg = session?.user?.image || userInfo?.image;
 
@@ -68,7 +70,7 @@ const Profile = async () => {
           </p>
         </div>
       </div>
-      <div className="flex flex-col gap-4 border-t py-2">
+      {/* <div className="flex flex-col gap-4 border-t py-2">
         <h2 className="capitalize text-xl font-bold  sm:text-start">
           Your Save Playlist
         </h2>
@@ -126,7 +128,7 @@ const Profile = async () => {
             </Link>
           </div>
         )}
-      </div>
+      </div> */}
     </div>
   );
 };

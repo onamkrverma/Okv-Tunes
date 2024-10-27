@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import useSWR, { mutate } from "swr";
 
 const LikedSongs = () => {
-  const { session } = useGlobalContext();
+  const { session, authToken } = useGlobalContext();
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
@@ -18,7 +18,7 @@ const LikedSongs = () => {
   }, []);
   const userId = session?.user?.id ?? "";
   const likedSongsIdsFetcher = () =>
-    session ? getLikedSongs({ userId }) : null;
+    authToken ? getLikedSongs({ userId, authToken }) : null;
   const { data: likedSongsIds } = useSWR(
     session ? "/liked-id" : null,
     likedSongsIdsFetcher,
