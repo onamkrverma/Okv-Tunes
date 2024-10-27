@@ -97,6 +97,7 @@ const config: NextAuthConfig = {
       return token;
     },
   },
+
   session: {
     strategy: "jwt",
   },

@@ -1,13 +1,13 @@
 import Wretch from "wretch";
 import queryString from "wretch/addons/queryString";
 import {
-  LikedSong,
   TArtistRes,
   TPlaylists,
   TSearchArtist,
   TSearchSongs,
   TSongs,
   TUser,
+  TUserPlaylist,
 } from "./api.d";
 
 const serverUrl =
@@ -19,13 +19,23 @@ const api = Wretch(`${serverUrl}/api`, {
   next: { revalidate: 3600 * 12 },
 }).addon(queryString);
 
-type TApiquery = {
+type TApiQuery = {
   id?: string | string[];
   query?: string | null;
   limit?: number;
 };
+type TUserApiQuery = {
+  userId: string;
+  authToken: string;
+  songId?: string;
+  playlistTitle?: string;
+  playlistSongIds?: string[];
+  playlistVisibility?: string;
+  isFullDeletePlaylist?: boolean;
+  playlistId?: string;
+};
 
-export const getPlaylists = async ({ id, limit = 10 }: TApiquery) => {
+export const getPlaylists = async ({ id, limit = 10 }: TApiQuery) => {
   const querParams = {
     id,
     limit,
@@ -37,7 +47,7 @@ export const getPlaylists = async ({ id, limit = 10 }: TApiquery) => {
 
   return response;
 };
-export const getSongs = async ({ id }: TApiquery) => {
+export const getSongs = async ({ id }: TApiQuery) => {
   const querParams = {
     id, // id=[songId]
   };
@@ -45,7 +55,7 @@ export const getSongs = async ({ id }: TApiquery) => {
   return response;
 };
 
-export const getSuggestedSongs = async ({ id, limit = 10 }: TApiquery) => {
+export const getSuggestedSongs = async ({ id, limit = 10 }: TApiQuery) => {
   const querParams = {
     id, // id=songId
     limit,
@@ -57,7 +67,7 @@ export const getSuggestedSongs = async ({ id, limit = 10 }: TApiquery) => {
 
   return response;
 };
-export const getSearchSongs = async ({ query, limit = 10 }: TApiquery) => {
+export const getSearchSongs = async ({ query, limit = 10 }: TApiQuery) => {
   const querParams = {
     query,
     limit,
@@ -69,7 +79,7 @@ export const getSearchSongs = async ({ query, limit = 10 }: TApiquery) => {
 
   return response;
 };
-export const getArtist = async ({ id, limit = 10 }: TApiquery) => {
+export const getArtist = async ({ id, limit = 10 }: TApiQuery) => {
   const querParams = {
     id, // id= artist id
     limit,
@@ -82,7 +92,7 @@ export const getArtist = async ({ id, limit = 10 }: TApiquery) => {
   return response;
 };
 
-export const getSearchArtists = async ({ query, limit = 10 }: TApiquery) => {
+export const getSearchArtists = async ({ query, limit = 10 }: TApiQuery) => {
   const querParams = {
     query,
     limit,
@@ -94,24 +104,51 @@ export const getSearchArtists = async ({ query, limit = 10 }: TApiquery) => {
 
   return response;
 };
-
-export const getUserInfo = async ({ id }: TApiquery) => {
-  const response = (await api.get(`/users/${id}`).json()) as TUser;
+export const getSearchAlbums = async ({ query, limit = 10 }: TApiQuery) => {
+  const querParams = {
+    query,
+    limit,
+  };
+  const response = (await api
+    .query(querParams)
+    .get(`/album/search`)
+    .json()) as TSearchArtist;
 
   return response;
 };
-export const getLikedSongs = async ({ id }: TApiquery) => {
-  // id = userid
+export const getAlbum = async ({ id }: TApiQuery) => {
+  const querParams = {
+    id,
+  };
   const response = (await api
+    .query(querParams)
+    .get(`/album`)
+    .json()) as TPlaylists;
+
+  return response;
+};
+
+// User apis
+export const getUserInfo = async ({ userId, authToken }: TUserApiQuery) => {
+  const response = (await api
+    .auth(`Bearer ${authToken}`)
+    .get(`/users/${userId}`)
+    .json()) as TUser;
+  return response;
+};
+
+export const getLikedSongs = async ({ userId, authToken }: TUserApiQuery) => {
+  const response = (await api
+    .auth(`Bearer ${authToken}`)
     .options({
       next: { revalidate: 0 },
     })
-    .get(`/users/${id}/liked-songs`)
+    .get(`/users/${userId}/liked-songs`)
     .json()) as string[];
   return response;
 };
 
-export const likeDislikeSong = async (userId: string, songId: string) => {
+export const likeDislikeSong = async ({ userId, songId }: TUserApiQuery) => {
   const response = (await api
     .post({ songId }, `/users/${userId}/like-dislike`)
     .json()) as {
@@ -119,5 +156,124 @@ export const likeDislikeSong = async (userId: string, songId: string) => {
     likedSongIds: string[];
   };
 
+  return response;
+};
+export const getUserAllPlaylist = async ({
+  userId,
+  authToken,
+}: TUserApiQuery) => {
+  const response = (await api
+    .auth(`Bearer ${authToken}`)
+    .options({
+      next: { revalidate: 0 },
+    })
+    .get(`/users/${userId}/playlist`)
+    .json()) as TUserPlaylist[];
+  return response;
+};
+
+export const getUserPlaylist = async ({
+  userId,
+  playlistId,
+}: TUserApiQuery) => {
+  const querParams = {
+    playlistid: playlistId,
+  };
+
+  const response = (await api
+    .options({
+      next: { revalidate: 0 },
+    })
+    .query(querParams)
+    .get(`/users/${userId}/playlist`)
+    .json()) as TUserPlaylist;
+  return response;
+};
+export const createUserPlaylist = async ({
+  userId,
+  playlistSongIds,
+  playlistTitle,
+  playlistVisibility,
+}: TUserApiQuery) => {
+  const reqBody = {
+    title: playlistTitle,
+    songIds: playlistSongIds,
+    visibility: playlistVisibility,
+  };
+
+  const response = (await api
+    .post(reqBody, `/users/${userId}/playlist`)
+    .json()) as { message: string };
+  return response;
+};
+export const updateUserPlaylistSongs = async ({
+  userId,
+  playlistSongIds,
+  playlistTitle,
+  playlistId,
+  playlistVisibility,
+}: TUserApiQuery) => {
+  const reqBody = {
+    playlistId,
+    title: playlistTitle,
+    songIds: playlistSongIds,
+    visibility: playlistVisibility,
+  };
+
+  const response = (await api
+    .put(reqBody, `/users/${userId}/playlist`)
+    .json()) as { message: string };
+  return response;
+};
+
+export const deleteUserPlaylistSongs = async ({
+  userId,
+  playlistSongIds,
+  playlistId,
+  isFullDeletePlaylist,
+}: TUserApiQuery) => {
+  const querParams = {
+    playlistid: playlistId,
+    songid: playlistSongIds,
+    "delete-playlist": isFullDeletePlaylist ? "true" : "false",
+  };
+
+  const response = (await api
+    .query(querParams)
+    .delete(`/users/${userId}/playlist`)
+    .json()) as { message: string };
+  return response;
+};
+
+export const getUserPublicPlaylists = async ({
+  authToken,
+}: {
+  authToken: string;
+}) => {
+  const response = (await api
+    .auth(`Bearer ${authToken}`)
+    .options({
+      next: { revalidate: 0 },
+    })
+    .get(`/users/public-playlist`)
+    .json()) as TUserPlaylist[];
+  return response;
+};
+
+export const getUserPublicPlaylist = async ({
+  playlistId,
+  authToken,
+}: TUserApiQuery) => {
+  const querParams = {
+    playlistid: playlistId,
+  };
+  const response = (await api
+    .auth(`Bearer ${authToken}`)
+    .options({
+      next: { revalidate: 0 },
+    })
+    .query(querParams)
+    .get(`/users/public-playlist`)
+    .json()) as TUserPlaylist;
   return response;
 };

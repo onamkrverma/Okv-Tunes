@@ -16,12 +16,11 @@ export const POST = async (
   try {
     if (!songId) {
       return NextResponse.json(
-        {
-          error: "The songId is required in request body",
-        },
+        { error: "The songId is required in request body" },
         { status: 404 }
       );
     }
+
     await connectDB();
 
     const user = await Users.findById(id, { likedSongIds: 1 });
@@ -32,25 +31,29 @@ export const POST = async (
         { status: 400 }
       );
     }
+
     const songIndex: number = user.likedSongIds.findIndex(
       (likedSongId: string) => likedSongId === songId
     );
+
     if (songIndex === -1) {
       user.likedSongIds.push(songId);
-      await user.save();
-      return NextResponse.json(
-        { message: "Song Liked", likedSongIds: user.likedSongIds },
-        { status: 200 }
-      );
     } else {
       user.likedSongIds.splice(songIndex, 1);
-      await user.save();
-
-      return NextResponse.json(
-        { message: "Song Disliked", likedSongIds: user.likedSongIds },
-        { status: 200 }
-      );
     }
+
+    await Users.updateOne(
+      { _id: id },
+      { $set: { likedSongIds: user.likedSongIds } }
+    );
+
+    return NextResponse.json(
+      {
+        message: songIndex === -1 ? "Song Liked" : "Song Disliked",
+        likedSongIds: user.likedSongIds,
+      },
+      { status: 200 }
+    );
   } catch (error: unknown) {
     console.error(error instanceof Error ? error.message : error);
     return NextResponse.json(

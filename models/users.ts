@@ -20,7 +20,25 @@ const UsersSchema = new Schema(
       select: false,
     },
     image: { type: String },
+
     likedSongIds: { type: [String], required: true },
+
+    playlist: [
+      {
+        title: { type: String, required: true },
+        songIds: {
+          type: [String],
+          required: true,
+        },
+        visibility: {
+          type: String,
+          enum: ["public", "private"],
+          default: "private",
+        },
+        createdBy: { type: String, require: true },
+        createdAt: { type: String, default: new Date().toISOString() },
+      },
+    ],
   },
   { timestamps: true }
 );

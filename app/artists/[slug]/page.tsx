@@ -1,4 +1,5 @@
 import ImageWithFallback from "@/components/ImageWithFallback";
+import PlayAllSongs from "@/components/PlayAllSongs";
 import SongsCollection from "@/components/SongsCollection";
 import { getArtist } from "@/utils/api";
 import { Metadata, ResolvingMetadata } from "next";
@@ -36,13 +37,13 @@ const ArtistInfo = async ({ params }: Props) => {
                   item.quality === "500x500" && item.url.includes("/c.saavncdn")
               )?.url ?? "/logo-circle.svg"
             }
-            alt={name + " okv tunes"}
+            alt={name + "-okv tunes"}
             width={200}
             height={200}
             className="w-full h-full object-cover rounded-full shadow-lg shadow-neutral-700"
           />
         </div>
-        <div className="flex flex-col gap-2 w-full max-w-md">
+        <div className="flex flex-col items-center sm:items-start gap-2 w-full max-w-md">
           <h1 className="capitalize text-xl sm:text-2xl font-bold text-center sm:text-start">
             {name}
           </h1>
@@ -67,12 +68,19 @@ const ArtistInfo = async ({ params }: Props) => {
               Read more
             </a>
           ) : null}
+
+          <PlayAllSongs
+            firstSong={topSongs[0]}
+            suggessionSongIds={topSongs.slice(1, 16).map((item) => item.id)}
+          />
         </div>
       </div>
       <p className="font-bold text-xl">Top songs</p>
       <div className="flex flex-col gap-4 my-4">
         {topSongs.length > 0 ? (
-          topSongs.map((song) => <SongsCollection key={song.id} song={song} />)
+          topSongs.map((song, index) => (
+            <SongsCollection key={song.id} song={song} index={index} />
+          ))
         ) : (
           <p>No songs found</p>
         )}

@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useGlobalContext } from "@/app/GlobalContex";
 import SuggestedSongs from "./SuggestedSongs";
-import { getSuggestedSongs } from "@/utils/api";
+import { getSongs, getSuggestedSongs } from "@/utils/api";
 import useSWR, { mutate } from "swr";
 import MiniPlayer from "./MiniPlayer";
 import ReactPlayer from "react-player";
@@ -13,6 +13,8 @@ import InfoIcon from "@/public/icons/info.svg";
 import Popup from "./Popup";
 import { usePathname } from "next/navigation";
 import ls from "localstorage-slim";
+import { Session } from "next-auth";
+import { getSession } from "next-auth/react";
 
 export type TplayerState = {
   url: string;
@@ -36,6 +38,7 @@ const Plalyer = () => {
     audioUrl,
     isRefetchSuggestion,
     volume,
+    suggessionSongIds,
   } = currentSong;
   const [playerState, setPlayerState] = useState<TplayerState>({
     url: "",
@@ -48,7 +51,7 @@ const Plalyer = () => {
     autoPlay: false,
   });
   const playerRef = useRef<ReactPlayer>(null);
-  const [isMoreClick, setIsMoreClick] = useState(false);
+  const [isMoreBtnClick, setIsMoreBtnClick] = useState(false);
   const [isPopup, setIsPopup] = useState(false);
   const pathName = usePathname();
 
@@ -64,9 +67,12 @@ const Plalyer = () => {
     document.body.style.overflow = isMaximise ? "hidden" : "auto";
   }, [isMaximise]);
 
-  const dataFetcher = () => getSuggestedSongs({ id: id, limit: 20 });
+  const dataFetcher = () =>
+    suggessionSongIds?.length
+      ? getSongs({ id: suggessionSongIds })
+      : getSuggestedSongs({ id: id, limit: 20 });
   const { data: suggestedSongsData, isLoading } = useSWR(
-    id ? "/suggested-songs" : null,
+    id || suggessionSongIds ? "/suggested-songs" : null,
     dataFetcher,
     {
       revalidateOnFocus: false,
@@ -268,7 +274,7 @@ const Plalyer = () => {
                 type="button"
                 title="more"
                 className=""
-                onClick={() => setIsMoreClick(!isMoreClick)}
+                onClick={() => setIsMoreBtnClick(!isMoreBtnClick)}
               >
                 <ThreeDotsIcon className={`w-6 h-6 `} />
               </button>
@@ -276,7 +282,7 @@ const Plalyer = () => {
 
             <div
               className={` absolute top-0 right-10 bg-secondary flex flex-col gap-2 p-2 rounded-md transition-transform duration-500 ${
-                isMoreClick ? "translate-y-8" : "-translate-y-full"
+                isMoreBtnClick ? "translate-y-8" : "-translate-y-full"
               } `}
             >
               <button
@@ -298,7 +304,7 @@ const Plalyer = () => {
                 id={currentSong.id}
                 src={imageUrl}
                 fallbackSrc={"/logo-circle.svg"}
-                alt={title + "okv tunes"}
+                alt={title + " okv tunes"}
                 width={500}
                 height={500}
                 className="w-full h-full object-cover"
@@ -325,7 +331,7 @@ const Plalyer = () => {
                   id={currentSong.id}
                   src={imageUrl}
                   fallbackSrc={"/logo-circle.svg"}
-                  alt={title + "okv tunes"}
+                  alt={title + " okv tunes"}
                   width={350}
                   height={350}
                   className="w-full h-auto  object-cover rounded-lg"
@@ -356,7 +362,12 @@ const Plalyer = () => {
             handlePrev={handlePrev}
           />
           {isPopup ? (
-            <Popup isPopup={isPopup} setIsPopup={setIsPopup} songId={id} />
+            <Popup
+              isPopup={isPopup}
+              setIsPopup={setIsPopup}
+              songId={id}
+              variant="song-info"
+            />
           ) : null}
         </>
       ) : null}
