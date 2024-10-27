@@ -28,9 +28,9 @@ const Profile = async () => {
   const userPlaylists = authToken
     ? await getUserAllPlaylist({ userId, authToken })
     : [];
-  // const publicPlaylists = authToken
-  //   ? await getUserPublicPlaylists({ authToken })
-  //   : [];
+  const publicPlaylists = authToken
+    ? await getUserPublicPlaylists({ authToken })
+    : [];
 
   const userImg = session?.user?.image || userInfo?.image;
 
@@ -94,7 +94,7 @@ const Profile = async () => {
                 />
               ))}
             </div>
-            {/* {publicPlaylists && publicPlaylists.length > 0 ? (
+            {publicPlaylists && publicPlaylists.length > 0 ? (
               <div className="flex flex-col gap-4 border-t py-2">
                 <h2 className="capitalize text-xl font-bold  sm:text-start">
                   Public Playlists
@@ -111,7 +111,7 @@ const Profile = async () => {
                   ))}
                 </div>
               </div>
-            ) : null} */}
+            ) : null}
           </>
         ) : (
           <div className="text-center flex flex-col items-center justify-center gap-2 min-h-40">
