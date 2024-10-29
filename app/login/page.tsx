@@ -4,6 +4,7 @@ import { gooogleLoginAction, loginAction } from "../actions/auth";
 import { useState } from "react";
 import Link from "next/link";
 import GoogleIcon from "@/public/icons/google.svg";
+import BackButton from "@/components/BackButton";
 
 type Props = {
   searchParams: { [key: string]: string | undefined };
@@ -44,6 +45,8 @@ const Login = ({ searchParams }: Props) => {
 
   return (
     <div className="flex justify-center items-center h-screen w-full p-4 ">
+      <BackButton />
+
       <div className="bg-primary/50 flex flex-col gap-4 items-center p-5 rounded-xl border shadow-neutral-500 shadow-md w-full max-w-md">
         <img src="/logo-full.svg" alt="okv tunes" className="h-12" />
         <p>Sign in and enjoy unlimited free music!</p>

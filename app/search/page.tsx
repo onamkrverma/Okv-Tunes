@@ -1,4 +1,5 @@
 "use client";
+import BackButton from "@/components/BackButton";
 import Card from "@/components/Card";
 import Loading from "@/components/Loading";
 import SongsCollection from "@/components/SongsCollection";
@@ -66,6 +67,8 @@ const SearchComponent = ({ searchParams }: Props) => {
 
   return (
     <div className="inner-container flex flex-col gap-6">
+      <BackButton />
+
       <div className="flex flex-col gap-4 my-2">
         <h2 className="capitalize font-bold text-sm sm:text-lg  ">
           Search results for {`"${searchQuery}"`}

@@ -1,3 +1,4 @@
+import BackButton from "@/components/BackButton";
 import ImageWithFallback from "@/components/ImageWithFallback";
 import PlayAllSongs from "@/components/PlayAllSongs";
 import SongsCollection from "@/components/SongsCollection";
@@ -32,6 +33,7 @@ const PlaylistSongs = async ({ params }: Props) => {
 
   return (
     <div className="inner-container flex flex-col gap-6">
+      <BackButton />
       <div className="flex gap-4 flex-col flex-wrap sm:flex-row items-center ">
         <div className="w-[200px] h-[200px]">
           <ImageWithFallback

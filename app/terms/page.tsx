@@ -1,3 +1,4 @@
+import BackButton from "@/components/BackButton";
 import { Metadata } from "next";
 import Link from "next/link";
 import React from "react";
@@ -9,7 +10,8 @@ export const metadata: Metadata = {
 const Terms = () => {
   return (
     <div className="inner-container p-6">
-      <h1 className="text-3xl font-bold mb-4">Terms of Service</h1>
+      <BackButton />
+      <h1 className="text-3xl font-bold my-4">Terms of Service</h1>
       <p className="mb-4">
         Welcome to OKV Tunes! By using our service, you agree to the following
         terms and conditions:

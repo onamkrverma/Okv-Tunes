@@ -4,6 +4,7 @@ import signupAction from "../actions/signup";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import BackButton from "@/components/BackButton";
 
 const Signup = () => {
   const [errorMessage, setErrorMessage] = useState("");
@@ -24,6 +25,8 @@ const Signup = () => {
 
   return (
     <div className="flex justify-center items-center h-screen w-full p-4 ">
+      <BackButton />
+
       <div className="bg-primary/50 flex flex-col gap-4 items-center p-5 rounded-xl border shadow-neutral-500 shadow-md w-full max-w-md">
         <img src="/logo-full.svg" alt="okv tunes" className="h-12" />
         <p>Sign up and unlock unlimited free music!</p>

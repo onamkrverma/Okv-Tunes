@@ -30,7 +30,7 @@ const Navbar = () => {
   }, [isSearchClick]);
 
   return (
-    <header className="inner-container !mt-0 !p-4 flex items-center justify-between sm:justify-center sticky top-0 left-0 backdrop-blur-lg bg-primary/50 px-10 py-2 border-b z-10">
+    <header className="inner-container !my-0 !p-4 flex items-center justify-between sm:justify-center sticky top-0 left-0 backdrop-blur-lg bg-primary/50 px-10 py-2 border-b z-10">
       <Link
         href={"/"}
         title="Okv Tunes logo"

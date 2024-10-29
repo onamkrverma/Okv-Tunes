@@ -16,6 +16,7 @@ import useSWR, { mutate } from "swr";
 import ThreeDotsIcon from "@/public/icons/three-dots.svg";
 import DeleteIcon from "@/public/icons/delete.svg";
 import { useRouter } from "next/navigation";
+import BackButton from "@/components/BackButton";
 
 type Props = {
   params: { playlistslug: string };
@@ -103,6 +104,7 @@ const UserPlaylistSongs = ({ params, searchParams }: Props) => {
 
   return (
     <div className="inner-container flex flex-col gap-6 relative">
+      <BackButton />
       <div className="flex justify-end items-center absolute right-4">
         <button
           type="button"

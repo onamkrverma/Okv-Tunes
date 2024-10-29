@@ -1,5 +1,6 @@
 "use client";
 import { useGlobalContext } from "@/app/GlobalContex";
+import BackButton from "@/components/BackButton";
 import ImageWithFallback from "@/components/ImageWithFallback";
 import Loading from "@/components/Loading";
 import PlayAllSongs from "@/components/PlayAllSongs";
@@ -48,6 +49,7 @@ const LikedSongs = () => {
 
   return (
     <div className="inner-container flex flex-col gap-6">
+      <BackButton />
       <div className="flex gap-4 flex-col flex-wrap sm:flex-row items-center ">
         <div className="w-[200px] h-[200px]">
           <ImageWithFallback
@@ -86,7 +88,7 @@ const LikedSongs = () => {
           <button
             type="button"
             onClick={hanldeRefresh}
-            className="flex items-center justify-center gap-2 border bg-neutral-800 hover:bg-secondary rounded-md p-1 px-2"
+            className="flex items-center justify-center gap-2 text-xs border bg-neutral-800 hover:bg-secondary rounded-md p-1 px-2"
           >
             <RefreshIcon
               className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`}

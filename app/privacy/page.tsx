@@ -1,3 +1,4 @@
+import BackButton from "@/components/BackButton";
 import { Metadata } from "next";
 import Link from "next/link";
 import React from "react";
@@ -9,7 +10,8 @@ export const metadata: Metadata = {
 const Privacy = () => {
   return (
     <div className="inner-container p-6">
-      <h1 className="text-3xl font-bold mb-4">Privacy Policy</h1>
+      <BackButton />
+      <h1 className="text-3xl font-bold my-4">Privacy Policy</h1>
       <p className="mb-4">
         Your privacy is important to us. This privacy policy explains how we
         collect, use, and protect your information.

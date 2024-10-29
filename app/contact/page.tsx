@@ -2,6 +2,7 @@
 import Input from "@/components/Input";
 import React, { useEffect, useRef, useState } from "react";
 import { contactAction } from "../actions/contact";
+import BackButton from "@/components/BackButton";
 
 const Contact = () => {
   useEffect(() => {
@@ -26,6 +27,8 @@ const Contact = () => {
 
   return (
     <div className="inner-container flex gap-2 flex-col">
+      <BackButton />
+
       <h1 className="text-2xl font-bold">Contact Us</h1>
       <p>
         We are here to assist you. Please submit your query using the form below

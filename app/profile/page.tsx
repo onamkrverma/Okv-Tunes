@@ -11,6 +11,8 @@ import Link from "next/link";
 import LoginIcon from "@/public/icons/login.svg";
 import { Metadata } from "next";
 import { cookies } from "next/headers";
+import RefreshClient from "@/components/RefreshClient";
+import BackButton from "@/components/BackButton";
 
 export const metadata: Metadata = {
   title: "Profile • Okv-Tunes",
@@ -40,11 +42,12 @@ const Profile = async () => {
     )}-${id}?type=${type}`;
 
   return (
-    <div className="inner-container flex flex-col gap-6 ">
-      <div className="flex gap-4 flex-col flex-wrap sm:flex-row items-center relative">
-        <div className="absolute -top-4 right-0">
-          <LoginLogout session={session} />
-        </div>
+    <div className="inner-container flex flex-col gap-6 relative">
+      <BackButton />
+      <div className="absolute top-0 right-4">
+        <LoginLogout session={session} />
+      </div>
+      <div className="flex gap-4 flex-col flex-wrap sm:flex-row items-center ">
         <div className=" w-24 h-24 sm:w-[150px] sm:h-[150px]">
           {userImg ? (
             <ImageWithFallback
@@ -71,9 +74,12 @@ const Profile = async () => {
         </div>
       </div>
       <div className="flex flex-col gap-4 border-t py-2">
-        <h2 className="capitalize text-xl font-bold  sm:text-start">
-          Your Save Playlist
-        </h2>
+        <div className="flex justify-between items-center">
+          <h2 className="capitalize text-xl font-bold  sm:text-start">
+            Your Save Playlist
+          </h2>
+          <RefreshClient />
+        </div>
         {session ? (
           <>
             <div className="flex items-center gap-4 overflow-x-auto">

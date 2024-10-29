@@ -1,3 +1,4 @@
+import BackButton from "@/components/BackButton";
 import Card from "@/components/Card";
 import { topArtist } from "@/utils/topArtists";
 import { Metadata } from "next";
@@ -12,6 +13,8 @@ export const metadata: Metadata = {
 const TopArtists = () => {
   return (
     <div className="inner-container flex flex-col gap-6">
+      <BackButton />
+
       <h2 className="text-lg sm:text-2xl font-semibold truncate">
         Popular Artists
       </h2>
