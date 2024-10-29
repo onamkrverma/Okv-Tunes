@@ -80,7 +80,7 @@ const Profile = async () => {
               <Card
                 id={"1"}
                 title={"Liked Songs"}
-                type="user"
+                type="user-playlist"
                 link="/playlist/liked-songs"
               />
 
@@ -89,7 +89,7 @@ const Profile = async () => {
                   key={playlist._id}
                   id={playlist._id}
                   title={playlist.title}
-                  type="user"
+                  type="user-playlist"
                   link={urlSlug(playlist.title, playlist._id, "private")}
                 />
               ))}
@@ -97,7 +97,7 @@ const Profile = async () => {
             {publicPlaylists && publicPlaylists.length > 0 ? (
               <div className="flex flex-col gap-4 border-t py-2">
                 <h2 className="capitalize text-xl font-bold  sm:text-start">
-                  Public Playlists
+                  Community Playlists
                 </h2>
                 <div className="flex items-center gap-4 overflow-x-auto">
                   {publicPlaylists.map((playlist) => (
@@ -105,8 +105,9 @@ const Profile = async () => {
                       key={playlist._id}
                       id={playlist._id}
                       title={playlist.title}
-                      type="user"
+                      type="user-playlist"
                       link={urlSlug(playlist.title, playlist._id, "public")}
+                      username={playlist.createdBy}
                     />
                   ))}
                 </div>

@@ -13,9 +13,19 @@ type Props = {
   artist?: string;
   audioUrl?: string;
   link?: string;
-  type: "song" | "artist" | "playlist" | "album" | "user";
+  username?: string;
+  type: "song" | "artist" | "playlist" | "album" | "user-playlist";
 };
-const Card = ({ title, imageUrl, artist, audioUrl, id, type, link }: Props) => {
+const Card = ({
+  title,
+  imageUrl,
+  artist,
+  audioUrl,
+  id,
+  type,
+  link,
+  username,
+}: Props) => {
   const { setGlobalState, session } = useGlobalContext();
 
   const router = useRouter();
@@ -128,18 +138,29 @@ const Card = ({ title, imageUrl, artist, audioUrl, id, type, link }: Props) => {
           href={urlSlug ?? ""}
           className="flex flex-col items-center justify-center gap-2 p-2 w-[150px] h-[150px] sm:w-[180px] sm:h-[180px] rounded-md cursor-pointer bg-custom_gradient relative hover:underline underline-offset-2"
         >
-          <img
-            src="/logo-circle.svg"
-            alt="logo"
-            width={32}
-            height={32}
-            className="w-8 h-8 absolute bottom-2 left-2"
-          />
-
-          <p className="w-[150px] sm:w-[180px] text-center text-xl font-bold line-clamp-3">
+          <p className="w-[150px] sm:w-[160px] text-center text-xl font-bold line-clamp-3">
             {title}
           </p>
           <span className="absolute top-0 left-0 w-full h-28 bg-action/50 -z-10 rounded-t-md rounded-br-[100%]"></span>
+          <div className="flex items-center gap-2 absolute bottom-2 left-2">
+            {!username ? (
+              <img
+                src="/logo-circle.svg"
+                alt="logo"
+                width={32}
+                height={32}
+                className="w-8 h-8 "
+              />
+            ) : (
+              <>
+                <span className="uppercase bg-action text-primary rounded-full h-8 w-8 flex justify-center items-center font-bold">
+                  {username?.at(0)}
+                </span>
+
+                <small className="truncate w-24">By: {username}</small>
+              </>
+            )}
+          </div>
         </Link>
       )}
     </>
