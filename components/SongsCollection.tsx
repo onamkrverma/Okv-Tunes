@@ -94,7 +94,7 @@ const SongsCollection = ({ song, playlistId, index }: Props) => {
         height={50}
         className="w-[50px] h-[50px] object-cover rounded-md"
       />
-      <div className="song-title-wrapper w-16 sm:w-20 lg:w-80">
+      <div className="song-title-wrapper w-16 sm:w-20 lg:w-full">
         <p className="truncate text-start max-w-[90%]">
           {name.replaceAll("&quot;", '"')}
         </p>
