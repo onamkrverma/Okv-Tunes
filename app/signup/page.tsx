@@ -25,7 +25,9 @@ const Signup = () => {
 
   return (
     <div className="flex justify-center items-center h-screen w-full p-4 ">
-      <BackButton />
+      <div className="absolute top-4 left-4">
+        <BackButton />
+      </div>
 
       <div className="bg-primary/50 flex flex-col gap-4 items-center p-5 rounded-xl border shadow-neutral-500 shadow-md w-full max-w-md">
         <img src="/logo-full.svg" alt="okv tunes" className="h-12" />
