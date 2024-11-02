@@ -15,9 +15,10 @@ type Props = {
   song: TSong;
   playlistId?: string;
   index: number;
+  type?: "public" | "private";
 };
 
-const SongsCollection = ({ song, playlistId, index }: Props) => {
+const SongsCollection = ({ song, playlistId, index, type }: Props) => {
   const { setGlobalState, authToken, session } = useGlobalContext();
   const router = useRouter();
   const pathname = usePathname();
@@ -126,10 +127,10 @@ const SongsCollection = ({ song, playlistId, index }: Props) => {
           isMoreBtnClick ? "flex" : "hidden"
         } `}
       >
-        {playlistId ? (
+        {playlistId && type === "private" ? (
           <button
             type="button"
-            className="flex items-center gap-1"
+            className="flex items-center gap-1 text-xs"
             onClick={handleRemoveSongs}
           >
             <DeleteIcon className="w-4 h-4" />

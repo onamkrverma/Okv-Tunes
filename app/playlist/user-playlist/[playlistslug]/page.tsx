@@ -25,7 +25,7 @@ type Props = {
 
 const UserPlaylistSongs = ({ params, searchParams }: Props) => {
   const id = params.playlistslug.split("-").pop() as string;
-  const type = searchParams["type"];
+  const type = searchParams["type"] as "public" | "private";
   const title = params.playlistslug.split("-").slice(0, -1).join(" ");
   const { session, authToken, setGlobalState } = useGlobalContext();
 
@@ -106,17 +106,19 @@ const UserPlaylistSongs = ({ params, searchParams }: Props) => {
     <div className="inner-container flex flex-col gap-6 relative">
       <BackButton />
       <div className="flex justify-end items-center absolute right-4">
-        <button
-          type="button"
-          title="more"
-          className=""
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsMoreBtnClick(!isMoreBtnClick);
-          }}
-        >
-          <ThreeDotsIcon className="w-6 h-6" />
-        </button>
+        {type === "private" ? (
+          <button
+            type="button"
+            title="more"
+            className=""
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsMoreBtnClick(!isMoreBtnClick);
+            }}
+          >
+            <ThreeDotsIcon className="w-6 h-6" />
+          </button>
+        ) : null}
 
         <div
           className={`absolute top-4 right-6 bg-neutral-800 border flex-col gap-2 p-2 rounded-md z-[5] hover:bg-secondary ${
@@ -205,6 +207,7 @@ const UserPlaylistSongs = ({ params, searchParams }: Props) => {
                 song={song}
                 playlistId={userPlaylist._id}
                 index={index}
+                type={type}
               />
             ))
           ) : (

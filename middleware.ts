@@ -38,6 +38,9 @@ export async function middleware(req: NextRequest) {
       return NextResponse.redirect(new URL("/login", req.url));
     }
   } else {
+    if (pathname === "/login" || pathname === "/signup") {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
     if (!userPaths.some((path) => pathname.startsWith(path))) {
       return NextResponse.json(
         { error: "You do not have access" },
@@ -50,5 +53,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/playlist/:path*", "/api/users/:path*"],
+  matcher: ["/playlist/:path*", "/api/users/:path*", "/login", "/signup"],
 };

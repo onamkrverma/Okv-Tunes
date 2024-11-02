@@ -1,10 +1,11 @@
 "use client";
-import Input from "@/components/Input";
-import { gooogleLoginAction, loginAction } from "../actions/auth";
-import { useState } from "react";
-import Link from "next/link";
-import GoogleIcon from "@/public/icons/google.svg";
 import BackButton from "@/components/BackButton";
+import Input from "@/components/Input";
+import Loading from "@/components/Loading";
+import GoogleIcon from "@/public/icons/google.svg";
+import Link from "next/link";
+import { useState } from "react";
+import { gooogleLoginAction, loginAction } from "../actions/auth";
 
 type Props = {
   searchParams: { [key: string]: string | undefined };
@@ -12,6 +13,7 @@ type Props = {
 
 const Login = ({ searchParams }: Props) => {
   const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const redirectNext = searchParams["next"];
 
   const removeSwAndRedirect = async () => {
@@ -25,6 +27,7 @@ const Login = ({ searchParams }: Props) => {
   };
 
   const handleLogin = async (formData: FormData) => {
+    setIsLoading(true);
     const email = formData.get("email")?.toString();
     const password = formData.get("password")?.toString();
     setErrorMessage("");
@@ -32,6 +35,7 @@ const Login = ({ searchParams }: Props) => {
       return setErrorMessage("Please provide all fields");
     }
     const res = await loginAction(email, password);
+    setIsLoading(false);
     if (res?.error) {
       return setErrorMessage(res.error);
     }
@@ -93,7 +97,7 @@ const Login = ({ searchParams }: Props) => {
             title="login"
             className="bg-neutral-800 w-full mt-2 text-primary rounded-lg p-3 border hover:bg-action"
           >
-            Login
+            {isLoading ? <Loading width="6" height="6" /> : "Login"}
           </button>
           {errorMessage ? (
             <p className="text-action text-sm my-2 bg-neutral-50 p-1 px-4 rounded-md text-center">
