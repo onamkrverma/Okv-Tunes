@@ -26,6 +26,17 @@ const config: Config = {
       boxShadow: {
         primary: "0 0 5px 5px #202020",
       },
+
+      keyframes: {
+        loadingBar: {
+          "0%": { transform: "translateX(-100%)" },
+          "50%": { transform: "translateX(0%)" },
+          "100%": { transform: "translateX(100%)" },
+        },
+      },
+      animation: {
+        loadingBar: "loadingBar 2s linear infinite",
+      },
     },
   },
   plugins: [],

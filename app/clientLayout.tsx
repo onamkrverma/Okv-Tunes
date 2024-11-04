@@ -8,6 +8,7 @@ import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import registerSw from "@/public/registerSw";
 import AlertNotification from "@/components/AlertNotification";
+import LoadingBar from "@/components/LoadingBar";
 const Plalyer = dynamic(() => import("@/components/Player"), { ssr: false });
 
 const ClientLayout = ({
@@ -27,6 +28,7 @@ const ClientLayout = ({
   return (
     <GlobalContextProvider authToken={authToken}>
       <main className="container relative">
+        <LoadingBar />
         <div className="absolute top-0 w-full h-48 -z-10 flex items-center justify-end rounded-full">
           <span className="bg-custom_gradient block w-3/4 h-full blur-3xl" />
         </div>
