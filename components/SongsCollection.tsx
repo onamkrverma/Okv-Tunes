@@ -1,5 +1,11 @@
 "use client";
-import React, { ChangeEvent, MouseEvent, useState } from "react";
+import React, {
+  ChangeEvent,
+  MouseEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { TSong } from "@/utils/api.d";
 import secondsToTime from "@/utils/secondsToTime";
 import { useGlobalContext } from "@/app/GlobalContex";
@@ -22,6 +28,7 @@ const SongsCollection = ({ song, playlistId, index, type }: Props) => {
   const { setGlobalState, authToken, session } = useGlobalContext();
   const router = useRouter();
   const pathname = usePathname();
+  const moreInfoRef = useRef<HTMLDivElement>(null);
 
   const [isMoreBtnClick, setIsMoreBtnClick] = useState(false);
 
@@ -81,6 +88,23 @@ const SongsCollection = ({ song, playlistId, index, type }: Props) => {
     }
   };
 
+  useEffect(() => {
+    const handleClickOutside = (e: globalThis.MouseEvent) => {
+      if (
+        moreInfoRef.current &&
+        !moreInfoRef.current.contains(e.target as Node)
+      ) {
+        setIsMoreBtnClick(false);
+      }
+    };
+
+    window.addEventListener("click", handleClickOutside);
+
+    return () => {
+      window.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+
   return (
     <div
       onClick={handleUpdateState}
@@ -126,6 +150,7 @@ const SongsCollection = ({ song, playlistId, index, type }: Props) => {
         className={`absolute bottom-2 right-12 bg-neutral-800 border flex-col gap-2 p-2 rounded-md z-[5] hover:bg-secondary ${
           isMoreBtnClick ? "flex" : "hidden"
         } `}
+        ref={moreInfoRef}
       >
         {playlistId && type === "private" ? (
           <button

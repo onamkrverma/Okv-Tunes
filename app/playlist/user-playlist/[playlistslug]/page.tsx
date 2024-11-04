@@ -11,12 +11,14 @@ import {
   getUserPlaylist,
   getUserPublicPlaylist,
 } from "@/utils/api";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useSWR, { mutate } from "swr";
 import ThreeDotsIcon from "@/public/icons/three-dots.svg";
 import DeleteIcon from "@/public/icons/delete.svg";
 import { useRouter } from "next/navigation";
 import BackButton from "@/components/BackButton";
+import Popup from "@/components/Player/Popup";
+import PencilIcon from "@/public/icons/pencil.svg";
 
 type Props = {
   params: { playlistslug: string };
@@ -26,15 +28,16 @@ type Props = {
 const UserPlaylistSongs = ({ params, searchParams }: Props) => {
   const id = params.playlistslug.split("-").pop() as string;
   const type = searchParams["type"] as "public" | "private";
-  const title = params.playlistslug.split("-").slice(0, -1).join(" ");
   const { session, authToken, setGlobalState } = useGlobalContext();
 
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isMoreBtnClick, setIsMoreBtnClick] = useState(false);
+  const [isPopup, setIsPopup] = useState(false);
   const router = useRouter();
+  const moreInfoRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    document.title = `User ${type} playlist • Okv-Tunes"`;
+    document.title = `User ${type} playlist • Okv-Tunes`;
   }, []);
 
   const userId = session?.user?.id ?? "";
@@ -102,6 +105,23 @@ const UserPlaylistSongs = ({ params, searchParams }: Props) => {
     }
   };
 
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        moreInfoRef.current &&
+        !moreInfoRef.current.contains(e.target as Node)
+      ) {
+        setIsMoreBtnClick(false);
+      }
+    };
+
+    window.addEventListener("click", handleClickOutside);
+
+    return () => {
+      window.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+
   return (
     <div className="inner-container flex flex-col gap-6 relative">
       <BackButton />
@@ -121,13 +141,24 @@ const UserPlaylistSongs = ({ params, searchParams }: Props) => {
         ) : null}
 
         <div
-          className={`absolute top-4 right-6 bg-neutral-800 border flex-col gap-2 p-2 rounded-md z-[5] hover:bg-secondary ${
+          className={`absolute top-4 right-6 bg-neutral-800 w-36 p-1 border flex-col rounded-md z-[5]  ${
             isMoreBtnClick ? "flex" : "hidden"
           } `}
+          ref={moreInfoRef}
         >
           <button
             type="button"
-            className="flex items-center gap-1 text-xs w-28"
+            title="edit playlist"
+            className="flex items-center gap-1 text-xs p-2 rounded-md hover:bg-secondary"
+            onClick={() => setIsPopup(true)}
+          >
+            <PencilIcon className="w-4 h-4" />
+            Edit Info
+          </button>
+          <button
+            type="button"
+            title="delete playlist"
+            className="flex items-center gap-1 text-xs p-2 rounded-md hover:bg-secondary"
             onClick={handleDeletePlaylist}
           >
             <DeleteIcon className="w-4 h-4" />
@@ -162,7 +193,7 @@ const UserPlaylistSongs = ({ params, searchParams }: Props) => {
         </div>
         <div className="flex flex-col gap-2 items-center sm:items-start w-full max-w-sm">
           <h1 className="capitalize text-xl sm:text-2xl font-bold text-center sm:text-start">
-            {title}
+            {userPlaylist?.title}
           </h1>
           <div className="flex flex-col gap-1 items-center sm:items-start">
             <small className="text-neutral-300 text-center sm:text-start capitalize">
@@ -185,20 +216,21 @@ const UserPlaylistSongs = ({ params, searchParams }: Props) => {
           ) : null}
         </div>
       </div>
-
       <div className="flex flex-col gap-4 my-4">
-        <div className="flex justify-end items-center">
-          <button
-            type="button"
-            onClick={hanldeRefresh}
-            className="flex items-center justify-center gap-2 text-xs border bg-neutral-800 hover:bg-secondary rounded-md p-1 px-2"
-          >
-            <RefreshIcon
-              className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`}
-            />
-            Refresh
-          </button>
-        </div>
+        {!isLoading && userPlaylist ? (
+          <div className="flex justify-end items-center">
+            <button
+              type="button"
+              onClick={hanldeRefresh}
+              className="flex items-center justify-center gap-2 text-xs border bg-neutral-800 hover:bg-secondary rounded-md p-1 px-2"
+            >
+              <RefreshIcon
+                className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`}
+              />
+              Refresh
+            </button>
+          </div>
+        ) : null}
         {!isLoading && userPlaylist ? (
           playlistSongs && playlistSongs?.data?.length > 0 ? (
             playlistSongs?.data.map((song, index) => (
@@ -225,6 +257,16 @@ const UserPlaylistSongs = ({ params, searchParams }: Props) => {
           <Loading loadingText="Loading" />
         )}
       </div>
+      {isPopup ? (
+        <Popup
+          isPopup={isPopup}
+          setIsPopup={setIsPopup}
+          id={id}
+          variant="edit-playlist"
+          playlistTitle={userPlaylist?.title}
+          playlistVisibility={userPlaylist?.visibility}
+        />
+      ) : null}
     </div>
   );
 };

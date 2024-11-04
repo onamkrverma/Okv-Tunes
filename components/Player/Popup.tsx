@@ -16,11 +16,20 @@ import Loading from "../Loading";
 type Props = {
   isPopup: boolean;
   setIsPopup: React.Dispatch<React.SetStateAction<boolean>>;
-  songId: string;
-  variant: "song-info" | "add-playlist";
+  id: string; // song id or playlist id
+  playlistTitle?: string;
+  playlistVisibility?: "private" | "public";
+  variant: "song-info" | "add-playlist" | "edit-playlist";
 };
 
-const Popup = ({ isPopup, setIsPopup, songId, variant }: Props) => {
+const Popup = ({
+  isPopup,
+  setIsPopup,
+  id,
+  variant,
+  playlistTitle,
+  playlistVisibility,
+}: Props) => {
   const { session, authToken } = useGlobalContext();
   const [isAddNewPlaylist, setIsAddNewPlaylist] = useState(false);
 
@@ -33,7 +42,7 @@ const Popup = ({ isPopup, setIsPopup, songId, variant }: Props) => {
   const saveFormRef = useRef<HTMLFormElement>(null);
   const createFormRef = useRef<HTMLFormElement>(null);
 
-  const songFetcher = () => getSongs({ id: songId });
+  const songFetcher = () => getSongs({ id });
   const { data: songData, isLoading } = useSWR(
     isPopup && variant === "song-info" ? "/song-info" : null,
     songFetcher,
@@ -72,7 +81,7 @@ const Popup = ({ isPopup, setIsPopup, songId, variant }: Props) => {
         authToken,
         userId,
         playlistId,
-        playlistSongIds: [songId],
+        playlistSongIds: [id],
       });
       setAlertMessage({ message: res?.message ?? "success", type: "success" });
     } catch (error) {
@@ -83,7 +92,9 @@ const Popup = ({ isPopup, setIsPopup, songId, variant }: Props) => {
       setIsPlaylistSaving(false);
     }
   };
-  const handleCreatePlaylist = async (e: ChangeEvent<HTMLFormElement>) => {
+  const handleCreateOrUpdatePlaylist = async (
+    e: ChangeEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
     if (!createFormRef.current || !session || !authToken) return;
     try {
@@ -93,15 +104,23 @@ const Popup = ({ isPopup, setIsPopup, songId, variant }: Props) => {
       const title = formData.get("title")?.toString();
       const visibility = formData.get("visibility")?.toString();
 
-      const res = await createUserPlaylist({
-        authToken,
-        userId,
-        playlistTitle: title,
-        playlistSongIds: [songId],
-        playlistVisibility: visibility,
-      });
+      const res =
+        variant === "edit-playlist"
+          ? await updateUserPlaylistSongs({
+              authToken,
+              userId,
+              playlistTitle: title,
+              playlistId: id,
+              playlistVisibility: visibility,
+            })
+          : await createUserPlaylist({
+              authToken,
+              userId,
+              playlistTitle: title,
+              playlistSongIds: [id],
+              playlistVisibility: visibility,
+            });
       setAlertMessage({ message: res?.message ?? "success", type: "success" });
-      console.log(title, visibility);
     } catch (error) {
       if (error instanceof Error) {
         setAlertMessage({ message: error.message, type: "error" });
@@ -126,6 +145,8 @@ const Popup = ({ isPopup, setIsPopup, songId, variant }: Props) => {
               ? "Song Info"
               : isAddNewPlaylist
               ? "Create New Playlist"
+              : variant === "edit-playlist"
+              ? "Edit Playlist info"
               : "Add to Playlist"}
           </p>
           <button
@@ -168,6 +189,7 @@ const Popup = ({ isPopup, setIsPopup, songId, variant }: Props) => {
             </div>
           ) : // add to playlist
           !isAddNewPlaylist &&
+            variant !== "edit-playlist" &&
             userPlaylistData &&
             userPlaylistData.length > 0 ? (
             <form
@@ -223,16 +245,18 @@ const Popup = ({ isPopup, setIsPopup, songId, variant }: Props) => {
         )}
 
         {isAddNewPlaylist ||
+        variant === "edit-playlist" ||
         (userPlaylistData && userPlaylistData.length === 0) ? (
           <form
             className="flex flex-col gap-2"
             ref={createFormRef}
-            onSubmit={handleCreatePlaylist}
+            onSubmit={handleCreateOrUpdatePlaylist}
           >
             <Input
               type="text"
               name="title"
               label="Playlist Title"
+              defaultValue={playlistTitle}
               minLength={3}
               required
             />
@@ -241,6 +265,7 @@ const Popup = ({ isPopup, setIsPopup, songId, variant }: Props) => {
               <select
                 name="visibility"
                 className="bg-secondary p-2 px-3 rounded-lg cursor-pointer focus:ring-1 focus:ring-inset focus-visible:outline-none"
+                defaultValue={playlistVisibility}
               >
                 <option value="private">Private</option>
                 <option value="public">Public</option>
@@ -255,7 +280,13 @@ const Popup = ({ isPopup, setIsPopup, songId, variant }: Props) => {
               title="create"
               className="bg-neutral-800 w-full mt-2 text-primary rounded-lg p-1.5 border hover:bg-action"
             >
-              {isPlaylistSaving ? <Loading width="6" height="6" /> : "Create"}
+              {isPlaylistSaving ? (
+                <Loading width="6" height="6" />
+              ) : variant === "edit-playlist" ? (
+                "Update"
+              ) : (
+                "Create"
+              )}
             </button>
           </form>
         ) : null}

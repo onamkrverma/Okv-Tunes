@@ -251,7 +251,7 @@ const MiniPlayer = ({
         <Popup
           isPopup={isPlaylistPopup}
           setIsPopup={setIsPlaylistPopup}
-          songId={id}
+          id={id}
           variant="add-playlist"
         />
       ) : null}

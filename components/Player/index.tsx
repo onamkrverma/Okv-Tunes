@@ -363,7 +363,7 @@ const Plalyer = () => {
             <Popup
               isPopup={isPopup}
               setIsPopup={setIsPopup}
-              songId={id}
+              id={id}
               variant="song-info"
             />
           ) : null}
