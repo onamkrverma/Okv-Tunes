@@ -108,7 +108,7 @@ const SongsCollection = ({ song, playlistId, index, type }: Props) => {
   return (
     <div
       onClick={handleUpdateState}
-      className="flex items-center gap-4 p-2 cursor-pointer hover:bg-secondary relative rounded-md"
+      className="flex items-center justify-between sm:gap-4 p-2 cursor-pointer hover:bg-secondary relative rounded-md"
     >
       <span className="text-neutral-400 text-sm">{index + 1}</span>
       <ImageWithFallback
@@ -120,10 +120,10 @@ const SongsCollection = ({ song, playlistId, index, type }: Props) => {
         className="w-[50px] h-[50px] object-cover rounded-md"
       />
       <div className="song-title-wrapper w-16 sm:w-20 lg:w-full">
-        <p className="truncate text-start max-w-[90%]">
+        <p className="truncate text-start w-full max-w-[90%]">
           {name.replaceAll("&quot;", '"')}
         </p>
-        <small className="truncate text-neutral-400 block sm:hidden">
+        <small className="truncate w-full text-neutral-400 block sm:hidden">
           {artistName.slice(0, 30)}
         </small>
       </div>

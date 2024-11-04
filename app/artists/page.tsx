@@ -18,7 +18,7 @@ const TopArtists = () => {
       <h2 className="text-lg sm:text-2xl font-semibold truncate">
         Popular Artists
       </h2>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 md:gap-x-2 justify-items-center">
+      <div className="max-[426px]:grid justify-center grid-cols-2 gap-4 flex flex-wrap items-center">
         {topArtist.map((artist) => (
           <Card
             key={artist.artistid}

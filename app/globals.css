@@ -65,12 +65,17 @@ body {
     width: 7rem;
   }
 }
-@media (min-width: 377px) and (max-width: 426px) {
+@media (min-width: 377px) and (max-width: 450px) {
   .song-title-wrapper {
     width: 10rem;
   }
 }
-@media (min-width: 427px) and (max-width: 637px) {
+@media (min-width: 451px) and (max-width: 537px) {
+  .song-title-wrapper {
+    width: 14rem;
+  }
+}
+@media (min-width: 538px) and (max-width: 637px) {
   .song-title-wrapper {
     width: 20rem;
   }
