@@ -78,7 +78,7 @@ const Profile = async () => {
           <h2 className="capitalize text-xl font-bold  sm:text-start">
             Your Save Playlist
           </h2>
-          <RefreshClient />
+          {session ? <RefreshClient /> : null}
         </div>
         {session ? (
           <>

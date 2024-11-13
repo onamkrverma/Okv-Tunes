@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useGlobalContext } from "@/app/GlobalContex";
 import SuggestedSongs from "./SuggestedSongs";
 import { getSongs, getSuggestedSongs } from "@/utils/api";
-import useSWR, { mutate } from "swr";
+import useSWR, { mutate, SWRResponse } from "swr";
 import MiniPlayer from "./MiniPlayer";
 import ReactPlayer from "react-player";
 import CaretUpIcon from "@/public/icons/caret-up.svg";
@@ -13,6 +13,7 @@ import InfoIcon from "@/public/icons/info.svg";
 import Popup from "./Popup";
 import { usePathname } from "next/navigation";
 import ls from "localstorage-slim";
+import { TSongs } from "@/utils/api.d";
 
 export type TplayerState = {
   url: string;
@@ -83,12 +84,16 @@ const Plalyer = () => {
     mutate("/suggested-songs");
   }, [isRefetchSuggestion]);
 
+  const getCurrentSongIndex = (suggestedSongsData: TSongs, id: string) => {
+    if (!suggestedSongsData || !suggestedSongsData.success) return -1;
+    return suggestedSongsData.data?.findIndex((item) => item.id === id);
+  };
+
   const updateNextPrevTrack = (type: "prev" | "next") => {
     if (!suggestedSongsData || !suggestedSongsData?.success) return;
 
-    const currentSongIndex = suggestedSongsData.data?.findIndex(
-      (item) => item.id === id
-    );
+    const currentSongIndex = getCurrentSongIndex(suggestedSongsData, id);
+
     const updatorValue = type === "prev" ? -1 : 1;
     let updateSongIndex = currentSongIndex + updatorValue;
     if (currentSongIndex === -1) {
@@ -142,11 +147,26 @@ const Plalyer = () => {
       ...prev,
       currentSong: { ...currentSong, isRefetchSuggestion: false },
     }));
+
     // set url on songs changes
     setPlayerState((prev) => ({
       ...prev,
       url: audioUrl,
     }));
+
+    if (suggestedSongsData && suggestedSongsData?.success) {
+      const currentSongIndex = getCurrentSongIndex(suggestedSongsData, id);
+
+      // set auto play false on last song
+      setPlayerState((prev) => ({
+        ...prev,
+        autoPlay:
+          currentSongIndex === suggestedSongsData.data.length - 1
+            ? false
+            : playerState.autoPlay,
+      }));
+    }
+
     // eslint-disable-next-line
   }, [audioUrl]);
 
@@ -205,9 +225,8 @@ const Plalyer = () => {
       });
 
       if (!suggestedSongsData || !suggestedSongsData?.success) return;
-      const currentSongIndex = suggestedSongsData.data?.findIndex(
-        (item) => item.id === id
-      );
+      const currentSongIndex = getCurrentSongIndex(suggestedSongsData, id);
+
       if (currentSongIndex > 0) {
         navigator.mediaSession.setActionHandler("previoustrack", () => {
           handlePrev();

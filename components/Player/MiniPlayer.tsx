@@ -183,7 +183,7 @@ const MiniPlayer = ({
             }`}
           >
             <small className="text-neutral-200 w-24 text-center hidden sm:block">
-              {secondsToTime(currentTime)} / {secondsToTime(duration ?? 0)}
+              {secondsToTime(currentTime)} / {secondsToTime(duration || 0)}
             </small>
             <div className={`flex gap-2 items-center justify-center w-24 `}>
               <button
