@@ -106,16 +106,18 @@ const Profile = async () => {
                   Community Playlists
                 </h2>
                 <div className="flex items-center gap-4 overflow-x-auto">
-                  {publicPlaylists.map((playlist) => (
-                    <Card
-                      key={playlist._id}
-                      id={playlist._id}
-                      title={playlist.title}
-                      type="user-playlist"
-                      link={urlSlug(playlist.title, playlist._id, "public")}
-                      username={playlist.createdBy}
-                    />
-                  ))}
+                  {publicPlaylists.map((playlist) =>
+                    playlist.songIds.length > 0 ? (
+                      <Card
+                        key={playlist._id}
+                        id={playlist._id}
+                        title={playlist.title}
+                        type="user-playlist"
+                        link={urlSlug(playlist.title, playlist._id, "public")}
+                        username={playlist.createdBy}
+                      />
+                    ) : null
+                  )}
                 </div>
               </div>
             ) : null}
