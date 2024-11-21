@@ -16,7 +16,7 @@ const serverUrl =
     : process.env.NEXT_PUBLIC_MY_SERVER_URL;
 
 const api = Wretch(`${serverUrl}/api`, {
-  next: { revalidate: 3600 * 12 },
+  next: { revalidate: 3600 * 6 },
 }).addon(queryString);
 
 type TApiQuery = {

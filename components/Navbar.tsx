@@ -61,7 +61,7 @@ const Navbar = () => {
           name="search"
           inputRef={inputRef}
           leftAdornment={<SearchIcon className="w-6 h-6" />}
-          placeholder="Search songs or artists"
+          placeholder="Search songs, artists or albums"
           className="focus:!ring-0"
         />
         <button type="submit" className="hidden"></button>

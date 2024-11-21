@@ -14,9 +14,13 @@ import { cookies } from "next/headers";
 import RefreshClient from "@/components/RefreshClient";
 import BackButton from "@/components/BackButton";
 
-export const metadata: Metadata = {
-  title: "Profile • Okv-Tunes",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const session = await auth();
+  const username = session?.user?.name;
+  return {
+    title: `${username ?? "Guest"}-profile • Okv-Tunes`,
+  };
+}
 
 const Profile = async () => {
   const session = await auth();
