@@ -14,7 +14,7 @@
 }
 
 :root {
-  --side-nav-width: 200px;
+  --side-nav-width: 250px;
 }
 
 ::-ms-reveal {
@@ -55,7 +55,7 @@ body {
 }
 .inner-container {
   width: calc(100% - var(--side-nav-width));
-  margin: 1rem 0 2rem auto;
+  margin: 1rem 0 2rem var(--side-nav-width);
   padding: 0 1rem;
   max-width: 1200px;
 }
@@ -81,9 +81,15 @@ body {
   }
 }
 
-@media (min-width: 1441px) {
+@media (min-width: 1800px) {
   .inner-container {
     margin: 2rem auto;
+  }
+}
+
+@media (max-width: 1440px) {
+  :root {
+    --side-nav-width: 200px;
   }
 }
 @media (max-width: 640px) {
