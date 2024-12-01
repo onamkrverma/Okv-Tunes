@@ -15,6 +15,7 @@ Okv Tunes is a Progressive Web App (PWA) music streaming platform that allows us
 - **Authentication**: Securely log in using your Google account or Credentials with NextAuth.
 - **Contact Us Form**: Reach out for any queries or support.
 - **User Info and Liked Songs**: Store user information and liked songs in a MongoDB database.
+- **Custom Playlist Support**: Now user can create their custom playlist and share with other users.
 
 
 ### Don't forget to :star: the repo
