@@ -8,6 +8,7 @@ import {
   getArtist,
   getSearchAlbums,
   getSearchArtists,
+  getSearchPlaylists,
   getSearchSongs,
 } from "@/utils/api";
 import { Suspense, useEffect, useState } from "react";
@@ -20,7 +21,7 @@ type Props = {
 const SearchComponent = ({ searchParams }: Props) => {
   const searchQuery = searchParams["query"];
   const typeQuery = searchParams["type"];
-  const toggleList = ["songs", "albums", "artists"];
+  const toggleList = ["songs", "playlist", "albums", "artists"];
   const [activeToggle, setActiveToggle] = useState(typeQuery ?? toggleList[0]);
 
   const songsFetcher = () => getSearchSongs({ query: searchQuery, limit: 50 });
@@ -28,6 +29,8 @@ const SearchComponent = ({ searchParams }: Props) => {
     getSearchArtists({ query: searchQuery, limit: 50 });
 
   const albumFetcher = () => getSearchAlbums({ query: searchQuery, limit: 50 });
+  const playlistFetcher = () =>
+    getSearchPlaylists({ query: searchQuery, limit: 50 });
 
   const { data: songResults, isLoading } = useSWR(
     searchQuery && activeToggle === "songs"
@@ -60,6 +63,17 @@ const SearchComponent = ({ searchParams }: Props) => {
     }
   );
 
+  const { data: playlistResults, isLoading: playlistLoading } = useSWR(
+    searchQuery && activeToggle === "playlist"
+      ? `/search-playlist?q=${searchQuery}`
+      : null,
+    playlistFetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
+
   useEffect(() => {
     document.title = `${searchQuery}-Search • Okv-Tunes`;
     // eslint-disable-next-line
@@ -78,7 +92,7 @@ const SearchComponent = ({ searchParams }: Props) => {
           activeToggle={activeToggle}
           setActiveToggle={setActiveToggle}
         />
-        {!isLoading && !artistsLoading && !albumsLoading ? (
+        {!isLoading && !artistsLoading && !albumsLoading && !playlistLoading ? (
           activeToggle === "songs" && songResults ? (
             songResults?.data?.total > 0 ? (
               songResults?.data.results.map((song, index) => (
@@ -88,7 +102,7 @@ const SearchComponent = ({ searchParams }: Props) => {
               <p>No songs found for this query</p>
             )
           ) : activeToggle === "albums" && albumsResults ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 md:gap-2 justify-items-center">
+            <div className="max-[426px]:grid grid-cols-2 gap-4 flex flex-wrap items-center">
               {albumsResults && albumsResults?.data.total > 0 ? (
                 albumsResults?.data.results.map((album) => (
                   <Card
@@ -106,11 +120,33 @@ const SearchComponent = ({ searchParams }: Props) => {
                   />
                 ))
               ) : (
-                <p>No artists found for this query</p>
+                <p>No Album found for this query</p>
+              )}
+            </div>
+          ) : activeToggle === "playlist" && playlistResults ? (
+            <div className="max-[426px]:grid grid-cols-2 gap-4 flex flex-wrap items-center">
+              {playlistResults && playlistResults?.data.total > 0 ? (
+                playlistResults?.data.results.map((playlist) => (
+                  <Card
+                    key={playlist.id}
+                    id={playlist.id}
+                    title={playlist.name}
+                    imageUrl={
+                      playlist.image.find(
+                        (item) =>
+                          item.quality === "500x500" &&
+                          item.url.includes("/c.saavncdn")
+                      )?.url ?? "/logo-circle.svg"
+                    }
+                    type="playlist"
+                  />
+                ))
+              ) : (
+                <p>No playlist found for this query</p>
               )}
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 md:gap-2 justify-items-center">
+            <div className="max-[426px]:grid grid-cols-2 gap-4 flex flex-wrap items-center">
               {artistsResults && artistsResults?.data.total > 0 ? (
                 artistsResults?.data.results.map((artist) => (
                   <Card

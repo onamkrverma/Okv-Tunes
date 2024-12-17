@@ -3,7 +3,7 @@ import queryString from "wretch/addons/queryString";
 import {
   TArtistRes,
   TPlaylists,
-  TSearchArtist,
+  TSearchResults,
   TSearchSongs,
   TSongs,
   TUser,
@@ -100,7 +100,7 @@ export const getSearchArtists = async ({ query, limit = 10 }: TApiQuery) => {
   const response = (await api
     .query(querParams)
     .get(`/artists/search`)
-    .json()) as TSearchArtist;
+    .json()) as TSearchResults;
 
   return response;
 };
@@ -112,10 +112,23 @@ export const getSearchAlbums = async ({ query, limit = 10 }: TApiQuery) => {
   const response = (await api
     .query(querParams)
     .get(`/album/search`)
-    .json()) as TSearchArtist;
+    .json()) as TSearchResults;
 
   return response;
 };
+export const getSearchPlaylists = async ({ query, limit = 10 }: TApiQuery) => {
+  const querParams = {
+    query,
+    limit,
+  };
+  const response = (await api
+    .query(querParams)
+    .get(`/playlists/search`)
+    .json()) as TSearchResults;
+
+  return response;
+};
+
 export const getAlbum = async ({ id }: TApiQuery) => {
   const querParams = {
     id,

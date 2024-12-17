@@ -19,7 +19,7 @@ const Toggle = ({ toggleList, activeToggle, setActiveToggle }: Props) => {
   };
 
   return (
-    <div className="flex gap-4 items-center ">
+    <div className="flex gap-4 items-center overflow-x-auto">
       {toggleList.map((item, index) => (
         <button
           key={index}

@@ -22,6 +22,14 @@ export interface Artist {
   type: ArtistType;
   url: string;
 }
+export interface Results {
+  id: string;
+  name: string;
+  role: Role;
+  image: Image[];
+  type: object;
+  url: string;
+}
 interface Bio {
   text: string;
   title: string;
@@ -93,9 +101,9 @@ export interface SearchSongs {
   total: number;
   results: TSong[];
 }
-export interface SearchArtists {
+export interface SearchResults {
   total: number;
-  results: Artist[];
+  results: Results[];
 }
 
 export interface Data<T> {
@@ -130,4 +138,4 @@ export interface TPlaylists extends Data<PlaylistData> {}
 export interface TSongs extends Data<TSong[]> {}
 export interface TSearchSongs extends Data<SearchSongs> {}
 export interface TArtistRes extends Data<TArtist> {}
-export interface TSearchArtist extends Data<SearchArtists> {}
+export interface TSearchResults extends Data<SearchResults> {}
