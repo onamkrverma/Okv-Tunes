@@ -32,7 +32,7 @@ export default async function Home() {
           Hi, {session ? session.user?.name : "guest"}
         </h1>
       </Link>
-      {homePlaylists.map((item) => (
+      {homePlaylists.slice(0, 4).map((item) => (
         <CardCollection
           key={item.id}
           id={item.id}
@@ -42,6 +42,14 @@ export default async function Home() {
       ))}
 
       <CardCollection title="Popular Artists" type="artist" />
+      {homePlaylists.slice(4).map((item) => (
+        <CardCollection
+          key={item.id}
+          id={item.id}
+          title={item.title}
+          type="song"
+        />
+      ))}
     </div>
   );
 }

@@ -4,6 +4,8 @@ export const homePlaylists = [
   { id: "946682072", title: "Top Hindi Songs" },
   { id: "49", title: "Dumdaar Hits" },
   { id: "1139074020", title: "Love Songs Hindi" },
+  { id: "1134548194", title: "Superhits India" },
+  { id: "1139173090", title: "Hindi Love Tunes" },
 ];
 
 export const topChartPlaylists = [
