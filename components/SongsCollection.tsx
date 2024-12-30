@@ -4,6 +4,7 @@ import AlbumIcon from "@/public/icons/album.svg";
 import DeleteIcon from "@/public/icons/delete.svg";
 import SaveIcon from "@/public/icons/save.svg";
 import ThreeDotsIcon from "@/public/icons/three-dots.svg";
+import QueueIcon from "@/public/icons/queue.svg";
 import { deleteUserPlaylistSongs } from "@/utils/api";
 import { TSong } from "@/utils/api.d";
 import secondsToTime from "@/utils/secondsToTime";
@@ -24,7 +25,8 @@ type Props = {
 };
 
 const SongsCollection = ({ song, playlistId, index, type }: Props) => {
-  const { setGlobalState, authToken, session } = useGlobalContext();
+  const { setGlobalState, currentSong, authToken, session } =
+    useGlobalContext();
   const router = useRouter();
   const pathname = usePathname();
   const moreInfoRef = useRef<HTMLDivElement>(null);
@@ -106,6 +108,20 @@ const SongsCollection = ({ song, playlistId, index, type }: Props) => {
     };
   }, []);
 
+  const handleAddToQueue = (
+    event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
+  ) => {
+    event.stopPropagation();
+    const songId = song.id;
+    const updateSuggessions = currentSong.suggessionSongIds
+      ? [...currentSong.suggessionSongIds, songId]
+      : [songId];
+    setGlobalState((prev) => ({
+      ...prev,
+      currentSong: { ...currentSong, suggessionSongIds: updateSuggessions },
+    }));
+  };
+
   return (
     <>
       <div
@@ -165,7 +181,14 @@ const SongsCollection = ({ song, playlistId, index, type }: Props) => {
               Go to album
             </Link>
           ) : null}
-
+          <button
+            type="button"
+            className="flex items-center gap-1 text-xs rounded-md p-2 hover:bg-secondary"
+            onClick={(event) => handleAddToQueue(event)}
+          >
+            <QueueIcon className="w-4 h-4" />
+            Add to queue
+          </button>
           {playlistId && type === "private" ? (
             <button
               type="button"
