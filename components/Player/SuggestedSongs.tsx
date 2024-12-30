@@ -1,6 +1,12 @@
 "use client";
 import secondsToTime from "@/utils/secondsToTime";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import Loading from "../Loading";
 import type { TSong, TSongs } from "@/utils/api.d";
 import { useGlobalContext } from "@/app/GlobalContex";
@@ -25,6 +31,7 @@ const SuggestedSongs = ({
 }: Props) => {
   const { currentSong, setGlobalState } = useGlobalContext();
   const [isUpnextClick, setIsUpnextClick] = useState(false);
+  const suggestedSongsRef = useRef<HTMLDivElement>(null);
 
   const handleUpdateState = (song: TSong) => {
     setGlobalState((prev) => ({
@@ -44,11 +51,29 @@ const SuggestedSongs = ({
     }));
   };
 
+  useEffect(() => {
+    const handleClickOutside = (e: globalThis.MouseEvent) => {
+      if (
+        suggestedSongsRef.current &&
+        !suggestedSongsRef.current.contains(e.target as Node)
+      ) {
+        setIsUpnextClick(false);
+      }
+    };
+
+    window.addEventListener("click", handleClickOutside);
+
+    return () => {
+      window.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+
   return (
     <div
       className={`flex sm:translate-x-0 flex-col gap-2 w-full max-w-[80%] sm:max-w-sm h-[320px] sm:h-[400px] rounded-md p-2 sm:bg-secondary/70 bg-secondary absolute sm:static transition-transform duration-500 ${
         isUpnextClick ? "translate-x-0" : "translate-x-[95%]"
       }`}
+      ref={suggestedSongsRef}
     >
       <button
         type="button"

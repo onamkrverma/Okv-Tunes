@@ -53,6 +53,7 @@ const Plalyer = () => {
   const [isMoreBtnClick, setIsMoreBtnClick] = useState(false);
   const [isPopup, setIsPopup] = useState(false);
   const pathName = usePathname();
+  const moreBtnRef = useRef<HTMLButtonElement>(null);
 
   currentSong.id
     ? ls.set(
@@ -259,6 +260,23 @@ const Plalyer = () => {
     // eslint-disable-next-line
   }, [pathName]);
 
+  useEffect(() => {
+    const handleClickOutside = (e: globalThis.MouseEvent) => {
+      if (
+        moreBtnRef.current &&
+        !moreBtnRef.current.contains(e.target as Node)
+      ) {
+        setIsMoreBtnClick(false);
+      }
+    };
+
+    window.addEventListener("click", handleClickOutside);
+
+    return () => {
+      window.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+
   return (
     <div>
       {session && id ? (
@@ -292,6 +310,7 @@ const Plalyer = () => {
                 title="more"
                 className=""
                 onClick={() => setIsMoreBtnClick(!isMoreBtnClick)}
+                ref={moreBtnRef}
               >
                 <ThreeDotsIcon className={`w-6 h-6 `} />
               </button>
