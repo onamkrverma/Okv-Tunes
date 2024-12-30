@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: `${name} • Okv-Tunes`,
-    description: `${description}`,
+    description: `${description.replaceAll("Jio", "Okv")}`,
   };
 }
 
@@ -53,7 +53,7 @@ const PlaylistSongs = async ({ params }: Props) => {
             {title}
           </h1>
           <small className="text-neutral-300 text-center sm:text-start">
-            {description}
+            {description.replaceAll("Jio", "Okv")}
           </small>
           <PlayAllSongs
             firstSong={songs[0]}
