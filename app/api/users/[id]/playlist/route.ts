@@ -167,9 +167,7 @@ export const PUT = async (
 
       if (duplicateSongs.length > 0) {
         return NextResponse.json(
-          {
-            error: "The selected song IDs already exist in this playlist",
-          },
+          "The selected song already exist in this playlist",
           { status: 400 }
         );
       }
