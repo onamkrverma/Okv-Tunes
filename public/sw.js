@@ -31,7 +31,25 @@ async function clearOldCaches() {
 }
 
 self.addEventListener("activate", (event) => {
-  event.waitUntil(clearOldCaches());
+  event.waitUntil(
+    clearOldCaches().then(async () => {
+      return caches.open(CACHE_NAME).then((cache) => {
+        return cache.addAll([
+          "/",
+          "/offline",
+          "/_next/static/chunks/app/offline/page.js",
+          "/android-chrome-192x192.png",
+          "/android-chrome-512x512.png",
+          "/apple-touch-icon.png",
+          "/logo-circle.svg",
+          "/logo-full.svg",
+          "/maskable_icon_x512.png",
+          "/screenshot.webp",
+          "/manifest.webmanifest",
+        ]);
+      });
+    })
+  );
   self.clients.claim();
 });
 
