@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { GlobalContextProvider } from "./GlobalContex";
 import Navbar from "@/components/Navbar";
 import SideNavbar from "@/components/SideNavbar";
@@ -24,6 +24,17 @@ const ClientLayout = ({
 
   const currentPath = usePathname();
   const hideSideNavbarPaths = ["/login", "/signup"];
+  const [isOffline, setIsOffline] = useState(false);
+
+  useEffect(() => {
+    setIsOffline(!window.navigator.onLine);
+    window.addEventListener("offline", (e) => {
+      setIsOffline(true);
+    });
+    window.addEventListener("online", (e) => {
+      setIsOffline(false);
+    });
+  }, []);
 
   return (
     <GlobalContextProvider authToken={authToken}>
@@ -32,6 +43,19 @@ const ClientLayout = ({
         <div className="absolute top-0 w-full h-48 -z-10 flex items-center justify-end rounded-full">
           <span className="bg-custom_gradient block w-3/4 h-full blur-3xl" />
         </div>
+        {isOffline ? (
+          <div
+            className={`${
+              !hideSideNavbarPaths.includes(currentPath)
+                ? "inner-container"
+                : ""
+            } !my-0 bg-[#b22222] text-center`}
+          >
+            <p className="text-white text-sm py-0.5">
+              ⚠️No Internet Connection !
+            </p>
+          </div>
+        ) : null}
         {!hideSideNavbarPaths.includes(currentPath) ? <Navbar /> : null}
         {!hideSideNavbarPaths.includes(currentPath) ? <SideNavbar /> : null}
         {children}
