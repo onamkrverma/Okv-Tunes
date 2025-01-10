@@ -20,6 +20,7 @@ const Navbar = () => {
     if (searchQuery) {
       navigate.push(`/search?query=${searchQuery}`);
       e.target.reset();
+      inputRef.current?.blur();
     }
   };
 
