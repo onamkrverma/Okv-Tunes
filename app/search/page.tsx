@@ -1,6 +1,7 @@
 "use client";
 import BackButton from "@/components/BackButton";
 import Card from "@/components/Card";
+import InfinitScroll from "@/components/InfinitScroll";
 import Loading from "@/components/Loading";
 import SongsCollection from "@/components/SongsCollection";
 import Toggle from "@/components/Toggle";
@@ -21,16 +22,20 @@ type Props = {
 const SearchComponent = ({ searchParams }: Props) => {
   const searchQuery = searchParams["query"];
   const typeQuery = searchParams["type"];
+  const limit = parseInt(searchParams?.["limit"] ?? "20");
+
   const toggleList = ["songs", "playlist", "albums", "artists"];
   const [activeToggle, setActiveToggle] = useState(typeQuery ?? toggleList[0]);
 
-  const songsFetcher = () => getSearchSongs({ query: searchQuery, limit: 50 });
+  const songsFetcher = () =>
+    getSearchSongs({ query: searchQuery, limit: limit });
   const artistsFetcher = () =>
-    getSearchArtists({ query: searchQuery, limit: 50 });
+    getSearchArtists({ query: searchQuery, limit: limit });
 
-  const albumFetcher = () => getSearchAlbums({ query: searchQuery, limit: 50 });
+  const albumFetcher = () =>
+    getSearchAlbums({ query: searchQuery, limit: limit });
   const playlistFetcher = () =>
-    getSearchPlaylists({ query: searchQuery, limit: 50 });
+    getSearchPlaylists({ query: searchQuery, limit: limit });
 
   const { data: songResults, isLoading } = useSWR(
     searchQuery && activeToggle === "songs"
@@ -73,6 +78,14 @@ const SearchComponent = ({ searchParams }: Props) => {
       revalidateOnReconnect: false,
     }
   );
+  useEffect(() => {
+    if (limit) {
+      mutate(`/search-songs?q=${searchQuery}`);
+      mutate(`/search-playlist?q=${searchQuery}`);
+      mutate(`/search-albums?q=${searchQuery}`);
+      mutate(`/search-artists?q=${searchQuery}`);
+    }
+  }, [limit]);
 
   useEffect(() => {
     document.title = `${searchQuery}-Search • Okv-Tunes`;
@@ -172,6 +185,7 @@ const SearchComponent = ({ searchParams }: Props) => {
           <Loading loadingText="Loading" />
         )}
       </div>
+      <InfinitScroll />
     </div>
   );
 };
