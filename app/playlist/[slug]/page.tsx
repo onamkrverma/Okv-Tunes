@@ -1,5 +1,6 @@
 import BackButton from "@/components/BackButton";
 import ImageWithFallback from "@/components/ImageWithFallback";
+import InfinitScroll from "@/components/InfinitScroll";
 import PlayAllSongs from "@/components/PlayAllSongs";
 import SongsCollection from "@/components/SongsCollection";
 import { getPlaylists } from "@/utils/api";
@@ -7,9 +8,13 @@ import { Metadata } from "next";
 import React from "react";
 type Props = {
   params: { slug: string };
+  searchParams?: { [key: string]: string | undefined };
 };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+  searchParams,
+}: Props): Promise<Metadata> {
   const id = params.slug.split("-").pop();
   const playlist = await getPlaylists({ id: id });
   const { name, description } = playlist.data;
@@ -20,15 +25,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-const PlaylistSongs = async ({ params }: Props) => {
+const PlaylistSongs = async ({ params, searchParams }: Props) => {
   const id = params.slug.split("-").pop() as string;
   const title = params.slug.split("-").slice(0, -1).join(" ");
+  const limit = parseInt(searchParams?.["limit"] as string);
 
   const playlist = await getPlaylists({
     id: id,
-    limit: 50,
+    limit: limit || 20,
   });
-
   const { name, description, songs } = playlist.data;
 
   return (
@@ -67,6 +72,8 @@ const PlaylistSongs = async ({ params }: Props) => {
           <SongsCollection key={song.id} song={song} index={index} />
         ))}
       </div>
+
+      <InfinitScroll />
     </div>
   );
 };

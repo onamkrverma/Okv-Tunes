@@ -1,5 +1,6 @@
 import BackButton from "@/components/BackButton";
 import ImageWithFallback from "@/components/ImageWithFallback";
+import InfinitScroll from "@/components/InfinitScroll";
 import PlayAllSongs from "@/components/PlayAllSongs";
 import SongsCollection from "@/components/SongsCollection";
 import { getArtist } from "@/utils/api";
@@ -7,6 +8,7 @@ import { Metadata, ResolvingMetadata } from "next";
 import React from "react";
 type Props = {
   params: { slug: string };
+  searchParams?: { [key: string]: string | undefined };
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -20,9 +22,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-const ArtistInfo = async ({ params }: Props) => {
+const ArtistInfo = async ({ params, searchParams }: Props) => {
   const id = params.slug.split("-").pop();
-  const artist = await getArtist({ id: id, limit: 50 });
+  const limit = parseInt(searchParams?.["limit"] as string);
+
+  const artist = await getArtist({ id: id, limit: limit || 20 });
 
   const { image, name, topSongs, bio, wiki, dob } = artist.data;
 
@@ -88,6 +92,7 @@ const ArtistInfo = async ({ params }: Props) => {
           <p>No songs found</p>
         )}
       </div>
+      <InfinitScroll />
     </div>
   );
 };
