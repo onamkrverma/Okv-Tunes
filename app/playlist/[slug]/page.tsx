@@ -20,7 +20,7 @@ export async function generateMetadata({
   const { name, description } = playlist.data;
 
   return {
-    title: `${name} • Okv-Tunes`,
+    title: `${name.replaceAll("Jio", "Okv")} • Okv-Tunes`,
     description: `${description.replaceAll("Jio", "Okv")}`,
   };
 }
