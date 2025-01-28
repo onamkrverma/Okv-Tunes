@@ -56,7 +56,7 @@ const config: NextAuthConfig = {
     signIn: async ({ user, account }) => {
       if (account?.provider === "google") {
         try {
-          const { email, name, image, id } = user;
+          const { email, name, image } = user;
           await connectDB();
           const userInfo = await Users.findOne({ email });
           if (!userInfo) {
@@ -77,13 +77,13 @@ const config: NextAuthConfig = {
       return false;
     },
 
-    session: async ({ session, user, token }) => {
+    session: async ({ session, token }) => {
       if (token.sub) {
         session.user.id = token.sub;
       }
       return session;
     },
-    jwt: async ({ token, user, account }) => {
+    jwt: async ({ token }) => {
       if (token.email) {
         await connectDB();
         const dbUser = (await Users.findOne(

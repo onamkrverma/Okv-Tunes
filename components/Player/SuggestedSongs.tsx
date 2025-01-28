@@ -127,7 +127,7 @@ const SuggestedSongs = ({
       <div className="upnext-songs overflow-y-scroll ">
         {!isLoading ? (
           suggestedSongsData?.success ? (
-            suggestedSongsData?.data?.map((song, index) => (
+            suggestedSongsData?.data?.map((song) => (
               <div
                 key={song.id}
                 className="relative flex items-center gap-4 p-2 cursor-pointer rounded-md hover:bg-secondary"

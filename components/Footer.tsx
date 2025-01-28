@@ -29,7 +29,7 @@ const Footer = () => {
         <div>
           <p className="text-lg">Latest Songs</p>
           <ul>
-            {latestHists.map((item, index) => (
+            {latestHists.map((item) => (
               <li key={item.id}>
                 <Link
                   href={urlSlug(item.title, item.id)}
@@ -44,7 +44,7 @@ const Footer = () => {
         <div>
           <p className="text-lg">Browse</p>
           <ul>
-            {topChartPlaylists.map((item, index) => (
+            {topChartPlaylists.map((item) => (
               <li key={item.id}>
                 <Link
                   href={urlSlug(item.title, item.id)}

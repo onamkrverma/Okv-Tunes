@@ -1,9 +1,8 @@
 "use client";
-import React, { useState } from "react";
-import PlayIcon from "@/public/icons/play.svg";
 import { useGlobalContext } from "@/app/GlobalContex";
-import { usePathname, useRouter } from "next/navigation";
+import PlayIcon from "@/public/icons/play.svg";
 import { TSong } from "@/utils/api.d";
+import { usePathname, useRouter } from "next/navigation";
 
 type Props = {
   firstSong: TSong;
@@ -15,7 +14,7 @@ const PlayAllSongs = ({ firstSong, suggessionSongIds }: Props) => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const { id, album, artists, downloadUrl, image, name, duration } = firstSong;
+  const { id, artists, downloadUrl, image, name } = firstSong;
 
   const artistName = artists.all.map((artist) => artist.name).join(" , ");
   const imageUrl =

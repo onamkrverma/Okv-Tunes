@@ -1,26 +1,25 @@
 "use client";
-import React, {
+import { useGlobalContext } from "@/app/GlobalContex";
+import CaretUpIcon from "@/public/icons/caret-up.svg";
+import MuteSpeakerIcon from "@/public/icons/mute-speaker.svg";
+import NextIcon from "@/public/icons/next.svg";
+import PauseIcon from "@/public/icons/pause.svg";
+import PlayIcon from "@/public/icons/play.svg";
+import PrevIcon from "@/public/icons/previous.svg";
+import SaveIcon from "@/public/icons/save.svg";
+import SpeakerIcon from "@/public/icons/speaker.svg";
+import secondsToTime from "@/utils/secondsToTime";
+import dynamic from "next/dynamic";
+import {
   Dispatch,
   RefObject,
   SetStateAction,
   useEffect,
-  useRef,
   useState,
 } from "react";
-import PlayIcon from "@/public/icons/play.svg";
-import PauseIcon from "@/public/icons/pause.svg";
-import NextIcon from "@/public/icons/next.svg";
-import PrevIcon from "@/public/icons/previous.svg";
-import SpeakerIcon from "@/public/icons/speaker.svg";
-import MuteSpeakerIcon from "@/public/icons/mute-speaker.svg";
-import CaretUpIcon from "@/public/icons/caret-up.svg";
 import ReactPlayer from "react-player";
-import { useGlobalContext } from "@/app/GlobalContex";
-import secondsToTime from "@/utils/secondsToTime";
-import { TplayerState } from "./index";
 import ImageWithFallback from "../ImageWithFallback";
-import dynamic from "next/dynamic";
-import SaveIcon from "@/public/icons/save.svg";
+import { TplayerState } from "./index";
 import Popup from "./Popup";
 
 const LikeDislike = dynamic(() => import("../LikeDislike"), { ssr: false });
@@ -41,7 +40,7 @@ const MiniPlayer = ({
   handlePrev,
 }: Props) => {
   const { currentSong, setGlobalState } = useGlobalContext();
-  const { artist, audioUrl, id, imageUrl, title, isMaximise } = currentSong;
+  const { artist, id, imageUrl, title, isMaximise } = currentSong;
 
   const [isPlaylistPopup, setIsPlaylistPopup] = useState(false);
 

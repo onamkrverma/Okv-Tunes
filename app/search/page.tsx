@@ -6,7 +6,6 @@ import Loading from "@/components/Loading";
 import SongsCollection from "@/components/SongsCollection";
 import Toggle from "@/components/Toggle";
 import {
-  getArtist,
   getSearchAlbums,
   getSearchArtists,
   getSearchPlaylists,

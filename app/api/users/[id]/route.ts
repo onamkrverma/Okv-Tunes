@@ -3,7 +3,7 @@ import connectDB from "@/utils/db";
 import { NextResponse, type NextRequest } from "next/server";
 
 export const GET = async (
-  request: NextRequest,
+  _: NextRequest,
   { params }: { params: { id: string } }
 ) => {
   const { id } = params;

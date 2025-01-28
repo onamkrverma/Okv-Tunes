@@ -28,10 +28,10 @@ const ClientLayout = ({
 
   useEffect(() => {
     setIsOffline(!window.navigator.onLine);
-    window.addEventListener("offline", (e) => {
+    window.addEventListener("offline", () => {
       setIsOffline(true);
     });
-    window.addEventListener("online", (e) => {
+    window.addEventListener("online", () => {
       setIsOffline(false);
     });
   }, []);

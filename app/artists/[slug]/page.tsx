@@ -4,8 +4,7 @@ import InfinitScroll from "@/components/InfinitScroll";
 import PlayAllSongs from "@/components/PlayAllSongs";
 import SongsCollection from "@/components/SongsCollection";
 import { getArtist } from "@/utils/api";
-import { Metadata, ResolvingMetadata } from "next";
-import React from "react";
+import { Metadata } from "next";
 type Props = {
   params: { slug: string };
   searchParams?: { [key: string]: string | undefined };
