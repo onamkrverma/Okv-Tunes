@@ -2,7 +2,7 @@ import BackButton from "@/components/BackButton";
 import ImageWithFallback from "@/components/ImageWithFallback";
 import PlayAllSongs from "@/components/PlayAllSongs";
 import SongsCollection from "@/components/SongsCollection";
-import { getAlbum, getPlaylists } from "@/utils/api";
+import { getAlbum } from "@/utils/api";
 import { Metadata } from "next";
 import React from "react";
 type Props = {
