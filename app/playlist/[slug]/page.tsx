@@ -5,16 +5,12 @@ import PlayAllSongs from "@/components/PlayAllSongs";
 import SongsCollection from "@/components/SongsCollection";
 import { getPlaylists } from "@/utils/api";
 import { Metadata } from "next";
-import React from "react";
 type Props = {
   params: { slug: string };
   searchParams?: { [key: string]: string | undefined };
 };
 
-export async function generateMetadata({
-  params,
-  searchParams,
-}: Props): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const id = params.slug.split("-").pop();
   const playlist = await getPlaylists({ id: id });
   const { name, description } = playlist.data;

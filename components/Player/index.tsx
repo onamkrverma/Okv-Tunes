@@ -1,19 +1,19 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
 import { useGlobalContext } from "@/app/GlobalContex";
-import SuggestedSongs from "./SuggestedSongs";
-import { getSongs, getSuggestedSongs } from "@/utils/api";
-import useSWR, { mutate, SWRResponse } from "swr";
-import MiniPlayer from "./MiniPlayer";
-import ReactPlayer from "react-player";
-import CaretUpIcon from "@/public/icons/caret-up.svg";
-import ThreeDotsIcon from "@/public/icons/three-dots.svg";
 import ImageWithFallback from "@/components/ImageWithFallback";
+import CaretUpIcon from "@/public/icons/caret-up.svg";
 import InfoIcon from "@/public/icons/info.svg";
-import Popup from "./Popup";
-import { usePathname } from "next/navigation";
-import ls from "localstorage-slim";
+import ThreeDotsIcon from "@/public/icons/three-dots.svg";
+import { getSongs, getSuggestedSongs } from "@/utils/api";
 import { TSongs } from "@/utils/api.d";
+import ls from "localstorage-slim";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import ReactPlayer from "react-player";
+import useSWR, { mutate } from "swr";
+import MiniPlayer from "./MiniPlayer";
+import Popup from "./Popup";
+import SuggestedSongs from "./SuggestedSongs";
 
 export type TplayerState = {
   url: string;

@@ -4,7 +4,6 @@ import React from "react";
 import ImageWithFallback from "./ImageWithFallback";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import ls from "localstorage-slim";
 
 type Props = {
   id: string;
