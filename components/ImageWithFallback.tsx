@@ -1,10 +1,5 @@
 "use client";
-import React, {
-  DetailedHTMLProps,
-  ImgHTMLAttributes,
-  useEffect,
-  useState,
-} from "react";
+import { DetailedHTMLProps, ImgHTMLAttributes } from "react";
 
 interface ImageWithFallbackProps
   extends DetailedHTMLProps<
@@ -17,20 +12,16 @@ interface ImageWithFallbackProps
 
 const ImageWithFallback = (props: ImageWithFallbackProps) => {
   const { src, fallbackSrc, id, ...rest } = props;
-  const [imgSrc, setImgSrc] = useState(src);
-
-  useEffect(() => {
-    setImgSrc(src);
-    // eslint-disable-next-line
-  }, [id]);
 
   return (
     <img
       {...rest}
-      src={imgSrc}
+      src={src}
       alt={rest.alt}
-      onError={() => {
-        setImgSrc(fallbackSrc ?? "/logo-circle.svg");
+      onError={(e) => {
+        const target = e.target as HTMLImageElement;
+        target.onerror = null;
+        target.src = fallbackSrc ?? "/logo-circle.svg";
       }}
     />
   );

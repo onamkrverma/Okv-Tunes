@@ -41,7 +41,7 @@ const CardCollection = async ({ type, id, title }: Props) => {
                 title={song.name}
                 imageUrl={
                   song.image.find((item) => item.quality === "500x500")?.url ??
-                  "logo-circle.svg"
+                  "/logo-circle.svg"
                 }
                 artist={song.artists.primary[0].name}
                 audioUrl={
