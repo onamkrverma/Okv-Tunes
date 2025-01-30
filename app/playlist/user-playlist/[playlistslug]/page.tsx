@@ -188,7 +188,7 @@ const UserPlaylistSongs = ({ params, searchParams }: Props) => {
             }
             width={200}
             height={200}
-            className="w-full h-full object-cover rounded-md shadow-lg shadow-neutral-700"
+            className="w-full h-full object-cover rounded-md "
           />
         </div>
         <div className="flex flex-col gap-2 items-center sm:items-start w-full max-w-sm">

@@ -59,7 +59,7 @@ const Profile = async () => {
               alt="user"
               width={150}
               height={150}
-              className="w-full h-full object-cover rounded-full shadow-lg shadow-neutral-700"
+              className="w-full h-full object-cover rounded-full "
             />
           ) : (
             <p className="uppercase bg-action text-primary rounded-full h-full w-full flex justify-center items-center text-[50px] sm:text-[80px] font-bold">

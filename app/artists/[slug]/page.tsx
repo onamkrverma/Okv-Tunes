@@ -46,7 +46,7 @@ const ArtistInfo = async ({ params, searchParams }: Props) => {
             alt={name + "-okv tunes"}
             width={200}
             height={200}
-            className="w-full h-full object-cover rounded-full shadow-lg shadow-neutral-700"
+            className="w-full h-full object-cover rounded-full "
           />
         </div>
         <div className="flex flex-col items-center sm:items-start gap-2 w-full max-w-md">
