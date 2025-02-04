@@ -33,9 +33,14 @@ const config: Config = {
           "50%": { transform: "translateX(0%)" },
           "100%": { transform: "translateX(100%)" },
         },
+        scale: {
+          "0%": { transform: "scale(1.0)" },
+          "50%": { transform: "scale(1.1)" },
+          "100%": { transform: "scale(1.0)" },
+        },
       },
       animation: {
-        loadingBar: "loadingBar 2s linear infinite",
+        scaleSize: "scale 1.5s linear infinite",
       },
     },
   },

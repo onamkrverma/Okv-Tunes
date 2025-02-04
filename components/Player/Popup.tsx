@@ -1,6 +1,7 @@
 "use client";
 import { useGlobalContext } from "@/app/GlobalContex";
 import CrossIcon from "@/public/icons/cross.svg";
+import MicIcon from "@/public/icons/mic.svg";
 import {
   createUserPlaylist,
   getSongs,
@@ -16,10 +17,15 @@ import Loading from "../Loading";
 type Props = {
   isPopup: boolean;
   setIsPopup: React.Dispatch<React.SetStateAction<boolean>>;
-  id: string; // song id or playlist id
+  id?: string; // song id or playlist id
   playlistTitle?: string;
   playlistVisibility?: "private" | "public";
-  variant: "song-info" | "add-playlist" | "edit-playlist";
+  variant: "song-info" | "add-playlist" | "edit-playlist" | "voice-search";
+
+  isListening: boolean;
+  startListening: () => void;
+  stopListening: ({ isClearResult }: { isClearResult?: boolean }) => void;
+  transcript: string;
 };
 
 const Popup = ({
@@ -29,6 +35,10 @@ const Popup = ({
   variant,
   playlistTitle,
   playlistVisibility,
+  isListening,
+  startListening,
+  stopListening,
+  transcript,
 }: Props) => {
   const { session, authToken } = useGlobalContext();
   const [isAddNewPlaylist, setIsAddNewPlaylist] = useState(false);
@@ -71,7 +81,7 @@ const Popup = ({
 
   const handleSaveToPlaylist = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!saveFormRef.current || !session || !authToken) return;
+    if (!saveFormRef.current || !session || !authToken || !id) return;
     try {
       setIsPlaylistSaving(true);
       setAlertMessage(null);
@@ -96,7 +106,7 @@ const Popup = ({
     e: ChangeEvent<HTMLFormElement>
   ) => {
     e.preventDefault();
-    if (!createFormRef.current || !session || !authToken) return;
+    if (!createFormRef.current || !session || !authToken || !id) return;
     try {
       setIsPlaylistSaving(true);
       setAlertMessage(null);
@@ -135,7 +145,9 @@ const Popup = ({
       {/* close popup */}
       <div
         className="h-full w-full absolute top-0"
-        onClick={() => setIsPopup(false)}
+        onClick={() => {
+          setIsPopup(false), stopListening({ isClearResult: true });
+        }}
       ></div>
 
       <div className="flex flex-col gap-2 p-4 bg-primary rounded-md w-10/12 max-w-md min-h-40 max-h-[500px] z-[2] overflow-scroll">
@@ -153,7 +165,9 @@ const Popup = ({
             type="button"
             title="close"
             className="bg-action p-1 rounded-lg"
-            onClick={() => setIsPopup(false)}
+            onClick={() => {
+              setIsPopup(false), stopListening({ isClearResult: true });
+            }}
           >
             <CrossIcon className="w-4 h-4" />
           </button>
@@ -289,6 +303,29 @@ const Popup = ({
               )}
             </button>
           </form>
+        ) : null}
+
+        {variant === "voice-search" ? (
+          <div className="flex items-center justify-center gap-2 flex-col py-4">
+            <p>{transcript} </p>
+            <button
+              type="button"
+              title="speak"
+              className={`${
+                isListening ? "bg-red-600 animate-scaleSize" : "bg-neutral-800"
+              } h-full p-4 rounded-full transition-all`}
+              onClick={() =>
+                isListening ? stopListening({}) : startListening()
+              }
+            >
+              <MicIcon className="size-8" />
+            </button>
+            <small>
+              {isListening
+                ? "Listening... Click on mic to stop"
+                : "Click on mic then speak"}
+            </small>
+          </div>
         ) : null}
 
         {alertMessage ? (
