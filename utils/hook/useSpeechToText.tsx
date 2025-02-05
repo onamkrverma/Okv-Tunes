@@ -21,7 +21,9 @@ const useSpeechToText = () => {
       return;
     }
     setIsListening(false);
-    isClearResult ? setTranscript("") : null;
+    if (isClearResult) {
+      setTranscript("");
+    }
     recognitionRef.current.stop();
   };
 
@@ -47,15 +49,15 @@ const useSpeechToText = () => {
       console.error("Error occurred in recognition:", event.error);
     };
 
-    recognition.onend = () => {
-      console.log("Speech recognition ended");
-    };
+    // recognition.onend = () => {
+    //   console.log("Speech recognition ended");
+    // };
 
     recognition.onspeechend = () => {
       if (recognitionRef.current) {
         recognitionRef.current.stop();
         setIsListening(false);
-        console.log("User stopped speaking, final text logged.");
+        // console.log("User stopped speaking, final text logged.");
       }
     };
 
@@ -66,12 +68,24 @@ const useSpeechToText = () => {
     };
   }, []);
 
+  const speakText = (text: string) => {
+    if (!text) {
+      console.log("No text to speak.");
+      return;
+    }
+    const synth = window.speechSynthesis;
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "en-IN";
+    synth.speak(utterance);
+  };
+
   return {
     isListening,
     startListening,
     stopListening,
     transcript,
     setTranscript,
+    speakText,
   };
 };
 

@@ -15,7 +15,7 @@ const Navbar = () => {
   const navigate = useRouter();
   const [isPopup, setIsPopup] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const { isListening, startListening, stopListening, transcript } =
+  const { isListening, startListening, stopListening, transcript, speakText } =
     useSpeechToText();
 
   const handleSubmit = (e: ChangeEvent<HTMLFormElement>) => {
@@ -35,29 +35,14 @@ const Navbar = () => {
     }
   }, [isSearchClick]);
 
-  const speakText = (text: string) => {
-    if (!text) {
-      console.log("No text to speak.");
-      return;
-    }
-    const synth = window.speechSynthesis;
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "en-IN";
-    synth.speak(utterance);
-  };
-
   useEffect(() => {
     if (!isListening && transcript.length) {
       speakText(transcript);
       navigate.push(`/search?query=${transcript}`);
-      stopListening({});
+      stopListening({ isClearResult: true });
       setIsPopup(false);
     }
   }, [isListening]);
-
-  console.log("first");
-  console.log({ isListening });
-  console.log({ transcript });
 
   return (
     <>
@@ -72,7 +57,7 @@ const Navbar = () => {
         <button
           type="button"
           title="search"
-          className="block sm:hidden absolute right-4"
+          className="block sm:hidden absolute right-3"
           onClick={() => setIsSearchClick(!isSearchClick)}
         >
           {!isSearchClick ? (

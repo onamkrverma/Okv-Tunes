@@ -22,10 +22,10 @@ type Props = {
   playlistVisibility?: "private" | "public";
   variant: "song-info" | "add-playlist" | "edit-playlist" | "voice-search";
 
-  isListening: boolean;
-  startListening: () => void;
-  stopListening: ({ isClearResult }: { isClearResult?: boolean }) => void;
-  transcript: string;
+  isListening?: boolean;
+  startListening?: () => void;
+  stopListening?: ({ isClearResult }: { isClearResult?: boolean }) => void;
+  transcript?: string;
 };
 
 const Popup = ({
@@ -146,7 +146,8 @@ const Popup = ({
       <div
         className="h-full w-full absolute top-0"
         onClick={() => {
-          setIsPopup(false), stopListening({ isClearResult: true });
+          setIsPopup(false),
+            stopListening && stopListening({ isClearResult: true });
         }}
       ></div>
 
@@ -159,14 +160,17 @@ const Popup = ({
               ? "Create New Playlist"
               : variant === "edit-playlist"
               ? "Edit Playlist info"
-              : "Add to Playlist"}
+              : variant === "add-playlist"
+              ? "Add to Playlist"
+              : "Speak to Search"}
           </p>
           <button
             type="button"
             title="close"
             className="bg-action p-1 rounded-lg"
             onClick={() => {
-              setIsPopup(false), stopListening({ isClearResult: true });
+              setIsPopup(false),
+                stopListening && stopListening({ isClearResult: true });
             }}
           >
             <CrossIcon className="w-4 h-4" />
@@ -315,7 +319,9 @@ const Popup = ({
                 isListening ? "bg-red-600 animate-scaleSize" : "bg-neutral-800"
               } h-full p-4 rounded-full transition-all`}
               onClick={() =>
-                isListening ? stopListening({}) : startListening()
+                isListening
+                  ? stopListening && stopListening({})
+                  : startListening && startListening()
               }
             >
               <MicIcon className="size-8" />
