@@ -56,7 +56,11 @@ const SongsCollection = ({ song, playlistId, index, type }: Props) => {
       },
     }));
     if (!session) {
-      return router.push(`/login?next=${pathname}`);
+      return router.push(
+        `/login?next=${pathname}${
+          pathname === "/search" ? location.search : ""
+        }`
+      );
     }
   };
 
