@@ -26,6 +26,7 @@ type Props = {
   startListening?: () => void;
   stopListening?: ({ isClearResult }: { isClearResult?: boolean }) => void;
   transcript?: string;
+  errorMessage?: string;
 };
 
 const Popup = ({
@@ -39,6 +40,7 @@ const Popup = ({
   startListening,
   stopListening,
   transcript,
+  errorMessage,
 }: Props) => {
   const { session, authToken } = useGlobalContext();
   const [isAddNewPlaylist, setIsAddNewPlaylist] = useState(false);
@@ -311,26 +313,34 @@ const Popup = ({
 
         {variant === "voice-search" ? (
           <div className="flex items-center justify-center gap-2 flex-col py-4">
-            <p>{transcript} </p>
-            <button
-              type="button"
-              title="speak"
-              className={`${
-                isListening ? "bg-red-600 animate-scaleSize" : "bg-neutral-800"
-              } h-full p-4 rounded-full transition-all`}
-              onClick={() =>
-                isListening
-                  ? stopListening && stopListening({})
-                  : startListening && startListening()
-              }
-            >
-              <MicIcon className="size-8" />
-            </button>
-            <small>
-              {isListening
-                ? "Listening... Click on mic to stop"
-                : "Click on mic then speak"}
-            </small>
+            <p className="">{errorMessage}</p>
+            <p>{transcript}</p>
+            {!errorMessage && (
+              <>
+                <button
+                  type="button"
+                  title="speak"
+                  className={`${
+                    isListening
+                      ? "bg-red-600 animate-scaleSize"
+                      : "bg-neutral-800"
+                  } h-full p-4 rounded-full transition-all`}
+                  onClick={() =>
+                    isListening
+                      ? stopListening && stopListening({})
+                      : startListening && startListening()
+                  }
+                >
+                  <MicIcon className="size-8" />
+                </button>
+
+                <small>
+                  {isListening
+                    ? "Listening... Click on mic to stop"
+                    : "Click on mic then speak"}
+                </small>
+              </>
+            )}
           </div>
         ) : null}
 

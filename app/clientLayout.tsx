@@ -43,6 +43,21 @@ const ClientLayout = ({
         <div className="absolute top-0 w-full h-48 -z-10 flex items-center justify-end rounded-full">
           <span className="bg-custom_gradient block w-3/4 h-full blur-3xl" />
         </div>
+        <div
+          className="!hidden"
+          style={{
+            textAlign: "center",
+            margin: "5px 0",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            fontSize: "18px",
+          }}
+        >
+          <p style={{ color: "red" }}>⚠️There is a problem</p>
+          <p style={{ margin: "0" }}>Unable to fetch existing caches data</p>
+          <p>Please clear site data or caches data manualy!</p>
+        </div>
         {isOffline ? (
           <div
             className={`${

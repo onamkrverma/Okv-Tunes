@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 const useSpeechToText = () => {
   const [transcript, setTranscript] = useState("");
   const [isListening, setIsListening] = useState(false);
+  const [error, setError] = useState("");
 
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
@@ -32,7 +33,8 @@ const useSpeechToText = () => {
       window.SpeechRecognition || window.webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
-      console.warn("SpeechRecognition is not supported in this brower");
+      console.warn("SpeechRecognition is not supported in this browser");
+      setError("This functionality is currently unavailable in this browser.");
       return;
     }
 
@@ -86,6 +88,7 @@ const useSpeechToText = () => {
     transcript,
     setTranscript,
     speakText,
+    error,
   };
 };
 

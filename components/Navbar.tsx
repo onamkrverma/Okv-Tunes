@@ -15,8 +15,14 @@ const Navbar = () => {
   const navigate = useRouter();
   const [isPopup, setIsPopup] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const { isListening, startListening, stopListening, transcript, speakText } =
-    useSpeechToText();
+  const {
+    isListening,
+    startListening,
+    stopListening,
+    transcript,
+    speakText,
+    error,
+  } = useSpeechToText();
 
   const handleSubmit = (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -101,6 +107,7 @@ const Navbar = () => {
           stopListening={stopListening}
           transcript={transcript}
           variant="voice-search"
+          errorMessage={error}
         />
       ) : null}
     </>
