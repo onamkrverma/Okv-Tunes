@@ -15,14 +15,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { name, description } = album.data;
 
   return {
-    title: `${name} • Okv-Tunes`,
-    description: `${description}`,
+    title: `${name.replaceAll("Jio", "Okv")} • Okv-Tunes`,
+    description: `${description.replaceAll("Jio", "Okv")}`,
   };
 }
 
 const AlbumSongs = async ({ params }: Props) => {
   const id = params.slug.split("-").pop() as string;
-  const title = params.slug.split("-").slice(0, -1).join(" ");
 
   const album = await getAlbum({
     id: id,
@@ -49,7 +48,7 @@ const AlbumSongs = async ({ params }: Props) => {
         </div>
         <div className="flex flex-col items-center sm:items-start gap-2 w-full max-w-sm">
           <h1 className="capitalize text-xl sm:text-2xl font-bold text-center sm:text-start">
-            {title}
+            {name}
           </h1>
           <small className="text-neutral-300 text-center sm:text-start">
             {description}

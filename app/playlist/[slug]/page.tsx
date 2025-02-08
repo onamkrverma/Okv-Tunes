@@ -12,11 +12,12 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const id = params.slug.split("-").pop();
+  const title = params.slug.split("-").slice(0, -1).join(" ");
   const playlist = await getPlaylists({ id: id });
-  const { name, description } = playlist.data;
+  const { description } = playlist.data;
 
   return {
-    title: `${name.replaceAll("Jio", "Okv")} • Okv-Tunes`,
+    title: `${title.replaceAll("Jio", "Okv")} • Okv-Tunes`,
     description: `${description.replaceAll("Jio", "Okv")}`,
   };
 }
