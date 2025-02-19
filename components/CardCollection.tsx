@@ -1,8 +1,9 @@
-import { getPlaylists } from "@/utils/api";
 import Link from "next/link";
 import React from "react";
 import Card from "./Card";
 import { topArtist } from "@/utils/topArtists";
+import { query } from "@/apolloClient";
+import { graphql } from "gql.tada";
 
 type Props = {
   id?: string;
@@ -11,7 +12,37 @@ type Props = {
 };
 
 const CardCollection = async ({ type, id, title }: Props) => {
-  const playlist = type === "song" ? await getPlaylists({ id: id }) : null;
+  const playlistQuery = graphql(`
+    query ExampleQuery($playlistId: String!) {
+      playlist(id: $playlistId) {
+        songs {
+          id
+          name
+          artists {
+            primary {
+              name
+            }
+          }
+          image {
+            quality
+            url
+          }
+          downloadUrl {
+            quality
+            url
+          }
+        }
+      }
+    }
+  `);
+
+  const { data } =
+    type === "song" && id
+      ? await query({
+          query: playlistQuery,
+          variables: { playlistId: id },
+        })
+      : {};
 
   const urlSlug =
     type == "song"
@@ -34,18 +65,18 @@ const CardCollection = async ({ type, id, title }: Props) => {
 
       <div className="flex items-center gap-4 p-1.5 overflow-x-auto">
         {type === "song"
-          ? playlist?.data.songs.map((song) => (
+          ? data?.playlist?.songs?.map((song) => (
               <Card
-                key={song.id}
-                id={song.id}
-                title={song.name}
+                key={song?.id ?? "1"}
+                id={song?.id ?? "1"}
+                title={song?.name ?? "unknown-title"}
                 imageUrl={
-                  song.image.find((item) => item.quality === "500x500")?.url ??
-                  "/logo-circle.svg"
+                  song?.image?.find((item) => item?.quality === "500x500")
+                    ?.url ?? "/logo-circle.svg"
                 }
-                artist={song.artists.primary[0].name}
+                artist={song?.artists?.primary?.at(0)?.name ?? "unknown-artist"}
                 audioUrl={
-                  song.downloadUrl.find((item) => item.quality === "320kbps")
+                  song?.downloadUrl?.find((item) => item?.quality === "320kbps")
                     ?.url ?? ""
                 }
                 type="song"
