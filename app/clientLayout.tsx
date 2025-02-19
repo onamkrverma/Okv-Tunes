@@ -9,6 +9,7 @@ import { usePathname } from "next/navigation";
 import registerSw from "@/public/registerSw";
 import AlertNotification from "@/components/AlertNotification";
 import LoadingBar from "@/components/LoadingBar";
+import { ApolloWrapper } from "./ApolloWrapper";
 const Plalyer = dynamic(() => import("@/components/Player"), { ssr: false });
 
 const ClientLayout = ({
@@ -38,48 +39,50 @@ const ClientLayout = ({
 
   return (
     <GlobalContextProvider authToken={authToken}>
-      <main className="container relative">
-        <LoadingBar />
-        <div className="absolute top-0 w-full h-48 -z-10 flex items-center justify-end rounded-full">
-          <span className="bg-custom_gradient block w-3/4 h-full blur-3xl" />
-        </div>
-        <div
-          className="!hidden"
-          style={{
-            textAlign: "center",
-            margin: "5px 0",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            fontSize: "18px",
-          }}
-        >
-          <p style={{ color: "red" }}>⚠️There is a problem</p>
-          <p style={{ margin: "0" }}>Unable to fetch existing caches data</p>
-          <p>Please clear site data or caches data manualy!</p>
-        </div>
-        {isOffline ? (
-          <div
-            className={`${
-              !hideSideNavbarPaths.includes(currentPath)
-                ? "inner-container"
-                : ""
-            } !my-0 bg-[#b22222] text-center`}
-          >
-            <p className="text-white text-sm py-0.5">
-              ⚠️No Internet Connection !
-            </p>
+      <ApolloWrapper>
+        <main className="container relative">
+          <LoadingBar />
+          <div className="absolute top-0 w-full h-48 -z-10 flex items-center justify-end rounded-full">
+            <span className="bg-custom_gradient block w-3/4 h-full blur-3xl" />
           </div>
-        ) : null}
-        {!hideSideNavbarPaths.includes(currentPath) ? <Navbar /> : null}
-        {!hideSideNavbarPaths.includes(currentPath) ? <SideNavbar /> : null}
-        {children}
-        {!hideSideNavbarPaths.includes(currentPath) ? (
-          <AlertNotification />
-        ) : null}
-        {!hideSideNavbarPaths.includes(currentPath) ? <Plalyer /> : null}
-        {!hideSideNavbarPaths.includes(currentPath) ? <Footer /> : null}
-      </main>
+          <div
+            className="!hidden"
+            style={{
+              textAlign: "center",
+              margin: "5px 0",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              fontSize: "18px",
+            }}
+          >
+            <p style={{ color: "red" }}>⚠️There is a problem</p>
+            <p style={{ margin: "0" }}>Unable to fetch existing caches data</p>
+            <p>Please clear site data or caches data manualy!</p>
+          </div>
+          {isOffline ? (
+            <div
+              className={`${
+                !hideSideNavbarPaths.includes(currentPath)
+                  ? "inner-container"
+                  : ""
+              } !my-0 bg-[#b22222] text-center`}
+            >
+              <p className="text-white text-sm py-0.5">
+                ⚠️No Internet Connection !
+              </p>
+            </div>
+          ) : null}
+          {!hideSideNavbarPaths.includes(currentPath) ? <Navbar /> : null}
+          {!hideSideNavbarPaths.includes(currentPath) ? <SideNavbar /> : null}
+          {children}
+          {!hideSideNavbarPaths.includes(currentPath) ? (
+            <AlertNotification />
+          ) : null}
+          {!hideSideNavbarPaths.includes(currentPath) ? <Plalyer /> : null}
+          {!hideSideNavbarPaths.includes(currentPath) ? <Footer /> : null}
+        </main>
+      </ApolloWrapper>
     </GlobalContextProvider>
   );
 };

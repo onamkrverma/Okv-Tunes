@@ -4,9 +4,12 @@ import {
   getSongsById,
   getSuggestedSongs,
   searchSongs,
-} from "@/controllers/songs";
-import { GqlSchema } from "./schema";
-import { getPlaylist, searchPlaylist } from "@/controllers/playlist";
+} from "@/graphql-server/controllers/songs";
+import { GqlSchema } from "@/graphql-server/schema";
+import {
+  getPlaylist,
+  searchPlaylist,
+} from "@/graphql-server/controllers/playlist";
 
 const resolvers = {
   Query: {

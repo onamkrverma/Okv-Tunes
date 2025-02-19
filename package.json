@@ -9,11 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@apollo/client": "^3.13.1",
+    "@apollo/experimental-nextjs-app-support": "^0.11.9",
     "@apollo/server": "^4.11.3",
     "@as-integrations/next": "^3.2.0",
     "@next/third-parties": "^14.2.13",
     "@svgr/webpack": "^8.1.0",
     "bcrypt": "^5.1.1",
+    "gql.tada": "^1.8.10",
     "graphql": "^16.10.0",
     "graphql-tag": "^2.12.6",
     "localstorage-slim": "^2.7.1",
@@ -37,6 +40,6 @@
     "eslint-config-next": "14.2.7",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "typescript": "^5.7.3"
   }
 }
