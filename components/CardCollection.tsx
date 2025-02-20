@@ -79,7 +79,7 @@ const CardCollection = async ({ type, id, title }: Props) => {
                   song?.downloadUrl?.find((item) => item?.quality === "320kbps")
                     ?.url ?? ""
                 }
-                type="song"
+                type={type}
               />
             ))
           : topArtist

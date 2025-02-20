@@ -10,6 +10,8 @@ import {
   getPlaylist,
   searchPlaylist,
 } from "@/graphql-server/controllers/playlist";
+import { getArtist, searchArtists } from "@/graphql-server/controllers/artists";
+import { getAlbum, searchAlbums } from "@/graphql-server/controllers/album";
 
 const resolvers = {
   Query: {
@@ -18,6 +20,10 @@ const resolvers = {
     relatedSongs: getSuggestedSongs,
     playlist: getPlaylist,
     searchPlaylist: searchPlaylist,
+    artists: getArtist,
+    searchArtists: searchArtists,
+    album: getAlbum,
+    searchAlbums: searchAlbums,
   },
 };
 

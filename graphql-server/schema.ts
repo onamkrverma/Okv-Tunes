@@ -19,7 +19,11 @@ export const GqlSchema = gql`
     type: String
     url: String
   }
-
+  type Bio {
+    text: String
+    title: String
+    sequence: Int
+  }
   type Artists {
     primary: [Artist]
     featured: [Artist]
@@ -76,11 +80,24 @@ export const GqlSchema = gql`
     url: String
   }
 
+  extend type Artist {
+    followerCount: Int
+    fanCount: Int
+    bio: [Bio]
+    dob: String
+    wiki: String
+    topSongs: [Song]
+  }
+
   type Query {
     searchSongs(query: String!, limit: Int): [Song]
     songs(id: [String!]!): [Song]
     relatedSongs(id: String!, limit: Int): [Song]
     playlist(id: String!, limit: Int): PlaylistData
     searchPlaylist(query: String!, limit: Int): [SearchResults]
+    artists(id: String!, songLimit: Int): Artist
+    searchArtists(query: String!, limit: Int): [SearchResults]
+    album(id: String!): PlaylistData
+    searchAlbums(query: String!, limit: Int): [SearchResults]
   }
 `;
