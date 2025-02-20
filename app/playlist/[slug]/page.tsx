@@ -57,17 +57,21 @@ const PlaylistSongs = async ({ params, searchParams }: Props) => {
           <small className="text-neutral-300 text-center sm:text-start">
             {description.replaceAll("Jio", "Okv")}
           </small>
-          <PlayAllSongs
+          {songs.length>0 ?   <PlayAllSongs
             firstSong={songs[0]}
             suggessionSongIds={songs.slice(1, 16).map((item) => item.id)}
-          />
+          />: null}
         </div>
       </div>
 
       <div className="flex flex-col gap-4 my-4">
-        {songs.map((song, index) => (
-          <SongsCollection key={song.id} song={song} index={index} />
-        ))}
+      {songs.length > 0 ? (
+          songs.map((song, index) => (
+            <SongsCollection key={song.id} song={song} index={index} />
+          ))
+        ) : (
+          <p>No songs found</p>
+        )}
       </div>
 
       <InfinitScroll />
