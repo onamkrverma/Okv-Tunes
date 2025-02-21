@@ -14,9 +14,11 @@ const PlayAllSongs = ({ firstSong, suggessionSongIds }: Props) => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const { id, artists, downloadUrl, image, name } = firstSong;
+  const { id, artists, downloadUrl, image, name, album } = firstSong;
 
   const artistName = artists.all.map((artist) => artist.name).join(" , ");
+  const albumName = album.name.replaceAll("&quot;", '"');
+
   const imageUrl =
     image.find((item) => item.quality === "500x500")?.url ?? "logo-circle.svg";
   const audioUrl =
@@ -31,6 +33,7 @@ const PlayAllSongs = ({ firstSong, suggessionSongIds }: Props) => {
         title: name,
         imageUrl,
         audioUrl,
+        album: albumName,
         isMaximise: true,
         isRefetchSuggestion: true,
         suggessionSongIds: suggessionSongIds,

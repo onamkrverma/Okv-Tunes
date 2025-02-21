@@ -35,7 +35,7 @@ const SongsCollection = ({ song, playlistId, index, type }: Props) => {
   const { id, album, artists, downloadUrl, image, name, duration } = song;
 
   const artistName = artists.all.map((artist) => artist.name).join(" , ");
-  const albumName = album.name;
+  const albumName = album.name.replaceAll("&quot;", '"');
   const imageUrl =
     image.find((item) => item.quality === "500x500")?.url ?? "logo-circle.svg";
   const audioUrl =
@@ -50,6 +50,7 @@ const SongsCollection = ({ song, playlistId, index, type }: Props) => {
         artist: artistName,
         title: name,
         imageUrl,
+        album: albumName,
         audioUrl,
         isMaximise: true,
         isRefetchSuggestion: true,
@@ -137,7 +138,7 @@ const SongsCollection = ({ song, playlistId, index, type }: Props) => {
           {artistName}
         </small>
         <small className="truncate w-60 text-neutral-400 hidden sm:block">
-          {albumName.replaceAll("&quot;", '"')}
+          {albumName}
         </small>
         <LikeDislike songId={id} />
         <small className="text-neutral-400">{secondsToTime(duration)}</small>

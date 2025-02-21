@@ -16,7 +16,7 @@ const AlertNotification = () => {
     <div
       className={`${
         alertMessage?.isAlertVisible ? "flex" : "hidden"
-      } items-center justify-between gap-2 fixed left-4 sm:bottom-20 bottom-40 z-10 border bg-neutral-800 rounded-md p-2 px-3`}
+      } items-center justify-between gap-2 fixed left-4 sm:bottom-20 bottom-40 z-20 border bg-neutral-800 rounded-md p-2 px-3`}
     >
       <p className="text-sm">{alertMessage?.message}</p>
       <button

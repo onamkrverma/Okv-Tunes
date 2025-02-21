@@ -44,6 +44,7 @@ const CardCollection = async ({ type, id, title }: Props) => {
                   "/logo-circle.svg"
                 }
                 artist={song.artists.primary[0].name}
+                album={song.album.name.replaceAll("&quot;", '"')}
                 audioUrl={
                   song.downloadUrl.find((item) => item.quality === "320kbps")
                     ?.url ?? ""

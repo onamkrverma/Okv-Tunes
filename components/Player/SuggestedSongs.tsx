@@ -40,6 +40,7 @@ const SuggestedSongs = ({
         id: song.id,
         artist: song.artists.primary[0].name,
         title: song.name,
+        album: song.album.name.replaceAll("&quot;", '"'),
         imageUrl:
           song.image.find((item) => item.quality === "500x500")?.url ?? "",
         audioUrl:

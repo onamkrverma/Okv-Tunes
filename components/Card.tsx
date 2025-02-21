@@ -12,6 +12,7 @@ type Props = {
   artist?: string;
   audioUrl?: string;
   link?: string;
+  album?: string;
   username?: string;
   type: "song" | "artist" | "playlist" | "album" | "user-playlist";
 };
@@ -24,6 +25,7 @@ const Card = ({
   type,
   link,
   username,
+  album,
 }: Props) => {
   const { setGlobalState, session } = useGlobalContext();
 
@@ -31,7 +33,7 @@ const Card = ({
   const pathname = usePathname();
 
   const handleUpdateState = () => {
-    if (!id || !artist || !audioUrl || !imageUrl) return;
+    if (!id || !artist || !audioUrl || !imageUrl || !album) return;
     setGlobalState((prev) => ({
       ...prev,
       currentSong: {
@@ -40,6 +42,7 @@ const Card = ({
         title,
         imageUrl,
         audioUrl,
+        album,
         isMaximise: true,
         isRefetchSuggestion: true,
       },

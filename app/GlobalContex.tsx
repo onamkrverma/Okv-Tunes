@@ -17,6 +17,7 @@ type TCurrentSong = {
   artist: string;
   audioUrl: string;
   isMaximise: boolean;
+  album: string;
   isRefetchSuggestion: boolean;
   volume?: number;
   suggessionSongIds?: string[];
@@ -41,6 +42,7 @@ export const defaultState: TGlobalState = {
     imageUrl: "",
     artist: "",
     audioUrl: "",
+    album: "",
     isMaximise: false,
     isRefetchSuggestion: false,
     volume: 1.0,

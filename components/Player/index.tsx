@@ -4,7 +4,7 @@ import ImageWithFallback from "@/components/ImageWithFallback";
 import CaretUpIcon from "@/public/icons/caret-up.svg";
 import InfoIcon from "@/public/icons/info.svg";
 import ThreeDotsIcon from "@/public/icons/three-dots.svg";
-import { getSongs, getSuggestedSongs } from "@/utils/api";
+import { getDownloadAudio, getSongs, getSuggestedSongs } from "@/utils/api";
 import { TSongs } from "@/utils/api.d";
 import ls from "localstorage-slim";
 import { usePathname } from "next/navigation";
@@ -14,6 +14,7 @@ import useSWR, { mutate } from "swr";
 import MiniPlayer from "./MiniPlayer";
 import Popup from "./Popup";
 import SuggestedSongs from "./SuggestedSongs";
+import DownloadIcon from "@/public/icons/download.svg";
 
 export type TplayerState = {
   url: string;
@@ -52,6 +53,7 @@ const Plalyer = () => {
   const playerRef = useRef<ReactPlayer>(null);
   const [isMoreBtnClick, setIsMoreBtnClick] = useState(false);
   const [isPopup, setIsPopup] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const pathName = usePathname();
   const moreBtnRef = useRef<HTMLButtonElement>(null);
 
@@ -112,8 +114,11 @@ const Plalyer = () => {
       artists,
       image,
       downloadUrl,
+      album,
     } = nextSong;
     const nextArtist = artists.primary[0].name;
+    const albumName = album.name.replaceAll("&quot;", '"');
+
     const nextImageUrl =
       image.find((item) => item.quality === "500x500")?.url ?? "";
     const nextAudioUrl =
@@ -125,6 +130,7 @@ const Plalyer = () => {
         id: nextId,
         title: nextTitle,
         artist: nextArtist,
+        album: albumName,
         imageUrl: nextImageUrl,
         audioUrl: nextAudioUrl,
         isRefetchSuggestion: false,
@@ -277,6 +283,27 @@ const Plalyer = () => {
     };
   }, []);
 
+  const handleDownload = () => {
+    setIsDownloading(true);
+    setGlobalState((prev) => ({
+      ...prev,
+      alertMessage: {
+        isAlertVisible: true,
+        message: "Downloading... Please wait😊",
+      },
+    }));
+    const { audioUrl, title, album, artist } = currentSong;
+    const audioId = audioUrl.match(/com\/(.*)\.mp4/)?.[1] ?? "";
+    getDownloadAudio({ audioId: audioId, album, artists: artist, title });
+    setTimeout(() => {
+      setGlobalState((prev) => ({
+        ...prev,
+        alertMessage: { isAlertVisible: false, message: "" },
+      }));
+      setIsDownloading(false);
+    }, 30 * 1000);
+  };
+
   return (
     <div>
       {session && id ? (
@@ -317,17 +344,26 @@ const Plalyer = () => {
             </div>
 
             <div
-              className={` absolute top-0 right-10 bg-secondary flex flex-col gap-2 p-2 rounded-md transition-transform duration-500 ${
+              className={` absolute top-0 right-10 z-10 bg-secondary flex flex-col gap-2 p-2 px-3 rounded-md transition-transform duration-500 ${
                 isMoreBtnClick ? "translate-y-8" : "-translate-y-full"
               } `}
             >
               <button
                 type="button"
-                className="flex items-center gap-1"
+                className="flex items-center gap-1 p-1 rounded-lg hover:bg-neutral-800"
                 onClick={() => setIsPopup(true)}
               >
                 <InfoIcon className="w-4 h-4" />
                 Info
+              </button>
+              <button
+                type="button"
+                className="flex items-center gap-1 p-1 rounded-lg hover:bg-neutral-800 disabled:bg-gray-600"
+                onClick={handleDownload}
+                disabled={isDownloading}
+              >
+                <DownloadIcon className="w-4 h-4" />
+                Download
               </button>
             </div>
 

@@ -10,6 +10,8 @@ import {
   TUserPlaylist,
 } from "./api.d";
 
+const downloadServer = process.env.NEXT_PUBLIC_MY_DOWNLOAD_URL;
+
 const serverUrl =
   process.env.NODE_ENV === "development"
     ? "http://localhost:3000"
@@ -289,4 +291,22 @@ export const getUserPublicPlaylist = async ({
     .get(`/users/public-playlist`)
     .json()) as TUserPlaylist;
   return response;
+};
+
+export const getDownloadAudio = ({
+  audioId,
+  title,
+  album,
+  artists,
+}: {
+  audioId: string;
+  title: string;
+  album: string;
+  artists: string;
+}) => {
+  const a = document.createElement("a");
+  a.href = `${downloadServer}/download-okv-tunes?title=${title}&album=${album}&artists=${artists}&id=${audioId}`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 };
