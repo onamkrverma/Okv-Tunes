@@ -371,7 +371,7 @@ const Plalyer = () => {
             </div>
 
             <div
-              className={`absolute w-full h-full blur-[600px] -z-10 pointer-events-none ${
+              className={`absolute w-full h-full blur-[650px] -z-10 pointer-events-none ${
                 !isMaximise ? "hidden" : "block"
               }`}
             >
@@ -403,7 +403,7 @@ const Plalyer = () => {
               {/* song poster */}
               <div
                 className={`sm:w-[150px] md:w-[250px] lg:w-[350px] ${
-                  screenHeight > 640 ? "w-11/12" : "w-10/12"
+                  screenHeight > 640 ? "w-[80%]" : "w-9/12"
                 }`}
               >
                 <ImageWithFallback
