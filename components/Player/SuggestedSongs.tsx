@@ -71,7 +71,7 @@ const SuggestedSongs = ({
 
   return (
     <div
-      className={`flex sm:translate-x-0 flex-col gap-2 w-full max-w-[80%] sm:max-w-sm h-[320px] sm:h-[400px] rounded-md p-2 sm:bg-secondary/70 bg-secondary absolute sm:static transition-transform duration-500 ${
+      className={`flex sm:translate-x-0 flex-col gap-2 w-full max-w-[90%] sm:max-w-sm h-1/2 sm:h-[400px] rounded-md p-2 sm:bg-secondary/70 bg-secondary absolute sm:static transition-transform duration-500 ${
         isUpnextClick ? "translate-x-0" : "translate-x-[95%]"
       }`}
       ref={suggestedSongsRef}

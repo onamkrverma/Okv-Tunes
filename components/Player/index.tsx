@@ -15,6 +15,7 @@ import MiniPlayer from "./MiniPlayer";
 import Popup from "./Popup";
 import SuggestedSongs from "./SuggestedSongs";
 import DownloadIcon from "@/public/icons/download.svg";
+import useWindowDimensions from "@/utils/hook/useWindowDimensions";
 
 export type TplayerState = {
   url: string;
@@ -56,6 +57,8 @@ const Plalyer = () => {
   const [isDownloading, setIsDownloading] = useState(false);
   const pathName = usePathname();
   const moreBtnRef = useRef<HTMLButtonElement>(null);
+
+  const { height: screenHeight } = useWindowDimensions();
 
   currentSong.id
     ? ls.set(
@@ -396,9 +399,13 @@ const Plalyer = () => {
               {...playerState}
               className="hidden"
             />
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 items-center">
               {/* song poster */}
-              <div className="w-[250px] sm:w-[150px] md:w-[250px] lg:w-[350px]">
+              <div
+                className={`sm:w-[150px] md:w-[250px] lg:w-[350px] ${
+                  screenHeight > 640 ? "w-11/12" : "w-10/12"
+                }`}
+              >
                 <ImageWithFallback
                   id={currentSong.id}
                   src={imageUrl}

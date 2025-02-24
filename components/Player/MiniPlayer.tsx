@@ -21,6 +21,7 @@ import ReactPlayer from "react-player";
 import ImageWithFallback from "../ImageWithFallback";
 import { TplayerState } from "./index";
 import Popup from "./Popup";
+import useWindowDimensions from "@/utils/hook/useWindowDimensions";
 
 const LikeDislike = dynamic(() => import("../LikeDislike"), { ssr: false });
 
@@ -41,6 +42,8 @@ const MiniPlayer = ({
 }: Props) => {
   const { currentSong, setGlobalState } = useGlobalContext();
   const { artist, id, imageUrl, title, isMaximise } = currentSong;
+
+  const { height: screenHeight } = useWindowDimensions();
 
   const [isPlaylistPopup, setIsPlaylistPopup] = useState(false);
 
@@ -177,14 +180,16 @@ const MiniPlayer = ({
           </div>
 
           <div
-            className={`sm:flex gap-4 items-center sm:justify-end sm:w-fit ${
+            className={`sm:flex gap-4 items-center sm:justify-end sm:w-fit sm:mt-0 ${
               isMaximise ? "flex justify-between w-full" : "hidden "
-            }`}
+            } ${screenHeight > 640 ? "mt-12" : "mt-2"}`}
           >
             <small className="text-neutral-200 w-24 text-center hidden sm:block">
               {secondsToTime(currentTime)} / {secondsToTime(duration || 0)}
             </small>
-            <div className={`flex gap-2 items-center justify-center w-24 `}>
+            <div
+              className={`flex gap-2 items-center justify-center w-32 sm:w-24 `}
+            >
               <button
                 type="button"
                 title="mute"
