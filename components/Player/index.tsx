@@ -312,9 +312,9 @@ const Plalyer = () => {
       {session && id ? (
         <>
           <div
-            className={`!mt-0 fixed top-0 right-0 left-0 bg-primary flex gap-4 sm:justify-evenly !pt-20 sm:!pt-0 flex-col md:flex-row items-center h-full z-[11] transition-transform duration-700 ${
+            className={`!mt-0 fixed top-0 right-0 left-0 bg-primary flex gap-4 sm:justify-evenly sm:!pt-0 flex-col md:flex-row items-center h-full z-[11] transition-transform duration-700 ${
               isMaximise ? "translate-y-0" : "translate-y-[150%]"
-            }`}
+            } ${screenHeight > 850 ? "!pt-40" : "!pt-20"}`}
           >
             <div className="w-full flex justify-between items-center absolute top-3 px-4">
               <button
@@ -399,11 +399,19 @@ const Plalyer = () => {
               {...playerState}
               className="hidden"
             />
-            <div className="flex flex-col gap-4 items-center">
+            <div
+              className={`flex flex-col items-center ${
+                screenHeight > 850 ? "gap-12" : "gap-4"
+              }`}
+            >
               {/* song poster */}
               <div
                 className={`sm:w-[150px] md:w-[250px] lg:w-[350px] ${
-                  screenHeight > 640 ? "w-[80%]" : "w-9/12"
+                  screenHeight > 640
+                    ? "w-[80%]"
+                    : screenHeight > 850
+                    ? "w-11/12"
+                    : "w-9/12"
                 }`}
               >
                 <ImageWithFallback
