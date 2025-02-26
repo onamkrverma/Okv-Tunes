@@ -12,6 +12,9 @@ const InfinitScroll = ({}) => {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  const current = new URLSearchParams(Array.from(searchParams.entries()));
+  const currentQuery = current.get("query");
+
   useEffect(() => {
     const handleScroll = () => {
       const { scrollTop, clientHeight, scrollHeight } =
@@ -20,14 +23,11 @@ const InfinitScroll = ({}) => {
       if (scrollTop + clientHeight >= scrollHeight - 500) {
         if (currentLimit < 50) {
           setIsLoading(true);
-          const current = new URLSearchParams(
-            Array.from(searchParams.entries())
-          );
           const limitIncrease = currentLimit + 10;
           current.set("limit", limitIncrease.toString());
           const search = current.toString();
-          const query = search ? `?${search}` : "";
-          router.replace(`${pathname}${query}`, { scroll: false });
+          const params = search ? `?${search}` : "";
+          router.replace(`${pathname}${params}`, { scroll: false });
         }
       }
       if (currentLimit >= 50) {
@@ -39,7 +39,7 @@ const InfinitScroll = ({}) => {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [currentLimit]);
+  }, [currentLimit, currentQuery]);
 
   return isLoading ? <Loading /> : null;
 };
