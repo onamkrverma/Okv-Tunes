@@ -15,6 +15,7 @@ const CardCollection = async ({ type, id, title }: Props) => {
   const playlistQuery = graphql(`
     query ExampleQuery($playlistId: String!) {
       playlist(id: $playlistId) {
+        id
         songs {
           id
           name

@@ -1,8 +1,10 @@
+import { query } from "@/apolloClient";
 import BackButton from "@/components/BackButton";
 import ImageWithFallback from "@/components/ImageWithFallback";
 import PlayAllSongs from "@/components/PlayAllSongs";
 import SongsCollection from "@/components/SongsCollection";
-import { getAlbum } from "@/utils/api";
+import type { TSong } from "@/utils/api.d";
+import { graphql } from "gql.tada";
 import { Metadata } from "next";
 import React from "react";
 type Props = {
@@ -11,23 +13,69 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const id = params.slug.split("-").pop();
-  const album = await getAlbum({ id: id });
-  const { name, description } = album.data;
+
+  const albumQuery = graphql(`
+    query ExampleQuery($albumId: String!) {
+      album(id: $albumId) {
+        name
+        description
+      }
+    }
+  `);
+  const { data } = id
+    ? await query({ query: albumQuery, variables: { albumId: id } })
+    : {};
+  const { name, description } = data?.album ?? {};
 
   return {
-    title: `${name.replaceAll("Jio", "Okv")} • Okv-Tunes`,
-    description: `${description.replaceAll("Jio", "Okv")}`,
+    title: `${name?.replaceAll("Jio", "Okv")} • Okv-Tunes`,
+    description: `${description?.replaceAll("Jio", "Okv")}`,
   };
 }
 
 const AlbumSongs = async ({ params }: Props) => {
   const id = params.slug.split("-").pop() as string;
 
-  const album = await getAlbum({
-    id: id,
-  });
+  // const album = await getAlbum({
+  //   id: id,
+  // });
 
-  const { name, description, songs } = album.data;
+  const albumQuery = graphql(`
+    query ExampleQuery($albumId: String!) {
+      album(id: $albumId) {
+        id
+        name
+        description
+        songs {
+          id
+          name
+          duration
+          artists {
+            all {
+              name
+            }
+          }
+          album {
+            name
+          }
+          image {
+            quality
+            url
+          }
+          downloadUrl {
+            quality
+            url
+          }
+        }
+      }
+    }
+  `);
+  const { data } = id
+    ? await query({ query: albumQuery, variables: { albumId: id } })
+    : {};
+  const name = data?.album?.name;
+  const description = data?.album?.description;
+  const songs = data?.album?.songs as TSong[];
 
   return (
     <div className="inner-container flex flex-col gap-6">
@@ -37,13 +85,13 @@ const AlbumSongs = async ({ params }: Props) => {
           <ImageWithFallback
             id={id}
             src={
-              songs[0].image.find((item) => item.quality === "500x500")?.url ??
+              songs[0].image.find((item) => item?.quality === "500x500")?.url ??
               "/logo-circle.svg"
             }
             alt={name + "-okv tunes"}
             width={200}
             height={200}
-            className="w-full h-full object-cover rounded-md "
+            className="w-full h-full object-cover rounded-md"
           />
         </div>
         <div className="flex flex-col items-center sm:items-start gap-2 w-full max-w-sm">
@@ -55,7 +103,7 @@ const AlbumSongs = async ({ params }: Props) => {
           </small>
           <PlayAllSongs
             firstSong={songs[0]}
-            suggessionSongIds={songs.slice(1, 16).map((item) => item.id)}
+            suggessionSongIds={songs?.slice(1, 16).map((item) => item.id)}
           />
         </div>
       </div>
