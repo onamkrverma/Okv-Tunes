@@ -18,6 +18,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     query ExampleQuery($albumId: String!) {
       album(id: $albumId) {
         name
+        id
         description
       }
     }
@@ -36,10 +37,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 const AlbumSongs = async ({ params }: Props) => {
   const id = params.slug.split("-").pop() as string;
 
-  // const album = await getAlbum({
-  //   id: id,
-  // });
-
   const albumQuery = graphql(`
     query ExampleQuery($albumId: String!) {
       album(id: $albumId) {
@@ -56,6 +53,7 @@ const AlbumSongs = async ({ params }: Props) => {
             }
           }
           album {
+            id
             name
           }
           image {

@@ -1,9 +1,11 @@
+import { query } from "@/apolloClient";
 import BackButton from "@/components/BackButton";
 import ImageWithFallback from "@/components/ImageWithFallback";
 import InfinitScroll from "@/components/InfinitScroll";
 import PlayAllSongs from "@/components/PlayAllSongs";
 import SongsCollection from "@/components/SongsCollection";
-import { getArtist } from "@/utils/api";
+import type { TSong } from "@/utils/api.d";
+import { graphql } from "gql.tada";
 import { Metadata } from "next";
 type Props = {
   params: { slug: string };
@@ -12,12 +14,54 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const id = params.slug.split("-").pop();
-  const artist = await getArtist({ id: id });
-  const { name, bio } = artist.data;
+
+  const artistQuery = graphql(`
+    query ExampleQuery($artistsId: String!, $songLimit: Int) {
+      artists(id: $artistsId, songLimit: $songLimit) {
+        id
+        name
+        bio {
+          text
+        }
+        image {
+          quality
+          url
+        }
+      }
+    }
+  `);
+
+  const { data } = id
+    ? await query({
+        query: artistQuery,
+        variables: { artistsId: id },
+      })
+    : {};
+
+  const name = data?.artists?.name;
+  const bio = data?.artists?.bio;
+  const image = data?.artists?.image;
+
+  const description = `${bio?.[0]?.text?.slice(0, 160)} • Okv-Tunes`;
 
   return {
     title: `${name} songs • Okv-Tunes`,
-    description: `${bio[0]?.text.slice(0, 160)}`,
+    description: description,
+    openGraph: {
+      type: "profile",
+      title: `${name} songs • Okv-Tunes`,
+      description: description,
+      images: [
+        {
+          url:
+            image?.find(
+              (item) =>
+                item?.quality === "500x500" &&
+                item?.url?.includes("/c.saavncdn")
+            )?.url ?? "/logo-circle.svg",
+        },
+      ],
+    },
   };
 }
 
@@ -25,9 +69,58 @@ const ArtistInfo = async ({ params, searchParams }: Props) => {
   const id = params.slug.split("-").pop();
   const limit = parseInt(searchParams?.["limit"] as string);
 
-  const artist = await getArtist({ id: id, limit: limit || 20 });
+  const artistQuery = graphql(`
+    query ExampleQuery($artistsId: String!, $songLimit: Int) {
+      artists(id: $artistsId, songLimit: $songLimit) {
+        id
+        name
+        wiki
+        dob
+        bio {
+          text
+        }
+        image {
+          quality
+          url
+        }
+        topSongs {
+          id
+          name
+          duration
+          artists {
+            all {
+              name
+            }
+          }
+          album {
+            id
+            name
+          }
+          image {
+            quality
+            url
+          }
+          downloadUrl {
+            quality
+            url
+          }
+        }
+      }
+    }
+  `);
 
-  const { image, name, topSongs, bio, wiki, dob } = artist.data;
+  const { data } = id
+    ? await query({
+        query: artistQuery,
+        variables: { artistsId: id, songLimit: limit || 20 },
+      })
+    : {};
+  const name = data?.artists?.name;
+  const dob = data?.artists?.dob;
+  const wiki = data?.artists?.wiki;
+  const bio = data?.artists?.bio ?? [];
+  const image = data?.artists?.image;
+  const topSongs = data?.artists?.topSongs as TSong[];
 
   return (
     <div className="inner-container flex flex-col gap-6">
@@ -38,9 +131,10 @@ const ArtistInfo = async ({ params, searchParams }: Props) => {
           <ImageWithFallback
             id={id}
             src={
-              image.find(
+              image?.find(
                 (item) =>
-                  item.quality === "500x500" && item.url.includes("/c.saavncdn")
+                  item?.quality === "500x500" &&
+                  item?.url?.includes("/c.saavncdn")
               )?.url ?? "/logo-circle.svg"
             }
             alt={name + "-okv tunes"}
@@ -59,9 +153,9 @@ const ArtistInfo = async ({ params, searchParams }: Props) => {
               Born: {dob}
             </p>
           ) : null}
-          {bio.length > 0 ? (
+          {bio?.length > 0 ? (
             <small className="text-neutral-300 text-center sm:text-start">
-              {bio[0].text.slice(0, 300) + "..."}
+              {bio?.at(0)?.text?.slice(0, 300) + "..."}
             </small>
           ) : null}
           {wiki ? (
