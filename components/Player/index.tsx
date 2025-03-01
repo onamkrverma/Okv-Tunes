@@ -4,16 +4,17 @@ import ImageWithFallback from "@/components/ImageWithFallback";
 import CaretUpIcon from "@/public/icons/caret-up.svg";
 import InfoIcon from "@/public/icons/info.svg";
 import ThreeDotsIcon from "@/public/icons/three-dots.svg";
-import { getSongs, getSuggestedSongs } from "@/utils/api";
-import { TSongs } from "@/utils/api.d";
+import type { TSong } from "@/utils/api.d";
 import ls from "localstorage-slim";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import ReactPlayer from "react-player";
-import useSWR, { mutate } from "swr";
 import MiniPlayer from "./MiniPlayer";
 import Popup from "./Popup";
 import SuggestedSongs from "./SuggestedSongs";
+import Loading from "../Loading";
+import { useSuspenseQuery } from "@apollo/client";
+import { graphql } from "gql.tada";
 
 export type TplayerState = {
   url: string;
@@ -66,32 +67,83 @@ const Plalyer = () => {
   useEffect(() => {
     document.body.style.overflow = isMaximise ? "hidden" : "auto";
   }, [isMaximise]);
-
-  const dataFetcher = () =>
-    suggessionSongIds?.length
-      ? getSongs({ id: suggessionSongIds })
-      : getSuggestedSongs({ id: id, limit: 20 });
-  const { data: suggestedSongsData, isLoading } = useSWR(
-    id || suggessionSongIds ? "/suggested-songs" : null,
-    dataFetcher,
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-    }
+  const songQuery = graphql(
+    `
+      query Song($songId: [String!]!) {
+        songs(id: $songId) {
+          id
+          name
+          duration
+          artists {
+            primary {
+              name
+            }
+          }
+          image {
+            quality
+            url
+          }
+          downloadUrl {
+            quality
+            url
+          }
+        }
+      }
+    `
   );
+  const relatedQuery = graphql(
+    `
+      query Song($relatedSongsId: String!, $limit: Int) {
+        relatedSongs(id: $relatedSongsId, limit: $limit) {
+          id
+          name
+          duration
+          artists {
+            primary {
+              name
+            }
+          }
+          image {
+            quality
+            url
+          }
+          downloadUrl {
+            quality
+            url
+          }
+        }
+      }
+    `
+  );
+  const { data: getSongByIds, refetch } = suggessionSongIds?.length
+    ? useSuspenseQuery(songQuery, { variables: { songId: suggessionSongIds } })
+    : {};
+
+  const { data: relatedSongsData, refetch: refetchRelated } =
+    !suggessionSongIds?.length
+      ? useSuspenseQuery(relatedQuery, {
+          variables: { relatedSongsId: id, limit: 20 },
+        })
+      : {};
+  const suggestedSongsData = (
+    suggessionSongIds?.length
+      ? getSongByIds?.songs
+      : relatedSongsData?.relatedSongs
+  ) as TSong[];
 
   useEffect(() => {
     if (!isRefetchSuggestion) return;
-    mutate("/suggested-songs");
+    refetch && refetch({ songId: suggessionSongIds });
+    refetchRelated && refetchRelated({ relatedSongsId: id, limit: 20 });
   }, [isRefetchSuggestion]);
 
-  const getCurrentSongIndex = (suggestedSongsData: TSongs, id: string) => {
-    if (!suggestedSongsData || !suggestedSongsData.success) return -1;
-    return suggestedSongsData.data?.findIndex((item) => item.id === id);
+  const getCurrentSongIndex = (suggestedSongsData: TSong[], id: string) => {
+    if (!suggestedSongsData || !suggestedSongsData.length) return -1;
+    return suggestedSongsData?.findIndex((item) => item.id === id);
   };
 
   const updateNextPrevTrack = (type: "prev" | "next") => {
-    if (!suggestedSongsData || !suggestedSongsData?.success) return;
+    if (!suggestedSongsData || !suggestedSongsData.length) return;
 
     const currentSongIndex = getCurrentSongIndex(suggestedSongsData, id);
 
@@ -101,8 +153,8 @@ const Plalyer = () => {
       updateSongIndex = 0;
     }
     // disable next click on last song
-    if (updateSongIndex === suggestedSongsData.data.length) return;
-    const nextSong = suggestedSongsData.data[updateSongIndex];
+    if (updateSongIndex === suggestedSongsData.length) return;
+    const nextSong = suggestedSongsData[updateSongIndex];
 
     if (!nextSong) return;
 
@@ -134,7 +186,7 @@ const Plalyer = () => {
   };
 
   const handleNext = () => {
-    if (!suggestedSongsData || !suggestedSongsData?.success) return;
+    if (!suggestedSongsData || !suggestedSongsData?.length) return;
     updateNextPrevTrack("next");
     setPlayerState({ ...playerState, autoPlay: true, playing: true });
   };
@@ -155,14 +207,14 @@ const Plalyer = () => {
       url: audioUrl,
     }));
 
-    if (suggestedSongsData && suggestedSongsData?.success) {
+    if (suggestedSongsData && suggestedSongsData?.length) {
       const currentSongIndex = getCurrentSongIndex(suggestedSongsData, id);
 
       // set auto play false on last song
       setPlayerState((prev) => ({
         ...prev,
         autoPlay:
-          currentSongIndex === suggestedSongsData.data.length - 1
+          currentSongIndex === suggestedSongsData.length - 1
             ? false
             : playerState.autoPlay,
       }));
@@ -225,7 +277,7 @@ const Plalyer = () => {
         playerRef.current?.seekTo(playerState.played + 10);
       });
 
-      if (!suggestedSongsData || !suggestedSongsData?.success) return;
+      if (!suggestedSongsData || !suggestedSongsData?.length) return;
       const currentSongIndex = getCurrentSongIndex(suggestedSongsData, id);
 
       if (currentSongIndex > 0) {
@@ -237,7 +289,7 @@ const Plalyer = () => {
         navigator.mediaSession.setActionHandler("previoustrack", null);
       }
 
-      if (currentSongIndex !== suggestedSongsData.data.length - 1) {
+      if (currentSongIndex !== suggestedSongsData.length - 1) {
         navigator.mediaSession.setActionHandler("nexttrack", () => {
           handleNext();
         });
@@ -383,12 +435,14 @@ const Plalyer = () => {
               </div>
             </div>
             {/* upcomming tracks */}
-            <SuggestedSongs
-              suggestedSongsData={suggestedSongsData}
-              isLoading={isLoading}
-              playerState={playerState}
-              setPlayerState={setPlayerState}
-            />
+            <Suspense fallback={<Loading loadingText="Loading" />}>
+              <SuggestedSongs
+                suggestedSongsData={suggestedSongsData}
+                // isLoading={isLoading}
+                playerState={playerState}
+                setPlayerState={setPlayerState}
+              />
+            </Suspense>
           </div>
           <MiniPlayer
             playerRef={playerRef}
@@ -398,12 +452,14 @@ const Plalyer = () => {
             handlePrev={handlePrev}
           />
           {isPopup ? (
-            <Popup
-              isPopup={isPopup}
-              setIsPopup={setIsPopup}
-              id={id}
-              variant="song-info"
-            />
+            <Suspense fallback={<Loading loadingText="Loading" />}>
+              <Popup
+                isPopup={isPopup}
+                setIsPopup={setIsPopup}
+                id={id}
+                variant="song-info"
+              />
+            </Suspense>
           ) : null}
         </>
       ) : null}

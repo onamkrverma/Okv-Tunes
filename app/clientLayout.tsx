@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { GlobalContextProvider } from "./GlobalContex";
 import Navbar from "@/components/Navbar";
 import SideNavbar from "@/components/SideNavbar";
@@ -79,7 +79,11 @@ const ClientLayout = ({
           {!hideSideNavbarPaths.includes(currentPath) ? (
             <AlertNotification />
           ) : null}
-          {!hideSideNavbarPaths.includes(currentPath) ? <Plalyer /> : null}
+          {!hideSideNavbarPaths.includes(currentPath) ? (
+            <Suspense>
+              <Plalyer />
+            </Suspense>
+          ) : null}
           {!hideSideNavbarPaths.includes(currentPath) ? <Footer /> : null}
         </main>
       </ApolloWrapper>

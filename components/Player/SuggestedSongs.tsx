@@ -8,7 +8,7 @@ import React, {
   useState,
 } from "react";
 import Loading from "../Loading";
-import type { TSong, TSongs } from "@/utils/api.d";
+import type { TSong } from "@/utils/api.d";
 import { useGlobalContext } from "@/app/GlobalContex";
 import CaretUpIcon from "@/public/icons/caret-up.svg";
 import PlayIcon from "@/public/icons/play.svg";
@@ -17,8 +17,8 @@ import { TplayerState } from "./index";
 import ImageWithFallback from "../ImageWithFallback";
 
 type Props = {
-  suggestedSongsData?: TSongs;
-  isLoading: boolean;
+  suggestedSongsData?: TSong[];
+  isLoading?: boolean;
   playerState: TplayerState;
   setPlayerState: Dispatch<SetStateAction<TplayerState>>;
 };
@@ -97,7 +97,7 @@ const SuggestedSongs = ({
             aria-label="autoplay"
             placeholder="autoplay"
             checked={playerState.autoPlay}
-            disabled={!suggestedSongsData?.success}
+            disabled={!suggestedSongsData?.length}
             onChange={() =>
               setPlayerState({
                 ...playerState,
@@ -126,8 +126,8 @@ const SuggestedSongs = ({
       </div>
       <div className="upnext-songs overflow-y-scroll ">
         {!isLoading ? (
-          suggestedSongsData?.success ? (
-            suggestedSongsData?.data?.map((song) => (
+          suggestedSongsData?.length ? (
+            suggestedSongsData?.map((song) => (
               <div
                 key={song.id}
                 className="relative flex items-center gap-4 p-2 cursor-pointer rounded-md hover:bg-secondary"

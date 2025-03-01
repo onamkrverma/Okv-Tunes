@@ -1,9 +1,9 @@
+import { GoogleTagManager } from "@next/third-parties/google";
 import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
-import "./globals.css";
-import ClientLayout from "./clientLayout";
-import { GoogleTagManager } from "@next/third-parties/google";
 import { cookies } from "next/headers";
+import ClientLayout from "./clientLayout";
+import "./globals.css";
 
 const poppins = Poppins({
   display: "swap",

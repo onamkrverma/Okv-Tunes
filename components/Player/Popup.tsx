@@ -4,10 +4,12 @@ import CrossIcon from "@/public/icons/cross.svg";
 import MicIcon from "@/public/icons/mic.svg";
 import {
   createUserPlaylist,
-  getSongs,
   getUserAllPlaylist,
   updateUserPlaylistSongs,
 } from "@/utils/api";
+import type { TSong } from "@/utils/api.d";
+import { useSuspenseQuery } from "@apollo/client";
+import { graphql } from "gql.tada";
 import Link from "next/link";
 import React, { ChangeEvent, useRef, useState } from "react";
 import useSWR from "swr";
@@ -54,15 +56,33 @@ const Popup = ({
   const saveFormRef = useRef<HTMLFormElement>(null);
   const createFormRef = useRef<HTMLFormElement>(null);
 
-  const songFetcher = () => getSongs({ id });
-  const { data: songData, isLoading } = useSWR(
-    isPopup && variant === "song-info" ? "/song-info" : null,
-    songFetcher,
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
+  const songQuery = graphql(`
+    query ExampleQuery($songId: [String!]!) {
+      songs(id: $songId) {
+        id
+        name
+        releaseDate
+        label
+        language
+        copyright
+        artists {
+          all {
+            id
+            name
+            role
+          }
+        }
+      }
     }
-  );
+  `);
+
+  const { data } = id
+    ? useSuspenseQuery(songQuery, {
+        variables: { songId: [id] },
+      })
+    : {};
+
+  const songData = data?.songs as TSong[];
   const userId = session?.user?.id ?? "";
 
   const playlistFetcher = () =>
@@ -178,10 +198,10 @@ const Popup = ({
             <CrossIcon className="w-4 h-4" />
           </button>
         </div>
-        {!isLoading && !isPlaylistLoading ? (
+        {!isPlaylistLoading ? (
           variant === "song-info" ? (
             <div>
-              {songData?.data.map((song) => (
+              {songData?.map((song) => (
                 <div key={song.id} className="flex flex-col gap-2">
                   <p>Song Title: {song.name}</p>
                   <p>ReleaseAt: {song.releaseDate} </p>
@@ -310,7 +330,6 @@ const Popup = ({
             </button>
           </form>
         ) : null}
-
         {variant === "voice-search" ? (
           <div className="flex items-center justify-center gap-2 flex-col py-4">
             <p className="">{errorMessage}</p>
