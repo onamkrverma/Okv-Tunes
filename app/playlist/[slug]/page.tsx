@@ -8,13 +8,14 @@ import type { TSong } from "@/utils/api.d";
 import { graphql } from "gql.tada";
 import { Metadata } from "next";
 type Props = {
-  params: { slug: string };
-  searchParams?: { [key: string]: string | undefined };
+  params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ [key: string]: string | undefined }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const id = params.slug.split("-").pop();
-  const title = params.slug.split("-").slice(0, -1).join(" ");
+  const paramString = await params;
+  const id = paramString.slug.split("-").pop();
+  const title = paramString.slug.split("-").slice(0, -1).join(" ");
 
   const playlistQuery = graphql(`
     query ExampleQuery($playlistId: String!) {
@@ -41,9 +42,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 const PlaylistSongs = async ({ params, searchParams }: Props) => {
-  const id = params.slug.split("-").pop() as string;
-  const title = params.slug.split("-").slice(0, -1).join(" ");
-  const limit = parseInt(searchParams?.["limit"] as string);
+  const paramString = await params;
+  const searchParamsString = await searchParams;
+  const id = paramString.slug.split("-").pop() as string;
+  const title = paramString.slug.split("-").slice(0, -1).join(" ");
+  const limit = parseInt(searchParamsString?.["limit"] as string);
 
   const playlistQuery = graphql(`
     query ExampleQuery($playlistId: String!, $limit: Int) {

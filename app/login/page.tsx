@@ -4,17 +4,17 @@ import Input from "@/components/Input";
 import Loading from "@/components/Loading";
 import GoogleIcon from "@/public/icons/google.svg";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, use } from "react";
 import { gooogleLoginAction, loginAction } from "../actions/auth";
 
 type Props = {
-  searchParams: { [key: string]: string | undefined };
+  searchParams: Promise<{ [key: string]: string | undefined }>;
 };
 
 const Login = ({ searchParams }: Props) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const redirectNext = searchParams["next"];
+  const redirectNext = use(searchParams)["next"];
 
   const removeSwAndRedirect = async () => {
     if ("serviceWorker" in navigator) {
