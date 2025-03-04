@@ -13,7 +13,7 @@ import MiniPlayer from "./MiniPlayer";
 import Popup from "./Popup";
 import SuggestedSongs from "./SuggestedSongs";
 import Loading from "../Loading";
-import { useSuspenseQuery } from "@apollo/client";
+import { useSuspenseQuery, skipToken } from "@apollo/client";
 import { graphql } from "gql.tada";
 
 export type TplayerState = {
@@ -55,6 +55,7 @@ const Plalyer = () => {
   const [isPopup, setIsPopup] = useState(false);
   const pathName = usePathname();
   const moreBtnRef = useRef<HTMLButtonElement>(null);
+  const [suggestedSongsData, setSuggestedSongsData] = useState<TSong[]>([]);
 
   currentSong.id
     ? ls.set(
@@ -115,26 +116,41 @@ const Plalyer = () => {
       }
     `
   );
-  const { data: getSongByIds, refetch } = suggessionSongIds?.length
-    ? useSuspenseQuery(songQuery, { variables: { songId: suggessionSongIds } })
-    : {};
 
-  const { data: relatedSongsData, refetch: refetchRelated } =
-    !suggessionSongIds?.length
-      ? useSuspenseQuery(relatedQuery, {
+  const { data: getSongByIds, refetch } = useSuspenseQuery(
+    songQuery,
+    suggessionSongIds &&
+      suggessionSongIds.length > 0 &&
+      suggestedSongsData.length === 0
+      ? {
+          variables: { songId: suggessionSongIds },
+        }
+      : skipToken
+  );
+
+  const { data: relatedSongsData, refetch: refetchRelated } = useSuspenseQuery(
+    relatedQuery,
+    !suggessionSongIds && id.length > 0 && suggestedSongsData.length === 0
+      ? {
           variables: { relatedSongsId: id, limit: 20 },
-        })
-      : {};
-  const suggestedSongsData = (
-    suggessionSongIds?.length
-      ? getSongByIds?.songs
-      : relatedSongsData?.relatedSongs
-  ) as TSong[];
+        }
+      : skipToken
+  );
+  useEffect(() => {
+    if (getSongByIds?.songs?.length || relatedSongsData?.relatedSongs?.length) {
+      const suggestedSongs = (
+        suggessionSongIds?.length
+          ? getSongByIds?.songs
+          : relatedSongsData?.relatedSongs
+      ) as TSong[];
+      setSuggestedSongsData(suggestedSongs);
+    }
+  }, [getSongByIds, relatedSongsData]);
 
   useEffect(() => {
     if (!isRefetchSuggestion) return;
-    refetch && refetch({ songId: suggessionSongIds });
-    refetchRelated && refetchRelated({ relatedSongsId: id, limit: 20 });
+    // refetch && refetch({ songId: suggessionSongIds });
+    // refetchRelated && refetchRelated({ relatedSongsId: id, limit: 20 });
   }, [isRefetchSuggestion]);
 
   const getCurrentSongIndex = (suggestedSongsData: TSong[], id: string) => {
