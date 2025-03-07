@@ -12,9 +12,9 @@ interface RequestBody {
 
 export const POST = async (
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) => {
-  const { id } = params;
+  const { id } = await params;
   const { songIds, title, visibility }: RequestBody = await request.json();
 
   try {
@@ -69,9 +69,9 @@ export const POST = async (
 // get single playlist with playlistid search param else get all playlist
 export const GET = async (
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) => {
-  const { id } = params;
+  const { id } = await params;
   const playlistId = request.nextUrl.searchParams.get("playlistid");
 
   try {
@@ -111,9 +111,9 @@ export const GET = async (
 
 export const PUT = async (
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) => {
-  const { id } = params;
+  const { id } = await params;
   const { songIds, title, playlistId, visibility }: RequestBody =
     await request.json();
 
@@ -202,9 +202,9 @@ export const PUT = async (
 
 export const DELETE = async (
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) => {
-  const { id } = params;
+  const { id } = await params;
   const songIds = request.nextUrl.searchParams.getAll("songid");
   const playlistId = request.nextUrl.searchParams.get("playlistid");
   const isFullDeletePlaylist =

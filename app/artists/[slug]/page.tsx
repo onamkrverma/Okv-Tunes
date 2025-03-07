@@ -6,12 +6,13 @@ import SongsCollection from "@/components/SongsCollection";
 import { getArtist } from "@/utils/api";
 import { Metadata } from "next";
 type Props = {
-  params: { slug: string };
-  searchParams?: { [key: string]: string | undefined };
+  params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ [key: string]: string | undefined }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const id = params.slug.split("-").pop();
+  const paramRes = await params;
+  const id = paramRes.slug.split("-").pop();
   const artist = await getArtist({ id: id });
   const { name, bio } = artist.data;
 
@@ -22,8 +23,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 const ArtistInfo = async ({ params, searchParams }: Props) => {
-  const id = params.slug.split("-").pop();
-  const limit = parseInt(searchParams?.["limit"] as string);
+  const paramRes = await params;
+  const searchParmsRes = await searchParams;
+
+  const id = paramRes.slug.split("-").pop();
+  const limit = parseInt(searchParmsRes?.["limit"] as string);
 
   const artist = await getArtist({ id: id, limit: limit || 20 });
 
@@ -75,10 +79,12 @@ const ArtistInfo = async ({ params, searchParams }: Props) => {
             </a>
           ) : null}
 
-        {topSongs.length>0 ?  <PlayAllSongs
-            firstSong={topSongs[0]}
-            suggessionSongIds={topSongs.slice(1, 16).map((item) => item.id)}
-          />:null}
+          {topSongs.length > 0 ? (
+            <PlayAllSongs
+              firstSong={topSongs[0]}
+              suggessionSongIds={topSongs.slice(1, 16).map((item) => item.id)}
+            />
+          ) : null}
         </div>
       </div>
       <p className="font-bold text-xl">Top songs</p>

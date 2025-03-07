@@ -65,7 +65,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -74,7 +74,7 @@ export default function RootLayout({
     process.env.NODE_ENV === "production"
       ? "__Secure-authjs.session-token"
       : "authjs.session-token";
-  const authToken = cookies().get(authCookiesName)?.value;
+  const authToken = (await cookies()).get(authCookiesName)?.value;
   return (
     <html lang="en">
       <GoogleTagManager gtmId="GTM-5G23KL35" />

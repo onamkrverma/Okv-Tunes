@@ -6,11 +6,12 @@ import { getAlbum } from "@/utils/api";
 import { Metadata } from "next";
 import React from "react";
 type Props = {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const id = params.slug.split("-").pop();
+  const paramRes = await params;
+  const id = paramRes.slug.split("-").pop();
   const album = await getAlbum({ id: id });
   const { name, description } = album.data;
 
@@ -21,7 +22,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 const AlbumSongs = async ({ params }: Props) => {
-  const id = params.slug.split("-").pop() as string;
+  const paramRes = await params;
+  const id = paramRes.slug.split("-").pop() as string;
 
   const album = await getAlbum({
     id: id,
@@ -53,15 +55,17 @@ const AlbumSongs = async ({ params }: Props) => {
           <small className="text-neutral-300 text-center sm:text-start">
             {description}
           </small>
-       {songs.length>0 ?   <PlayAllSongs
-            firstSong={songs[0]}
-            suggessionSongIds={songs.slice(1, 16).map((item) => item.id)}
-          />: null}
+          {songs.length > 0 ? (
+            <PlayAllSongs
+              firstSong={songs[0]}
+              suggessionSongIds={songs.slice(1, 16).map((item) => item.id)}
+            />
+          ) : null}
         </div>
       </div>
 
       <div className="flex flex-col gap-4 my-4">
-      {songs.length > 0 ? (
+        {songs.length > 0 ? (
           songs.map((song, index) => (
             <SongsCollection key={song.id} song={song} index={index} />
           ))

@@ -11,7 +11,7 @@ import {
   getUserPlaylist,
   getUserPublicPlaylist,
 } from "@/utils/api";
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import useSWR, { mutate } from "swr";
 import ThreeDotsIcon from "@/public/icons/three-dots.svg";
 import DeleteIcon from "@/public/icons/delete.svg";
@@ -21,13 +21,15 @@ import Popup from "@/components/Player/Popup";
 import PencilIcon from "@/public/icons/pencil.svg";
 
 type Props = {
-  params: { playlistslug: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: Promise<{ playlistslug: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
 const UserPlaylistSongs = ({ params, searchParams }: Props) => {
-  const id = params.playlistslug.split("-").pop() as string;
-  const type = searchParams["type"] as "public" | "private";
+  const { playlistslug } = use(params);
+  const searchParamsRes = use(searchParams);
+  const id = playlistslug.split("-").pop() as string;
+  const type = searchParamsRes["type"] as "public" | "private";
   const { session, authToken, setGlobalState } = useGlobalContext();
 
   const [isRefreshing, setIsRefreshing] = useState(false);

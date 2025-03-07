@@ -29,7 +29,7 @@ const Profile = async () => {
     process.env.NODE_ENV === "production"
       ? "__Secure-authjs.session-token"
       : "authjs.session-token";
-  const authToken = cookies().get(authCookiesName)?.value;
+  const authToken = (await cookies()).get(authCookiesName)?.value;
   const userInfo = authToken ? await getUserInfo({ userId, authToken }) : null;
   const userPlaylists = authToken
     ? await getUserAllPlaylist({ userId, authToken })

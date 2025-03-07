@@ -11,17 +11,18 @@ import {
   getSearchPlaylists,
   getSearchSongs,
 } from "@/utils/api";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, use, useEffect, useState } from "react";
 import useSWR, { mutate } from "swr";
 
 type Props = {
-  searchParams: { [key: string]: string | undefined };
+  searchParams: Promise<{ [key: string]: string | undefined }>;
 };
 
 const SearchComponent = ({ searchParams }: Props) => {
-  const searchQuery = searchParams["query"];
-  const typeQuery = searchParams["type"];
-  const limit = parseInt(searchParams?.["limit"] ?? "20");
+  const searchParamsRes = use(searchParams);
+  const searchQuery = searchParamsRes["query"];
+  const typeQuery = searchParamsRes["type"];
+  const limit = parseInt(searchParamsRes?.["limit"] ?? "20");
 
   const toggleList = ["songs", "playlist", "albums", "artists"];
   const [activeToggle, setActiveToggle] = useState(typeQuery ?? toggleList[0]);

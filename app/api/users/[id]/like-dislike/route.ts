@@ -8,9 +8,9 @@ interface RequestBody {
 
 export const POST = async (
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) => {
-  const { id } = params;
+  const { id } = await params;
   const { songId }: RequestBody = await request.json();
 
   try {

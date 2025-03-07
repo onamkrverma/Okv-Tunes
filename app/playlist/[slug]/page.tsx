@@ -6,13 +6,14 @@ import SongsCollection from "@/components/SongsCollection";
 import { getPlaylists } from "@/utils/api";
 import { Metadata } from "next";
 type Props = {
-  params: { slug: string };
-  searchParams?: { [key: string]: string | undefined };
+  params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ [key: string]: string | undefined }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const id = params.slug.split("-").pop();
-  const title = params.slug.split("-").slice(0, -1).join(" ");
+  const { slug } = await params;
+  const id = slug.split("-").pop();
+  const title = slug.split("-").slice(0, -1).join(" ");
   const playlist = await getPlaylists({ id: id });
   const { description } = playlist.data;
 
@@ -23,9 +24,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 const PlaylistSongs = async ({ params, searchParams }: Props) => {
-  const id = params.slug.split("-").pop() as string;
-  const title = params.slug.split("-").slice(0, -1).join(" ");
-  const limit = parseInt(searchParams?.["limit"] as string);
+  const { slug } = await params;
+  const searchParamRes = await searchParams;
+
+  const id = slug.split("-").pop() as string;
+  const title = slug.split("-").slice(0, -1).join(" ");
+  const limit = parseInt(searchParamRes?.["limit"] as string);
 
   const playlist = await getPlaylists({
     id: id,
@@ -57,15 +61,17 @@ const PlaylistSongs = async ({ params, searchParams }: Props) => {
           <small className="text-neutral-300 text-center sm:text-start">
             {description.replaceAll("Jio", "Okv")}
           </small>
-          {songs.length>0 ?   <PlayAllSongs
-            firstSong={songs[0]}
-            suggessionSongIds={songs.slice(1, 16).map((item) => item.id)}
-          />: null}
+          {songs.length > 0 ? (
+            <PlayAllSongs
+              firstSong={songs[0]}
+              suggessionSongIds={songs.slice(1, 16).map((item) => item.id)}
+            />
+          ) : null}
         </div>
       </div>
 
       <div className="flex flex-col gap-4 my-4">
-      {songs.length > 0 ? (
+        {songs.length > 0 ? (
           songs.map((song, index) => (
             <SongsCollection key={song.id} song={song} index={index} />
           ))
