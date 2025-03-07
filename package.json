@@ -21,7 +21,7 @@
     "react-player": "^2.16.0",
     "sharp": "^0.33.5",
     "swr": "^2.3.3",
-    "wretch": "^2.9.0"
+    "wretch": "^2.11.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
