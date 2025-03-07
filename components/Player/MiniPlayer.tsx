@@ -28,7 +28,7 @@ const LikeDislike = dynamic(() => import("../LikeDislike"), { ssr: false });
 type Props = {
   handlePrev: () => void;
   handleNext: () => void;
-  playerRef: RefObject<ReactPlayer>;
+  playerRef: RefObject<ReactPlayer | null>;
   playerState: TplayerState;
   setPlayerState: Dispatch<SetStateAction<TplayerState>>;
 };
