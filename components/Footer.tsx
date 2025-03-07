@@ -2,10 +2,18 @@
 import { latestHists, topChartPlaylists } from "@/utils/playlists";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+
+let deferredPrompt: BeforeInstallPromptEvent | null = null;
+
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
+}
 
 const Footer = () => {
   const pathname = usePathname();
+  const [installable, setInstallable] = useState(false);
 
   const footerLinks = [
     { title: "Contact Us", link: "/contact" },
@@ -22,6 +30,39 @@ const Footer = () => {
     `/playlist/${encodeURIComponent(
       title.replaceAll(" ", "-").toLowerCase()
     )}-${id}`;
+
+  useEffect(() => {
+    const beforeInstallPromptHandler = (e: Event) => {
+      const event = e as BeforeInstallPromptEvent;
+      e.preventDefault();
+      deferredPrompt = event;
+      setInstallable(true);
+    };
+
+    window.addEventListener("beforeinstallprompt", beforeInstallPromptHandler);
+
+    return () => {
+      window.removeEventListener(
+        "beforeinstallprompt",
+        beforeInstallPromptHandler
+      );
+    };
+  }, []);
+
+  const handleInstallClick = () => {
+    setInstallable(false);
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === "accepted") {
+          console.log("User accepted the install prompt");
+        } else {
+          console.log("User dismissed the install prompt");
+        }
+        deferredPrompt = null;
+      });
+    }
+  };
 
   return (
     <div className="inner-container border-t !pt-10 !pb-28 sm:!pb-10">
@@ -71,6 +112,18 @@ const Footer = () => {
             ))}
           </ul>
         </div>
+        {installable && (
+          <div>
+            <p className="text-lg">Download The App</p>
+            <button type="button" onClick={handleInstallClick}>
+              <img
+                src="/install_pwa.svg"
+                alt="install-pwa"
+                className="w-40 my-2"
+              />
+            </button>
+          </div>
+        )}
       </div>
       <small className="border-t w-full flex justify-end my-2 pt-2 text-neutral-400">
         © 2024
