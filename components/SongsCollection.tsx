@@ -13,6 +13,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { MouseEvent, useEffect, useRef, useState } from "react";
 import ImageWithFallback from "./ImageWithFallback";
 import Popup from "./Player/Popup";
+import { useDrag, useDrop } from "react-dnd";
+import MovableIcon from "@/public/icons/movable.svg";
 
 const LikeDislike = dynamic(() => import("./LikeDislike"), { ssr: false });
 
@@ -20,14 +22,24 @@ type Props = {
   song: TSong;
   playlistId?: string;
   index: number;
+  moveRow?: (dragIndex: number, hoverIndex: number) => void;
+  isRerodering?: boolean;
   type?: "public" | "private";
 };
 
-const SongsCollection = ({ song, playlistId, index, type }: Props) => {
+const SongsCollection = ({
+  song,
+  playlistId,
+  index,
+  type,
+  moveRow,
+  isRerodering,
+}: Props) => {
   const { setGlobalState, authToken, session } = useGlobalContext();
   const router = useRouter();
   const pathname = usePathname();
   const moreInfoRef = useRef<HTMLDivElement>(null);
+  const songDivRef = useRef<HTMLDivElement>(null);
 
   const [isMoreBtnClick, setIsMoreBtnClick] = useState(false);
   const [isPlaylistPopup, setIsPlaylistPopup] = useState(false);
@@ -111,13 +123,88 @@ const SongsCollection = ({ song, playlistId, index, type }: Props) => {
     };
   }, []);
 
+  // drag drop logic
+  type TDragItem = {
+    index: number;
+    type: string; // Ensure it matches the `accept` value in `useDrop`
+  };
+  const [collectedDropProps, drop] = useDrop<
+    TDragItem,
+    void,
+    { handlerId: string | null }
+  >({
+    accept: "song",
+    collect: (monitor) => {
+      return {
+        handlerId: monitor.getHandlerId() as string | null,
+      };
+    },
+    hover(item, monitor) {
+      if (!songDivRef.current) {
+        return;
+      }
+      const dragIndex = item.index;
+      const hoverIndex = index;
+      // Don't replace items with themselves
+      if (dragIndex === hoverIndex) {
+        return;
+      }
+
+      // Determine rectangle on screen
+      const hoverBoundingRect = songDivRef.current?.getBoundingClientRect();
+      // Get vertical middle
+      const hoverMiddleY =
+        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+      // Determine mouse position
+      const clientOffset = monitor.getClientOffset();
+      if (!clientOffset) return;
+      // Get pixels to the top
+      const hoverClientY = clientOffset.y - hoverBoundingRect.top;
+      // Dragging downwards
+      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+        return;
+      }
+      // Dragging upwards
+      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+        return;
+      }
+      // Time to actually perform the action
+
+      moveRow && moveRow(dragIndex, hoverIndex);
+      item.index = hoverIndex;
+    },
+  });
+
+  const [collectedDragProps, drag] = useDrag({
+    type: "song",
+    item: () => {
+      return { id, index };
+    },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  });
+  const isDragging = collectedDragProps.isDragging;
+
+  drag(drop(songDivRef));
+
   return (
     <>
       <div
-        onClick={handleUpdateState}
-        className="flex items-center justify-between sm:gap-4 p-2 cursor-pointer hover:bg-secondary relative rounded-md"
+        ref={songDivRef}
+        data-handler-id={collectedDropProps.handlerId}
+        onClick={!isRerodering ? handleUpdateState : undefined}
+        className={`flex items-center justify-between sm:gap-4 p-2 cursor-pointer hover:bg-secondary relative rounded-md ${
+          isDragging ? "" : ""
+        }`}
       >
-        <span className="text-neutral-400 text-sm">{index + 1}</span>
+        <div>
+          {isRerodering ? (
+            <MovableIcon className="w-5 h-5 cursor-move" />
+          ) : (
+            <span className="text-neutral-400 text-sm">{index + 1}</span>
+          )}
+        </div>
         <ImageWithFallback
           id={id}
           src={imageUrl}
