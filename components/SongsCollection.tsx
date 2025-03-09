@@ -13,8 +13,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { MouseEvent, useEffect, useRef, useState } from "react";
 import ImageWithFallback from "./ImageWithFallback";
 import Popup from "./Player/Popup";
-import { useDrag, useDrop } from "react-dnd";
 import MovableIcon from "@/public/icons/movable.svg";
+import { useDraggableList } from "@/utils/hook/useDraggableList";
 
 const LikeDislike = dynamic(() => import("./LikeDislike"), { ssr: false });
 
@@ -39,10 +39,15 @@ const SongsCollection = ({
   const router = useRouter();
   const pathname = usePathname();
   const moreInfoRef = useRef<HTMLDivElement>(null);
-  const songDivRef = useRef<HTMLDivElement>(null);
 
   const [isMoreBtnClick, setIsMoreBtnClick] = useState(false);
   const [isPlaylistPopup, setIsPlaylistPopup] = useState(false);
+
+  const { collectedDropProps, ref: songDivRef } = useDraggableList({
+    index,
+    type: "song",
+    onMove: moveRow,
+  });
 
   const { id, album, artists, downloadUrl, image, name, duration } = song;
 
@@ -123,80 +128,14 @@ const SongsCollection = ({
     };
   }, []);
 
-  // drag drop logic
-  type TDragItem = {
-    index: number;
-    type: string; // Ensure it matches the `accept` value in `useDrop`
-  };
-  const [collectedDropProps, drop] = useDrop<
-    TDragItem,
-    void,
-    { handlerId: string | null }
-  >({
-    accept: "song",
-    collect: (monitor) => {
-      return {
-        handlerId: monitor.getHandlerId() as string | null,
-      };
-    },
-    hover(item, monitor) {
-      if (!songDivRef.current) {
-        return;
-      }
-      const dragIndex = item.index;
-      const hoverIndex = index;
-      // Don't replace items with themselves
-      if (dragIndex === hoverIndex) {
-        return;
-      }
-
-      // Determine rectangle on screen
-      const hoverBoundingRect = songDivRef.current?.getBoundingClientRect();
-      // Get vertical middle
-      const hoverMiddleY =
-        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
-      // Determine mouse position
-      const clientOffset = monitor.getClientOffset();
-      if (!clientOffset) return;
-      // Get pixels to the top
-      const hoverClientY = clientOffset.y - hoverBoundingRect.top;
-      // Dragging downwards
-      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
-        return;
-      }
-      // Dragging upwards
-      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
-        return;
-      }
-      // Time to actually perform the action
-
-      moveRow && moveRow(dragIndex, hoverIndex);
-      item.index = hoverIndex;
-    },
-  });
-
-  const [collectedDragProps, drag] = useDrag({
-    type: "song",
-    item: () => {
-      return { id, index };
-    },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
-  });
-  const isDragging = collectedDragProps.isDragging;
-
-  drag(drop(songDivRef));
-
   return (
     <>
       <div
         ref={songDivRef}
+        draggable={isRerodering}
         data-handler-id={collectedDropProps.handlerId}
         onClick={!isRerodering ? handleUpdateState : undefined}
-        className={`flex items-center justify-between sm:gap-4 p-2 cursor-pointer hover:bg-secondary relative rounded-md ${
-          isDragging ? "" : ""
-        }`}
+        className={`flex items-center justify-between sm:gap-4 p-2 cursor-pointer hover:bg-secondary relative rounded-md`}
       >
         <div>
           {isRerodering ? (
