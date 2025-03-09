@@ -54,3 +54,41 @@ export const GET = async (
     );
   }
 };
+
+interface RequestBody {
+  songIds: string[];
+}
+
+export const PUT = async (
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) => {
+  const { id } = await params;
+  const { songIds }: RequestBody = await request.json();
+
+  try {
+    if (!songIds.length) {
+      return NextResponse.json(
+        { error: "The songIds array is required in request body" },
+        { status: 404 }
+      );
+    }
+
+    await connectDB();
+
+    await Users.updateOne({ _id: id }, { $set: { likedSongIds: songIds } });
+
+    return NextResponse.json(
+      {
+        message: "Liked songs updated",
+      },
+      { status: 200 }
+    );
+  } catch (error: unknown) {
+    console.error(error instanceof Error ? error.message : error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+};

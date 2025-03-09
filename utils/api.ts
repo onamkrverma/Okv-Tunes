@@ -29,7 +29,7 @@ type TApiQuery = {
 type TUserApiQuery = {
   userId: string;
   authToken: string;
-  songId?: string;
+  songId?: string | string[];
   playlistTitle?: string;
   playlistSongIds?: string[];
   playlistVisibility?: string;
@@ -163,6 +163,16 @@ export const getLikedSongs = async ({ userId, authToken }: TUserApiQuery) => {
   return response;
 };
 
+export const updateLikedSongs = async ({ userId, songId }: TUserApiQuery) => {
+  const songIds = songId as string[];
+  const response = (await api
+    .put({ songIds }, `/users/${userId}/liked-songs`)
+    .json()) as {
+    message: string;
+  };
+
+  return response;
+};
 export const likeDislikeSong = async ({ userId, songId }: TUserApiQuery) => {
   const response = (await api
     .post({ songId }, `/users/${userId}/like-dislike`)

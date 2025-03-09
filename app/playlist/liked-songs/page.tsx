@@ -8,7 +8,7 @@ import SongsCollection from "@/components/SongsCollection";
 import RefreshIcon from "@/public/icons/refresh.svg";
 import ReorderIcon from "@/public/icons/reorder.svg";
 import { TSong } from "@/utils/api.d";
-import { getLikedSongs, getSongs } from "@/utils/api";
+import { getLikedSongs, getSongs, updateLikedSongs } from "@/utils/api";
 import { useCallback, useEffect, useState } from "react";
 import useSWR, { mutate } from "swr";
 import { DndProvider } from "react-dnd";
@@ -50,7 +50,9 @@ const LikedSongs = () => {
   const hanldeRefresh = async () => {
     setIsRefreshing(true);
     await mutate("/liked-id");
-    await mutate("/liked-songs");
+    if (!isRerodering) {
+      await mutate("/liked-songs");
+    }
     setIsRefreshing(false);
   };
 
@@ -60,11 +62,22 @@ const LikedSongs = () => {
     }
   }, [likedSongs]);
 
+  const handleUpdateList = async () => {
+    if (!authToken) return;
+    const songIds = likedSongData.map((item) => item.id);
+    await updateLikedSongs({
+      userId,
+      authToken,
+      songId: songIds,
+    });
+    await hanldeRefresh();
+  };
+
   const moveRow = useCallback((dragIndex: number, hoverIndex: number) => {
-    setlikedSongData((prevCharacters) => {
-      const updatedList = [...prevCharacters];
-      const [movedCharacter] = updatedList.splice(dragIndex, 1);
-      updatedList.splice(hoverIndex, 0, movedCharacter);
+    setlikedSongData((prev) => {
+      const updatedList = [...prev];
+      const [movedSong] = updatedList.splice(dragIndex, 1);
+      updatedList.splice(hoverIndex, 0, movedSong);
       return updatedList;
     });
   }, []);
@@ -121,13 +134,13 @@ const LikedSongs = () => {
           </button>
           <button
             type="button"
-            onClick={hanldeRefresh}
+            onClick={!isRerodering ? hanldeRefresh : handleUpdateList}
             className="flex items-center justify-center gap-2 text-xs border bg-neutral-800 hover:bg-secondary rounded-md p-1 px-2"
           >
             <RefreshIcon
               className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`}
             />
-            Refresh
+            {!isRerodering ? "Refresh" : "Update"}
           </button>
         </div>
         <DndProvider backend={HTML5Backend}>
