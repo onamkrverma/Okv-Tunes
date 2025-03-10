@@ -15,6 +15,8 @@ import ImageWithFallback from "./ImageWithFallback";
 import Popup from "./Player/Popup";
 import MovableIcon from "@/public/icons/movable.svg";
 import { useDraggableList } from "@/utils/hook/useDraggableList";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 const LikeDislike = dynamic(() => import("./LikeDislike"), { ssr: false });
 
@@ -23,17 +25,17 @@ type Props = {
   playlistId?: string;
   index: number;
   moveRow?: (dragIndex: number, hoverIndex: number) => void;
-  isRerodering?: boolean;
+  isReordering?: boolean;
   type?: "public" | "private";
 };
 
-const SongsCollection = ({
+const Song = ({
   song,
   playlistId,
   index,
   type,
   moveRow,
-  isRerodering,
+  isReordering,
 }: Props) => {
   const { setGlobalState, authToken, session } = useGlobalContext();
   const router = useRouter();
@@ -132,13 +134,17 @@ const SongsCollection = ({
     <>
       <div
         ref={songDivRef}
-        draggable={isRerodering}
-        data-handler-id={collectedDropProps.handlerId}
-        onClick={!isRerodering ? handleUpdateState : undefined}
-        className={`flex items-center justify-between sm:gap-4 p-2 cursor-pointer hover:bg-secondary relative rounded-md`}
+        draggable={isReordering}
+        data-handler-id={
+          isReordering ? collectedDropProps.handlerId : undefined
+        }
+        onClick={!isReordering ? handleUpdateState : undefined}
+        className={`flex items-center justify-between sm:gap-4 p-2 ${
+          isReordering ? "cursor-move" : "cursor-pointer"
+        } hover:bg-secondary relative rounded-md`}
       >
         <div>
-          {isRerodering ? (
+          {isReordering ? (
             <MovableIcon className="w-5 h-5 cursor-move" />
           ) : (
             <span className="text-neutral-400 text-sm">{index + 1}</span>
@@ -230,6 +236,28 @@ const SongsCollection = ({
         />
       ) : null}
     </>
+  );
+};
+
+const SongsCollection = ({
+  song,
+  playlistId,
+  index,
+  type,
+  moveRow,
+  isReordering,
+}: Props) => {
+  return (
+    <DndProvider backend={HTML5Backend}>
+      <Song
+        playlistId={playlistId}
+        song={song}
+        index={index}
+        type={type}
+        moveRow={moveRow}
+        isReordering={isReordering}
+      />
+    </DndProvider>
   );
 };
 

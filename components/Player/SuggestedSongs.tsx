@@ -1,56 +1,46 @@
 "use client";
-import secondsToTime from "@/utils/secondsToTime";
 import React, {
   Dispatch,
   SetStateAction,
+  useCallback,
   useEffect,
   useRef,
   useState,
 } from "react";
 import Loading from "../Loading";
-import type { TSong, TSongs } from "@/utils/api.d";
-import { useGlobalContext } from "@/app/GlobalContex";
+import type { TSong } from "@/utils/api.d";
 import CaretUpIcon from "@/public/icons/caret-up.svg";
 import PlayIcon from "@/public/icons/play.svg";
 import PauseIcon from "@/public/icons/pause.svg";
 import { TplayerState } from "./index";
-import ImageWithFallback from "../ImageWithFallback";
+import SuggestedSongCard from "./SuggestedSongCard";
 
 type Props = {
-  suggestedSongsData?: TSongs;
+  suggestedSongs: TSong[];
+  setSuggestedSongs: Dispatch<SetStateAction<TSong[]>>;
   isLoading: boolean;
   playerState: TplayerState;
   setPlayerState: Dispatch<SetStateAction<TplayerState>>;
 };
 
 const SuggestedSongs = ({
-  suggestedSongsData,
+  suggestedSongs,
+  setSuggestedSongs,
   isLoading,
   playerState,
   setPlayerState,
 }: Props) => {
-  const { currentSong, setGlobalState } = useGlobalContext();
   const [isUpnextClick, setIsUpnextClick] = useState(false);
   const suggestedSongsRef = useRef<HTMLDivElement>(null);
 
-  const handleUpdateState = (song: TSong) => {
-    setGlobalState((prev) => ({
-      ...prev,
-      currentSong: {
-        id: song.id,
-        artist: song.artists.primary[0].name,
-        title: song.name,
-        album: song.album.name.replaceAll("&quot;", '"'),
-        imageUrl:
-          song.image.find((item) => item.quality === "500x500")?.url ?? "",
-        audioUrl:
-          song.downloadUrl.find((item) => item.quality === "320kbps")?.url ??
-          "",
-        isMaximise: true,
-        isRefetchSuggestion: false,
-      },
-    }));
-  };
+  const moveRow = useCallback((dragIndex: number, hoverIndex: number) => {
+    setSuggestedSongs((prev) => {
+      const updatedList = [...prev];
+      const [movedSong] = updatedList.splice(dragIndex, 1);
+      updatedList.splice(hoverIndex, 0, movedSong);
+      return updatedList;
+    });
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (e: globalThis.MouseEvent) => {
@@ -98,7 +88,7 @@ const SuggestedSongs = ({
             aria-label="autoplay"
             placeholder="autoplay"
             checked={playerState.autoPlay}
-            disabled={!suggestedSongsData?.success}
+            disabled={suggestedSongs.length === 0}
             onChange={() =>
               setPlayerState({
                 ...playerState,
@@ -127,34 +117,14 @@ const SuggestedSongs = ({
       </div>
       <div className="upnext-songs overflow-y-scroll ">
         {!isLoading ? (
-          suggestedSongsData?.success ? (
-            suggestedSongsData?.data?.map((song) => (
-              <div
+          suggestedSongs.length > 0 ? (
+            suggestedSongs.map((song, index) => (
+              <SuggestedSongCard
                 key={song.id}
-                className="relative flex items-center gap-4 p-2 cursor-pointer rounded-md hover:bg-secondary"
-                onClick={() => handleUpdateState(song)}
-              >
-                <ImageWithFallback
-                  src={
-                    song.image.find((item) => item.quality === "500x500")
-                      ?.url ?? "/logo-circle.svg"
-                  }
-                  id={song.id}
-                  alt={song.name + "okv tunes"}
-                  width={50}
-                  height={50}
-                  className="w-[50px] h-[50px] object-cover rounded-md"
-                />
-                {currentSong.id === song.id ? (
-                  <PlayIcon className="absolute left-6 w-5 h-5 p-1 rounded-full bg-action animate-spin" />
-                ) : null}
-                <p className="truncate w-80">
-                  {song.name.replaceAll("&quot;", '"')}
-                </p>
-                <small className="text-neutral-400">
-                  {secondsToTime(song.duration)}
-                </small>
-              </div>
+                index={index}
+                song={song}
+                moveRow={moveRow}
+              />
             ))
           ) : (
             <p>No suggestions found for the this song</p>

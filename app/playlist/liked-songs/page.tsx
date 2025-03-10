@@ -18,7 +18,7 @@ const LikedSongs = () => {
   const { session, authToken } = useGlobalContext();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [likedSongData, setlikedSongData] = useState<TSong[]>([]);
-  const [isRerodering, setIsRerodering] = useState(false);
+  const [isReordering, setIsRerodering] = useState(false);
 
   useEffect(() => {
     document.title = "Liked Songs • Okv-Tunes";
@@ -50,7 +50,7 @@ const LikedSongs = () => {
   const hanldeRefresh = async () => {
     setIsRefreshing(true);
     await mutate("/liked-id");
-    if (!isRerodering) {
+    if (!isReordering) {
       await mutate("/liked-songs");
     }
     setIsRefreshing(false);
@@ -122,25 +122,25 @@ const LikedSongs = () => {
         <div className="flex justify-end items-center gap-2">
           <button
             type="button"
-            onClick={() => setIsRerodering(!isRerodering)}
+            onClick={() => setIsRerodering(!isReordering)}
             className="flex items-center justify-center gap-2 text-xs border bg-neutral-800 hover:bg-secondary rounded-md p-1 px-2"
           >
             <ReorderIcon
               className={`w-4 h-4 transition-colors ${
-                isRerodering ? "text-[#00ff0a]" : ""
+                isReordering ? "text-[#00ff0a]" : ""
               }`}
             />
             Reorder
           </button>
           <button
             type="button"
-            onClick={!isRerodering ? hanldeRefresh : handleUpdateList}
+            onClick={!isReordering ? hanldeRefresh : handleUpdateList}
             className="flex items-center justify-center gap-2 text-xs border bg-neutral-800 hover:bg-secondary rounded-md p-1 px-2"
           >
             <RefreshIcon
               className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`}
             />
-            {!isRerodering ? "Refresh" : "Update"}
+            {!isReordering ? "Refresh" : "Update"}
           </button>
         </div>
         <DndProvider backend={HTML5Backend}>
@@ -152,7 +152,7 @@ const LikedSongs = () => {
                   song={song}
                   index={index}
                   moveRow={moveRow}
-                  isRerodering={isRerodering}
+                  isReordering={isReordering}
                 />
               ))
             ) : (

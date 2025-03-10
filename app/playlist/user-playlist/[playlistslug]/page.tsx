@@ -43,7 +43,7 @@ const UserPlaylistSongs = ({ params, searchParams }: Props) => {
   const router = useRouter();
   const moreInfoRef = useRef<HTMLDivElement>(null);
 
-  const [isRerodering, setIsRerodering] = useState(false);
+  const [isReordering, setIsRerodering] = useState(false);
 
   const [userPlaylistSongs, setUserPlaylistSongs] = useState<TSong[]>([]);
 
@@ -89,7 +89,7 @@ const UserPlaylistSongs = ({ params, searchParams }: Props) => {
   const hanldeRefresh = async () => {
     setIsRefreshing(true);
     await mutate(`/user-playlist?id=${id}`);
-    if (!isRerodering) {
+    if (!isReordering) {
       await mutate(`/playlist-songs?id=${id}`);
     }
     setIsRefreshing(false);
@@ -262,25 +262,25 @@ const UserPlaylistSongs = ({ params, searchParams }: Props) => {
           <div className="flex justify-end items-center gap-2">
             <button
               type="button"
-              onClick={() => setIsRerodering(!isRerodering)}
+              onClick={() => setIsRerodering(!isReordering)}
               className="flex items-center justify-center gap-2 text-xs border bg-neutral-800 hover:bg-secondary rounded-md p-1 px-2"
             >
               <ReorderIcon
                 className={`w-4 h-4 transition-colors ${
-                  isRerodering ? "text-[#00ff0a]" : ""
+                  isReordering ? "text-[#00ff0a]" : ""
                 }`}
               />
               Reorder
             </button>
             <button
               type="button"
-              onClick={!isRerodering ? hanldeRefresh : handleUpdateList}
+              onClick={!isReordering ? hanldeRefresh : handleUpdateList}
               className="flex items-center justify-center gap-2 text-xs border bg-neutral-800 hover:bg-secondary rounded-md p-1 px-2"
             >
               <RefreshIcon
                 className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`}
               />
-              {!isRerodering ? "Refresh" : "Update"}
+              {!isReordering ? "Refresh" : "Update"}
             </button>
           </div>
         ) : null}
@@ -295,7 +295,7 @@ const UserPlaylistSongs = ({ params, searchParams }: Props) => {
                   index={index}
                   type={type}
                   moveRow={moveRow}
-                  isRerodering={isRerodering}
+                  isReordering={isReordering}
                 />
               ))
             ) : (

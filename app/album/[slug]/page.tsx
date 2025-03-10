@@ -4,7 +4,6 @@ import PlayAllSongs from "@/components/PlayAllSongs";
 import SongsCollection from "@/components/SongsCollection";
 import { getAlbum } from "@/utils/api";
 import { Metadata } from "next";
-import React from "react";
 type Props = {
   params: Promise<{ slug: string }>;
 };
@@ -67,7 +66,12 @@ const AlbumSongs = async ({ params }: Props) => {
       <div className="flex flex-col gap-4 my-4">
         {songs.length > 0 ? (
           songs.map((song, index) => (
-            <SongsCollection key={song.id} song={song} index={index} />
+            <SongsCollection
+              key={song.id}
+              song={song}
+              index={index}
+              isReordering={false}
+            />
           ))
         ) : (
           <p>No songs found</p>
