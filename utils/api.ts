@@ -35,6 +35,7 @@ type TUserApiQuery = {
   playlistVisibility?: string;
   isFullDeletePlaylist?: boolean;
   playlistId?: string;
+  isReorder?: boolean;
 };
 
 export const getPlaylists = async ({ id, limit = 10 }: TApiQuery) => {
@@ -237,12 +238,14 @@ export const updateUserPlaylistSongs = async ({
   playlistTitle,
   playlistId,
   playlistVisibility,
+  isReorder,
 }: TUserApiQuery) => {
   const reqBody = {
     playlistId,
     title: playlistTitle,
     songIds: playlistSongIds,
     visibility: playlistVisibility,
+    isReorder,
   };
 
   const response = (await api

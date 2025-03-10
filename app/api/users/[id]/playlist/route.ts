@@ -8,6 +8,7 @@ interface RequestBody {
   visibility?: "public" | "private";
   playlistId?: string;
   isFullDeletePlaylist?: boolean;
+  isReorder?: boolean;
 }
 
 export const POST = async (
@@ -114,7 +115,7 @@ export const PUT = async (
   { params }: { params: Promise<{ id: string }> }
 ) => {
   const { id } = await params;
-  const { songIds, title, playlistId, visibility }: RequestBody =
+  const { songIds, title, playlistId, visibility, isReorder }: RequestBody =
     await request.json();
 
   try {
@@ -158,7 +159,7 @@ export const PUT = async (
       playlist.visibility = visibility;
     }
 
-    if (songIds) {
+    if (songIds && !isReorder) {
       const duplicateSongs = songIds.filter((songId) =>
         playlist.songIds.includes(songId)
       );
@@ -171,6 +172,8 @@ export const PUT = async (
       }
 
       playlist.songIds = [...playlist.songIds, ...songIds];
+    } else if (songIds && isReorder) {
+      playlist.songIds = songIds;
     }
 
     await Users.updateOne(

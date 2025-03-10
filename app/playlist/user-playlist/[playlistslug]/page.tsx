@@ -10,8 +10,9 @@ import {
   getSongs,
   getUserPlaylist,
   getUserPublicPlaylist,
+  updateUserPlaylistSongs,
 } from "@/utils/api";
-import { use, useEffect, useRef, useState } from "react";
+import { use, useCallback, useEffect, useRef, useState } from "react";
 import useSWR, { mutate } from "swr";
 import ThreeDotsIcon from "@/public/icons/three-dots.svg";
 import DeleteIcon from "@/public/icons/delete.svg";
@@ -19,6 +20,10 @@ import { useRouter } from "next/navigation";
 import BackButton from "@/components/BackButton";
 import Popup from "@/components/Player/Popup";
 import PencilIcon from "@/public/icons/pencil.svg";
+import { TSong } from "@/utils/api.d";
+import ReorderIcon from "@/public/icons/reorder.svg";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 type Props = {
   params: Promise<{ playlistslug: string }>;
@@ -37,6 +42,10 @@ const UserPlaylistSongs = ({ params, searchParams }: Props) => {
   const [isPopup, setIsPopup] = useState(false);
   const router = useRouter();
   const moreInfoRef = useRef<HTMLDivElement>(null);
+
+  const [isRerodering, setIsRerodering] = useState(false);
+
+  const [userPlaylistSongs, setUserPlaylistSongs] = useState<TSong[]>([]);
 
   useEffect(() => {
     document.title = `User ${type} playlist • Okv-Tunes`;
@@ -71,10 +80,18 @@ const UserPlaylistSongs = ({ params, searchParams }: Props) => {
     }
   );
 
+  useEffect(() => {
+    if (playlistSongs?.success) {
+      setUserPlaylistSongs(playlistSongs.data);
+    }
+  }, [playlistSongs]);
+
   const hanldeRefresh = async () => {
     setIsRefreshing(true);
     await mutate(`/user-playlist?id=${id}`);
-    await mutate(`/playlist-songs?id=${id}`);
+    if (!isRerodering) {
+      await mutate(`/playlist-songs?id=${id}`);
+    }
     setIsRefreshing(false);
   };
 
@@ -123,6 +140,28 @@ const UserPlaylistSongs = ({ params, searchParams }: Props) => {
       window.removeEventListener("click", handleClickOutside);
     };
   }, []);
+
+  const moveRow = useCallback((dragIndex: number, hoverIndex: number) => {
+    setUserPlaylistSongs((prev) => {
+      const updatedList = [...prev];
+      const [movedSong] = updatedList.splice(dragIndex, 1);
+      updatedList.splice(hoverIndex, 0, movedSong);
+      return updatedList;
+    });
+  }, []);
+
+  const handleUpdateList = async () => {
+    if (!authToken) return;
+    const songIds = userPlaylistSongs.map((item) => item.id);
+    await updateUserPlaylistSongs({
+      authToken,
+      userId,
+      playlistId: id,
+      playlistSongIds: songIds,
+      isReorder: true,
+    });
+    await hanldeRefresh();
+  };
 
   return (
     <div className="inner-container flex flex-col gap-6 relative">
@@ -220,45 +259,62 @@ const UserPlaylistSongs = ({ params, searchParams }: Props) => {
       </div>
       <div className="flex flex-col gap-4 my-4">
         {!isLoading && userPlaylist ? (
-          <div className="flex justify-end items-center">
+          <div className="flex justify-end items-center gap-2">
             <button
               type="button"
-              onClick={hanldeRefresh}
+              onClick={() => setIsRerodering(!isRerodering)}
+              className="flex items-center justify-center gap-2 text-xs border bg-neutral-800 hover:bg-secondary rounded-md p-1 px-2"
+            >
+              <ReorderIcon
+                className={`w-4 h-4 transition-colors ${
+                  isRerodering ? "text-[#00ff0a]" : ""
+                }`}
+              />
+              Reorder
+            </button>
+            <button
+              type="button"
+              onClick={!isRerodering ? hanldeRefresh : handleUpdateList}
               className="flex items-center justify-center gap-2 text-xs border bg-neutral-800 hover:bg-secondary rounded-md p-1 px-2"
             >
               <RefreshIcon
                 className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`}
               />
-              Refresh
+              {!isRerodering ? "Refresh" : "Update"}
             </button>
           </div>
         ) : null}
-        {!isLoading && userPlaylist ? (
-          playlistSongs && playlistSongs?.data?.length > 0 ? (
-            playlistSongs?.data.map((song, index) => (
-              <SongsCollection
-                key={song.id}
-                song={song}
-                playlistId={userPlaylist._id}
-                index={index}
-                type={type}
-              />
-            ))
+        <DndProvider backend={HTML5Backend}>
+          {!isLoading && userPlaylist ? (
+            playlistSongs && playlistSongs?.data?.length > 0 ? (
+              userPlaylistSongs.map((song, index) => (
+                <SongsCollection
+                  key={song.id}
+                  song={song}
+                  playlistId={userPlaylist._id}
+                  index={index}
+                  type={type}
+                  moveRow={moveRow}
+                  isRerodering={isRerodering}
+                />
+              ))
+            ) : (
+              <div className="text-center flex flex-col items-center justify-center gap-2 min-h-40">
+                <p className="text-lg font-bold">
+                  No song found in this playlist
+                </p>
+                <small className="text-neutral-400">
+                  User saved playlist songs will be displayed here. If this is
+                  your playlist, please add songs to see them appear.
+                </small>
+              </div>
+            )
           ) : (
-            <div className="text-center flex flex-col items-center justify-center gap-2 min-h-40">
-              <p className="text-lg font-bold">
-                No song found in this playlist
-              </p>
-              <small className="text-neutral-400">
-                User saved playlist songs will be displayed here. If this is
-                your playlist, please add songs to see them appear.
-              </small>
-            </div>
-          )
-        ) : (
-          <Loading loadingText="Loading" />
-        )}
+            <Loading loadingText="Loading" />
+          )}
+        </DndProvider>
       </div>
+
       {isPopup ? (
         <Popup
           isPopup={isPopup}
