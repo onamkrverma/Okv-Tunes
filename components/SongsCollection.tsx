@@ -2,10 +2,12 @@
 import { useGlobalContext } from "@/app/GlobalContex";
 import AlbumIcon from "@/public/icons/album.svg";
 import DeleteIcon from "@/public/icons/delete.svg";
+import MovableIcon from "@/public/icons/movable.svg";
 import SaveIcon from "@/public/icons/save.svg";
 import ThreeDotsIcon from "@/public/icons/three-dots.svg";
 import { deleteUserPlaylistSongs } from "@/utils/api";
 import { TSong } from "@/utils/api.d";
+import { useDraggableList } from "@/utils/hook/useDraggableList";
 import secondsToTime from "@/utils/secondsToTime";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -20,10 +22,19 @@ type Props = {
   song: TSong;
   playlistId?: string;
   index: number;
+  moveRow?: (dragIndex: number, hoverIndex: number) => void;
+  isReordering?: boolean;
   type?: "public" | "private";
 };
 
-const SongsCollection = ({ song, playlistId, index, type }: Props) => {
+const SongsCollection = ({
+  song,
+  playlistId,
+  index,
+  type,
+  moveRow,
+  isReordering,
+}: Props) => {
   const { setGlobalState, authToken, session } = useGlobalContext();
   const router = useRouter();
   const pathname = usePathname();
@@ -31,6 +42,12 @@ const SongsCollection = ({ song, playlistId, index, type }: Props) => {
 
   const [isMoreBtnClick, setIsMoreBtnClick] = useState(false);
   const [isPlaylistPopup, setIsPlaylistPopup] = useState(false);
+
+  const { collectedDropProps, ref: songDivRef } = useDraggableList({
+    index,
+    type: "song",
+    onMove: moveRow,
+  });
 
   const { id, album, artists, downloadUrl, image, name, duration } = song;
 
@@ -114,10 +131,21 @@ const SongsCollection = ({ song, playlistId, index, type }: Props) => {
   return (
     <>
       <div
-        onClick={handleUpdateState}
-        className="flex items-center justify-between sm:gap-4 p-2 cursor-pointer hover:bg-secondary relative rounded-md"
+        ref={isReordering ? songDivRef : undefined}
+        draggable={isReordering}
+        data-handler-id={collectedDropProps.handlerId}
+        onClick={!isReordering ? handleUpdateState : undefined}
+        className={`flex items-center justify-between sm:gap-4 p-2 ${
+          isReordering ? "cursor-move" : "cursor-pointer"
+        } hover:bg-secondary relative rounded-md`}
       >
-        <span className="text-neutral-400 text-sm">{index + 1}</span>
+        <div>
+          {isReordering ? (
+            <MovableIcon className="w-5 h-5 cursor-move" />
+          ) : (
+            <span className="text-neutral-400 text-sm">{index + 1}</span>
+          )}
+        </div>
         <ImageWithFallback
           id={id}
           src={imageUrl}

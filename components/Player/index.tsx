@@ -2,10 +2,12 @@
 import { useGlobalContext } from "@/app/GlobalContex";
 import ImageWithFallback from "@/components/ImageWithFallback";
 import CaretUpIcon from "@/public/icons/caret-up.svg";
+import DownloadIcon from "@/public/icons/download.svg";
 import InfoIcon from "@/public/icons/info.svg";
 import ThreeDotsIcon from "@/public/icons/three-dots.svg";
 import { getDownloadAudio, getSongs, getSuggestedSongs } from "@/utils/api";
-import { TSongs } from "@/utils/api.d";
+import { TSong } from "@/utils/api.d";
+import useWindowDimensions from "@/utils/hook/useWindowDimensions";
 import ls from "localstorage-slim";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -14,8 +16,6 @@ import useSWR, { mutate } from "swr";
 import MiniPlayer from "./MiniPlayer";
 import Popup from "./Popup";
 import SuggestedSongs from "./SuggestedSongs";
-import DownloadIcon from "@/public/icons/download.svg";
-import useWindowDimensions from "@/utils/hook/useWindowDimensions";
 
 export type TplayerState = {
   url: string;
@@ -57,6 +57,7 @@ const Plalyer = () => {
   const [isDownloading, setIsDownloading] = useState(false);
   const pathName = usePathname();
   const moreBtnRef = useRef<HTMLButtonElement>(null);
+  const [suggestedSongs, setSuggestedSongs] = useState<TSong[]>([]);
 
   const { height: screenHeight } = useWindowDimensions();
 
@@ -90,15 +91,18 @@ const Plalyer = () => {
     mutate("/suggested-songs");
   }, [isRefetchSuggestion]);
 
-  const getCurrentSongIndex = (suggestedSongsData: TSongs, id: string) => {
-    if (!suggestedSongsData || !suggestedSongsData.success) return -1;
-    return suggestedSongsData.data?.findIndex((item) => item.id === id);
+  useEffect(() => {
+    if (suggestedSongsData?.success) {
+      setSuggestedSongs(suggestedSongsData.data);
+    }
+  }, [suggestedSongsData]);
+
+  const getCurrentSongIndex = (songs: TSong[], id: string) => {
+    return songs.findIndex((item) => item.id === id);
   };
 
   const updateNextPrevTrack = (type: "prev" | "next") => {
-    if (!suggestedSongsData || !suggestedSongsData?.success) return;
-
-    const currentSongIndex = getCurrentSongIndex(suggestedSongsData, id);
+    const currentSongIndex = getCurrentSongIndex(suggestedSongs, id);
 
     const updatorValue = type === "prev" ? -1 : 1;
     let updateSongIndex = currentSongIndex + updatorValue;
@@ -106,8 +110,8 @@ const Plalyer = () => {
       updateSongIndex = 0;
     }
     // disable next click on last song
-    if (updateSongIndex === suggestedSongsData.data.length) return;
-    const nextSong = suggestedSongsData.data[updateSongIndex];
+    if (updateSongIndex === suggestedSongs.length) return;
+    const nextSong = suggestedSongs[updateSongIndex];
 
     if (!nextSong) return;
 
@@ -143,7 +147,6 @@ const Plalyer = () => {
   };
 
   const handleNext = () => {
-    if (!suggestedSongsData || !suggestedSongsData?.success) return;
     updateNextPrevTrack("next");
     setPlayerState({ ...playerState, autoPlay: true, playing: true });
   };
@@ -164,14 +167,14 @@ const Plalyer = () => {
       url: audioUrl,
     }));
 
-    if (suggestedSongsData && suggestedSongsData?.success) {
-      const currentSongIndex = getCurrentSongIndex(suggestedSongsData, id);
+    if (suggestedSongs.length) {
+      const currentSongIndex = getCurrentSongIndex(suggestedSongs, id);
 
       // set auto play false on last song
       setPlayerState((prev) => ({
         ...prev,
         autoPlay:
-          currentSongIndex === suggestedSongsData.data.length - 1
+          currentSongIndex === suggestedSongs.length - 1
             ? false
             : playerState.autoPlay,
       }));
@@ -234,8 +237,7 @@ const Plalyer = () => {
         playerRef.current?.seekTo(playerState.played + 10);
       });
 
-      if (!suggestedSongsData || !suggestedSongsData?.success) return;
-      const currentSongIndex = getCurrentSongIndex(suggestedSongsData, id);
+      const currentSongIndex = getCurrentSongIndex(suggestedSongs, id);
 
       if (currentSongIndex > 0) {
         navigator.mediaSession.setActionHandler("previoustrack", () => {
@@ -246,7 +248,7 @@ const Plalyer = () => {
         navigator.mediaSession.setActionHandler("previoustrack", null);
       }
 
-      if (currentSongIndex !== suggestedSongsData.data.length - 1) {
+      if (currentSongIndex !== suggestedSongs.length - 1) {
         navigator.mediaSession.setActionHandler("nexttrack", () => {
           handleNext();
         });
@@ -435,7 +437,8 @@ const Plalyer = () => {
             </div>
             {/* upcomming tracks */}
             <SuggestedSongs
-              suggestedSongsData={suggestedSongsData}
+              suggestedSongs={suggestedSongs}
+              setSuggestedSongs={setSuggestedSongs}
               isLoading={isLoading}
               playerState={playerState}
               setPlayerState={setPlayerState}

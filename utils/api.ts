@@ -29,12 +29,13 @@ type TApiQuery = {
 type TUserApiQuery = {
   userId: string;
   authToken: string;
-  songId?: string;
+  songId?: string | string[];
   playlistTitle?: string;
   playlistSongIds?: string[];
   playlistVisibility?: string;
   isFullDeletePlaylist?: boolean;
   playlistId?: string;
+  isReorder?: boolean;
 };
 
 export const getPlaylists = async ({ id, limit = 10 }: TApiQuery) => {
@@ -163,6 +164,16 @@ export const getLikedSongs = async ({ userId, authToken }: TUserApiQuery) => {
   return response;
 };
 
+export const updateLikedSongs = async ({ userId, songId }: TUserApiQuery) => {
+  const songIds = songId as string[];
+  const response = (await api
+    .put({ songIds }, `/users/${userId}/liked-songs`)
+    .json()) as {
+    message: string;
+  };
+
+  return response;
+};
 export const likeDislikeSong = async ({ userId, songId }: TUserApiQuery) => {
   const response = (await api
     .post({ songId }, `/users/${userId}/like-dislike`)
@@ -227,12 +238,14 @@ export const updateUserPlaylistSongs = async ({
   playlistTitle,
   playlistId,
   playlistVisibility,
+  isReorder,
 }: TUserApiQuery) => {
   const reqBody = {
     playlistId,
     title: playlistTitle,
     songIds: playlistSongIds,
     visibility: playlistVisibility,
+    isReorder,
   };
 
   const response = (await api

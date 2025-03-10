@@ -69,11 +69,15 @@ const PlaylistSongs = async ({ params, searchParams }: Props) => {
           ) : null}
         </div>
       </div>
-
       <div className="flex flex-col gap-4 my-4">
         {songs.length > 0 ? (
           songs.map((song, index) => (
-            <SongsCollection key={song.id} song={song} index={index} />
+            <SongsCollection
+              key={song.id}
+              song={song}
+              index={index}
+              isReordering={false}
+            />
           ))
         ) : (
           <p>No songs found</p>

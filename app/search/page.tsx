@@ -109,7 +109,12 @@ const SearchComponent = ({ searchParams }: Props) => {
           activeToggle === "songs" && songResults ? (
             songResults?.data?.total > 0 ? (
               songResults?.data.results.map((song, index) => (
-                <SongsCollection key={song.id} song={song} index={index} />
+                <SongsCollection
+                  key={song.id}
+                  song={song}
+                  index={index}
+                  isReordering={false}
+                />
               ))
             ) : (
               <p>No songs found for this query</p>
