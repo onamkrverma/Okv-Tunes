@@ -2,10 +2,12 @@
 import { useGlobalContext } from "@/app/GlobalContex";
 import ImageWithFallback from "@/components/ImageWithFallback";
 import CaretUpIcon from "@/public/icons/caret-up.svg";
+import DownloadIcon from "@/public/icons/download.svg";
 import InfoIcon from "@/public/icons/info.svg";
 import ThreeDotsIcon from "@/public/icons/three-dots.svg";
 import { getDownloadAudio, getSongs, getSuggestedSongs } from "@/utils/api";
 import { TSong } from "@/utils/api.d";
+import useWindowDimensions from "@/utils/hook/useWindowDimensions";
 import ls from "localstorage-slim";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -14,10 +16,6 @@ import useSWR, { mutate } from "swr";
 import MiniPlayer from "./MiniPlayer";
 import Popup from "./Popup";
 import SuggestedSongs from "./SuggestedSongs";
-import DownloadIcon from "@/public/icons/download.svg";
-import useWindowDimensions from "@/utils/hook/useWindowDimensions";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
 
 export type TplayerState = {
   url: string;
@@ -438,15 +436,13 @@ const Plalyer = () => {
               </div>
             </div>
             {/* upcomming tracks */}
-            <DndProvider backend={HTML5Backend}>
-              <SuggestedSongs
-                suggestedSongs={suggestedSongs}
-                setSuggestedSongs={setSuggestedSongs}
-                isLoading={isLoading}
-                playerState={playerState}
-                setPlayerState={setPlayerState}
-              />
-            </DndProvider>
+            <SuggestedSongs
+              suggestedSongs={suggestedSongs}
+              setSuggestedSongs={setSuggestedSongs}
+              isLoading={isLoading}
+              playerState={playerState}
+              setPlayerState={setPlayerState}
+            />
           </div>
           <MiniPlayer
             playerRef={playerRef}

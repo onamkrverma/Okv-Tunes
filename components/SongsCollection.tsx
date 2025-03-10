@@ -2,10 +2,12 @@
 import { useGlobalContext } from "@/app/GlobalContex";
 import AlbumIcon from "@/public/icons/album.svg";
 import DeleteIcon from "@/public/icons/delete.svg";
+import MovableIcon from "@/public/icons/movable.svg";
 import SaveIcon from "@/public/icons/save.svg";
 import ThreeDotsIcon from "@/public/icons/three-dots.svg";
 import { deleteUserPlaylistSongs } from "@/utils/api";
 import { TSong } from "@/utils/api.d";
+import { useDraggableList } from "@/utils/hook/useDraggableList";
 import secondsToTime from "@/utils/secondsToTime";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -13,10 +15,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { MouseEvent, useEffect, useRef, useState } from "react";
 import ImageWithFallback from "./ImageWithFallback";
 import Popup from "./Player/Popup";
-import MovableIcon from "@/public/icons/movable.svg";
-import { useDraggableList } from "@/utils/hook/useDraggableList";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
 
 const LikeDislike = dynamic(() => import("./LikeDislike"), { ssr: false });
 
@@ -29,7 +27,7 @@ type Props = {
   type?: "public" | "private";
 };
 
-const Song = ({
+const SongsCollection = ({
   song,
   playlistId,
   index,
@@ -133,11 +131,9 @@ const Song = ({
   return (
     <>
       <div
-        ref={songDivRef}
+        ref={isReordering ? songDivRef : undefined}
         draggable={isReordering}
-        data-handler-id={
-          isReordering ? collectedDropProps.handlerId : undefined
-        }
+        data-handler-id={collectedDropProps.handlerId}
         onClick={!isReordering ? handleUpdateState : undefined}
         className={`flex items-center justify-between sm:gap-4 p-2 ${
           isReordering ? "cursor-move" : "cursor-pointer"
@@ -236,28 +232,6 @@ const Song = ({
         />
       ) : null}
     </>
-  );
-};
-
-const SongsCollection = ({
-  song,
-  playlistId,
-  index,
-  type,
-  moveRow,
-  isReordering,
-}: Props) => {
-  return (
-    <DndProvider backend={HTML5Backend}>
-      <Song
-        playlistId={playlistId}
-        song={song}
-        index={index}
-        type={type}
-        moveRow={moveRow}
-        isReordering={isReordering}
-      />
-    </DndProvider>
   );
 };
 
