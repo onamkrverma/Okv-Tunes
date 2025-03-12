@@ -16,7 +16,11 @@ Okv Tunes is a Progressive Web App (PWA) music streaming platform that allows us
 - **Contact Us Form**: Reach out for any queries or support.
 - **User Info and Liked Songs**: Store user information and liked songs in a MongoDB database.
 - **Custom Playlist Support**: Now user can create their custom playlist and share with other users.
-- **Speak to Search** (beta) : Now user can search songs by speech
+
+
+### New Features 🎉
+- **Speak to Search** (beta) : search songs by speech
+- **Reorder Songs** : Rearrange order of songs in user's playlist and song suggessions.
 
 
 ### Don't forget to :star: the repo
