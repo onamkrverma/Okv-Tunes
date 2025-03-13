@@ -1,6 +1,8 @@
 "use client";
 import { useGlobalContext } from "@/app/GlobalContex";
 import AlbumIcon from "@/public/icons/album.svg";
+import PlaylistIcon from "@/public/icons/playlist.svg";
+import PlaylistPlayIcon from "@/public/icons/playlist-play.svg";
 import DeleteIcon from "@/public/icons/delete.svg";
 import MovableIcon from "@/public/icons/movable.svg";
 import SaveIcon from "@/public/icons/save.svg";
@@ -15,6 +17,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { MouseEvent, useEffect, useRef, useState } from "react";
 import ImageWithFallback from "./ImageWithFallback";
 import Popup from "./Player/Popup";
+import { mutate } from "swr";
 
 const LikeDislike = dynamic(() => import("./LikeDislike"), { ssr: false });
 
@@ -35,7 +38,8 @@ const SongsCollection = ({
   moveRow,
   isReordering,
 }: Props) => {
-  const { setGlobalState, authToken, session } = useGlobalContext();
+  const { setGlobalState, currentSong, authToken, session } =
+    useGlobalContext();
   const router = useRouter();
   const pathname = usePathname();
   const moreInfoRef = useRef<HTMLDivElement>(null);
@@ -111,6 +115,44 @@ const SongsCollection = ({
     }
   };
 
+  const handlePlayNext = async () => {
+    setGlobalState((prev) => ({
+      ...prev,
+      currentSong: {
+        ...currentSong,
+        playNextSongId: id,
+      },
+    }));
+    setIsMoreBtnClick(false);
+    await mutate("/manual-added-songs");
+  };
+
+  const handleAddToQueue = () => {
+    const idExist = currentSong.suggestionSongIds?.some((item) => item === id);
+    if (idExist) {
+      setGlobalState((prev) => ({
+        ...prev,
+        alertMessage: {
+          isAlertVisible: true,
+          message: "Song already exist in suggestion",
+        },
+      }));
+      return setIsMoreBtnClick(false);
+    }
+    const updatedSuggestionSongIds = [
+      ...(currentSong.suggestionSongIds || []),
+      id,
+    ];
+    setGlobalState((prev) => ({
+      ...prev,
+      currentSong: {
+        ...currentSong,
+        suggestionSongIds: updatedSuggestionSongIds,
+      },
+    }));
+    setIsMoreBtnClick(false);
+  };
+
   useEffect(() => {
     const handleClickOutside = (e: globalThis.MouseEvent) => {
       if (
@@ -182,11 +224,27 @@ const SongsCollection = ({
           <ThreeDotsIcon className="w-6 h-6" />
         </button>
         <div
-          className={`absolute bottom-[-80%] right-12 bg-neutral-800 border flex-col  p-2 rounded-md z-[5] ${
+          className={`absolute top-[5%] right-12 bg-neutral-800 border flex-col  p-2 rounded-md z-[5] ${
             isMoreBtnClick ? "flex" : "hidden"
           } `}
           ref={moreInfoRef}
         >
+          <button
+            type="button"
+            className="flex items-center gap-1 text-xs rounded-md p-2 hover:bg-secondary"
+            onClick={handlePlayNext}
+          >
+            <PlaylistPlayIcon className="w-4 h-4" />
+            Play next
+          </button>
+          <button
+            type="button"
+            className="flex items-center gap-1 text-xs rounded-md p-2 hover:bg-secondary"
+            onClick={handleAddToQueue}
+          >
+            <PlaylistIcon className="w-4 h-4" />
+            Add to queue
+          </button>
           {!pathname.includes("/album") ? (
             <Link
               href={`/album/${encodeURIComponent(

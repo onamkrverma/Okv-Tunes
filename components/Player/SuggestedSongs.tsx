@@ -14,6 +14,9 @@ import PlayIcon from "@/public/icons/play.svg";
 import PauseIcon from "@/public/icons/pause.svg";
 import { TplayerState } from "./index";
 import SuggestedSongCard from "./SuggestedSongCard";
+import { useGlobalContext } from "@/app/GlobalContex";
+import { getSongs } from "@/utils/api";
+import useSWR from "swr";
 
 type Props = {
   suggestedSongs: TSong[];
@@ -30,8 +33,37 @@ const SuggestedSongs = ({
   playerState,
   setPlayerState,
 }: Props) => {
+  const { currentSong } = useGlobalContext();
+  const { playNextSongId, addToQueueSongId } = currentSong;
+
   const [isUpnextClick, setIsUpnextClick] = useState(false);
   const suggestedSongsRef = useRef<HTMLDivElement>(null);
+
+  const dataFetcher = () =>
+    playNextSongId || addToQueueSongId
+      ? getSongs({ id: playNextSongId || addToQueueSongId })
+      : null;
+
+  const { data: fetchedData } = useSWR(
+    playNextSongId || addToQueueSongId ? "/manual-added-songs" : null,
+    dataFetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
+  console.log({ playNextSongId });
+
+  useEffect(() => {
+    if (fetchedData?.data) {
+      const nonSuggestedSongs = fetchedData.data.filter((item) =>
+        suggestedSongs.some((song) => song.id !== item.id)
+      );
+
+      const allSuggestionSongs = [...fetchedData.data, ...nonSuggestedSongs];
+      setSuggestedSongs(allSuggestionSongs);
+    }
+  }, [fetchedData]);
 
   const moveRow = useCallback((dragIndex: number, hoverIndex: number) => {
     setSuggestedSongs((prev) => {

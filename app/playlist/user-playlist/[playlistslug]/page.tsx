@@ -250,7 +250,7 @@ const UserPlaylistSongs = ({ params, searchParams }: Props) => {
           {playlistSongs?.data && playlistSongs?.data.length > 0 ? (
             <PlayAllSongs
               firstSong={playlistSongs?.data[0]}
-              suggessionSongIds={playlistSongs?.data
+              suggestionSongIds={playlistSongs?.data
                 .slice(1, 16)
                 .map((item) => item.id)}
             />

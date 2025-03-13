@@ -39,7 +39,7 @@ const Plalyer = () => {
     audioUrl,
     isRefetchSuggestion,
     volume,
-    suggessionSongIds,
+    suggestionSongIds,
   } = currentSong;
   const [playerState, setPlayerState] = useState<TplayerState>({
     url: "",
@@ -74,11 +74,11 @@ const Plalyer = () => {
   }, [isMaximise]);
 
   const dataFetcher = () =>
-    suggessionSongIds?.length
-      ? getSongs({ id: suggessionSongIds })
+    suggestionSongIds?.length
+      ? getSongs({ id: suggestionSongIds })
       : getSuggestedSongs({ id: id, limit: 20 });
   const { data: suggestedSongsData, isLoading } = useSWR(
-    id || suggessionSongIds ? "/suggested-songs" : null,
+    id || suggestionSongIds ? "/suggested-songs" : null,
     dataFetcher,
     {
       revalidateOnFocus: false,

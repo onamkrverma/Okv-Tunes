@@ -82,7 +82,7 @@ const ArtistInfo = async ({ params, searchParams }: Props) => {
           {topSongs.length > 0 ? (
             <PlayAllSongs
               firstSong={topSongs[0]}
-              suggessionSongIds={topSongs.slice(1, 16).map((item) => item.id)}
+              suggestionSongIds={topSongs.slice(1, 16).map((item) => item.id)}
             />
           ) : null}
         </div>

@@ -6,10 +6,10 @@ import { usePathname, useRouter } from "next/navigation";
 
 type Props = {
   firstSong: TSong;
-  suggessionSongIds: string[];
+  suggestionSongIds: string[];
 };
 
-const PlayAllSongs = ({ firstSong, suggessionSongIds }: Props) => {
+const PlayAllSongs = ({ firstSong, suggestionSongIds }: Props) => {
   const { setGlobalState, session } = useGlobalContext();
   const router = useRouter();
   const pathname = usePathname();
@@ -36,7 +36,8 @@ const PlayAllSongs = ({ firstSong, suggessionSongIds }: Props) => {
         album: albumName,
         isMaximise: true,
         isRefetchSuggestion: true,
-        suggessionSongIds: suggessionSongIds,
+        suggestionSongIds: suggestionSongIds,
+        isPlayAll: true,
       },
     }));
     if (!session) {

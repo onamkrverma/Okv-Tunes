@@ -22,7 +22,9 @@ type TCurrentSong = {
   album: string;
   isRefetchSuggestion: boolean;
   volume?: number;
-  suggessionSongIds?: string[];
+  suggestionSongIds?: string[];
+  playNextSongId?: string;
+  addToQueueSongId?: string;
 };
 
 type TAlertMessage = {
@@ -125,7 +127,7 @@ export const GlobalContextProvider = ({
         })
       : null;
   }, []);
-
+  console.log(globalState.currentSong);
   return (
     <GlobalContext.Provider value={{ ...globalState, setGlobalState }}>
       <DndProvider backend={HTML5Backend}>{children}</DndProvider>

@@ -110,7 +110,7 @@ const LikedSongs = () => {
           {likedSongs ? (
             <PlayAllSongs
               firstSong={likedSongs?.data[0]}
-              suggessionSongIds={likedSongs?.data
+              suggestionSongIds={likedSongs?.data
                 .slice(1, 16)
                 .map((item) => item.id)}
             />

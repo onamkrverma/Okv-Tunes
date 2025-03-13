@@ -64,7 +64,7 @@ const PlaylistSongs = async ({ params, searchParams }: Props) => {
           {songs.length > 0 ? (
             <PlayAllSongs
               firstSong={songs[0]}
-              suggessionSongIds={songs.slice(1, 16).map((item) => item.id)}
+              suggestionSongIds={songs.slice(1, 16).map((item) => item.id)}
             />
           ) : null}
         </div>
