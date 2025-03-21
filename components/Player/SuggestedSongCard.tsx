@@ -1,19 +1,26 @@
 import secondsToTime from "@/utils/secondsToTime";
-import React from "react";
+import React, { MouseEvent } from "react";
 import ImageWithFallback from "../ImageWithFallback";
 import { useGlobalContext } from "@/app/GlobalContex";
 import { TSong } from "@/utils/api.d";
 import MovableIcon from "@/public/icons/movable.svg";
 import PlayIcon from "@/public/icons/play.svg";
 import { useDraggableList } from "@/utils/hook/useDraggableList";
+import DeleteIcon from "@/public/icons/delete.svg";
 
 type Props = {
   song: TSong;
   index: number;
   moveRow: (dragIndex: number, hoverIndex: number) => void;
+  handleSongRemoval: (e: MouseEvent<HTMLButtonElement>, id: string) => void;
 };
 
-const SuggestedSongCard = ({ song, index, moveRow }: Props) => {
+const SuggestedSongCard = ({
+  song,
+  index,
+  moveRow,
+  handleSongRemoval,
+}: Props) => {
   const { currentSong, setGlobalState } = useGlobalContext();
 
   const { collectedDropProps, ref: songDivRef } = useDraggableList({
@@ -66,6 +73,14 @@ const SuggestedSongCard = ({ song, index, moveRow }: Props) => {
       ) : null}
       <p className="truncate w-80">{song.name.replaceAll("&quot;", '"')}</p>
       <small className="text-neutral-400">{secondsToTime(song.duration)}</small>
+      <button
+        type="button"
+        title="Remove"
+        className="rounded-full bg-action cursor-pointer "
+        onClick={(e) => handleSongRemoval(e, song.id)}
+      >
+        <DeleteIcon className="w-5 h-5 p-0.5" />
+      </button>
     </div>
   );
 };

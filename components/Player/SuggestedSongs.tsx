@@ -68,6 +68,12 @@ const SuggestedSongs = ({
     }
   }, [fetchedData]);
 
+  const handleSongRemoval = (e: MouseEvent<HTMLButtonElement>, id: string) => {
+    e.stopPropagation();
+    const updatedList = suggestedSongs.filter((item) => item.id !== id);
+    setSuggestedSongs(updatedList);
+  };
+
   const moveRow = useCallback((dragIndex: number, hoverIndex: number) => {
     setSuggestedSongs((prev) => {
       const updatedList = [...prev];
@@ -159,6 +165,7 @@ const SuggestedSongs = ({
                 index={index}
                 song={song}
                 moveRow={moveRow}
+                handleSongRemoval={handleSongRemoval}
               />
             ))
           ) : (
