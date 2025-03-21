@@ -1,6 +1,7 @@
 "use client";
 import React, {
   Dispatch,
+  MouseEvent,
   SetStateAction,
   useCallback,
   useEffect,
@@ -45,22 +46,24 @@ const SuggestedSongs = ({
       : null;
 
   const { data: fetchedData } = useSWR(
-    playNextSongId || addToQueueSongId ? "/manual-added-songs" : null,
+    playNextSongId || addToQueueSongId
+      ? `/manual-added-songs?id=${playNextSongId || addToQueueSongId}`
+      : null,
     dataFetcher,
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
     }
   );
-  console.log({ playNextSongId });
 
   useEffect(() => {
     if (fetchedData?.data) {
-      const nonSuggestedSongs = fetchedData.data.filter((item) =>
-        suggestedSongs.some((song) => song.id !== item.id)
+      const nonSuggestedSongs = suggestedSongs.filter((item) =>
+        fetchedData.data.some((song) => song.id !== item.id)
       );
-
-      const allSuggestionSongs = [...fetchedData.data, ...nonSuggestedSongs];
+      const allSuggestionSongs = playNextSongId
+        ? [...fetchedData.data, ...nonSuggestedSongs]
+        : [...nonSuggestedSongs, ...fetchedData.data];
       setSuggestedSongs(allSuggestionSongs);
     }
   }, [fetchedData]);

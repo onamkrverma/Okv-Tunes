@@ -124,33 +124,19 @@ const SongsCollection = ({
       },
     }));
     setIsMoreBtnClick(false);
-    await mutate("/manual-added-songs");
+    await mutate(`/manual-added-songs?id=${id}`);
   };
 
-  const handleAddToQueue = () => {
-    const idExist = currentSong.suggestionSongIds?.some((item) => item === id);
-    if (idExist) {
-      setGlobalState((prev) => ({
-        ...prev,
-        alertMessage: {
-          isAlertVisible: true,
-          message: "Song already exist in suggestion",
-        },
-      }));
-      return setIsMoreBtnClick(false);
-    }
-    const updatedSuggestionSongIds = [
-      ...(currentSong.suggestionSongIds || []),
-      id,
-    ];
+  const handleAddToQueue = async () => {
     setGlobalState((prev) => ({
       ...prev,
       currentSong: {
         ...currentSong,
-        suggestionSongIds: updatedSuggestionSongIds,
+        addToQueueSongId: id,
       },
     }));
     setIsMoreBtnClick(false);
+    await mutate(`/manual-added-songs?id=${id}`);
   };
 
   useEffect(() => {

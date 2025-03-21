@@ -127,7 +127,6 @@ export const GlobalContextProvider = ({
         })
       : null;
   }, []);
-  console.log(globalState.currentSong);
   return (
     <GlobalContext.Provider value={{ ...globalState, setGlobalState }}>
       <DndProvider backend={HTML5Backend}>{children}</DndProvider>
