@@ -26,6 +26,7 @@ export type TplayerState = {
   played: number;
   loaded?: number;
   autoPlay: boolean;
+  loop: boolean;
 };
 
 const Plalyer = () => {
@@ -47,6 +48,7 @@ const Plalyer = () => {
     controls: false,
     volume: volume ?? 1.0,
     muted: false,
+    loop: false,
     played: 0, // in seconds
     loaded: 0,
     autoPlay: false,

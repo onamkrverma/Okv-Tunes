@@ -8,6 +8,7 @@ import PlayIcon from "@/public/icons/play.svg";
 import PrevIcon from "@/public/icons/previous.svg";
 import SaveIcon from "@/public/icons/save.svg";
 import SpeakerIcon from "@/public/icons/speaker.svg";
+import LoopIcon from "@/public/icons/repeat.svg";
 import secondsToTime from "@/utils/secondsToTime";
 import dynamic from "next/dynamic";
 import {
@@ -221,6 +222,22 @@ const MiniPlayer = ({
               />
             </div>
             <div className="flex items-center justify-center gap-2">
+              <button
+                type="button"
+                title="Loop-in"
+                onClick={() =>
+                  setPlayerState({
+                    ...playerState,
+                    loop: !playerState.loop,
+                  })
+                }
+              >
+                <LoopIcon
+                  className={`w-6 h-6 ${
+                    playerState.loop ? "text-action" : "opacity-80"
+                  }`}
+                />
+              </button>
               <LikeDislike songId={id} />
               <button
                 type="button"
