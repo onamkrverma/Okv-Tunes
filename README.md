@@ -21,7 +21,7 @@ Okv Tunes is a Progressive Web App (PWA) music streaming platform that allows us
 ### New Features 🎉
 - **Speak to Search** (beta) : search songs by speech
 - **Reorder Songs** : Rearrange order of songs in user's playlist and song suggessions.
-
+- **Play Next and Add to Queue**: Queue a song to play next or add it to the suggestions list seamlessly.
 
 ### Don't forget to :star: the repo
 
