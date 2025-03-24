@@ -35,7 +35,7 @@ const SuggestedSongs = ({
   setPlayerState,
 }: Props) => {
   const { currentSong } = useGlobalContext();
-  const { playNextSongId, addToQueueSongId } = currentSong;
+  const { playNextSongId, addToQueueSongId, id } = currentSong;
 
   const [isUpnextClick, setIsUpnextClick] = useState(false);
   const suggestedSongsRef = useRef<HTMLDivElement>(null);
@@ -58,12 +58,22 @@ const SuggestedSongs = ({
 
   useEffect(() => {
     if (fetchedData?.data) {
-      const nonSuggestedSongs = suggestedSongs.filter((item) =>
-        fetchedData.data.some((song) => song.id !== item.id)
+      const fetchedSongIds = new Set(fetchedData.data.map((song) => song.id));
+
+      const nonDuplicateSongs = suggestedSongs.filter(
+        (item) => !fetchedSongIds.has(item.id)
       );
+      const currentSongIndex = suggestedSongs.findIndex(
+        (item) => item.id === id
+      );
+
       const allSuggestionSongs = playNextSongId
-        ? [...fetchedData.data, ...nonSuggestedSongs]
-        : [...nonSuggestedSongs, ...fetchedData.data];
+        ? [
+            ...nonDuplicateSongs.slice(0, currentSongIndex + 1),
+            ...fetchedData.data,
+            ...nonDuplicateSongs.slice(currentSongIndex + 1),
+          ]
+        : [...nonDuplicateSongs, ...fetchedData.data];
       setSuggestedSongs(allSuggestionSongs);
     }
   }, [fetchedData]);
