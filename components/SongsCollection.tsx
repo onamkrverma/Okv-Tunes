@@ -121,6 +121,10 @@ const SongsCollection = ({
       currentSong: {
         ...currentSong,
         playNextSongId: id,
+        addToQueueSongId:
+          currentSong.addToQueueSongId !== id
+            ? currentSong.addToQueueSongId
+            : "",
       },
     }));
     setIsMoreBtnClick(false);
@@ -133,6 +137,8 @@ const SongsCollection = ({
       currentSong: {
         ...currentSong,
         addToQueueSongId: id,
+        playNextSongId:
+          currentSong.playNextSongId !== id ? currentSong.playNextSongId : "",
       },
     }));
     setIsMoreBtnClick(false);
