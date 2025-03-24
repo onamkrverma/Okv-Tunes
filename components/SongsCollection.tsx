@@ -116,6 +116,15 @@ const SongsCollection = ({
   };
 
   const handlePlayNext = async () => {
+    if (currentSong.playNextSongId === id) {
+      return setGlobalState((prev) => ({
+        ...prev,
+        alertMessage: {
+          isAlertVisible: true,
+          message: "Song already added to Play Next",
+        },
+      }));
+    }
     setGlobalState((prev) => ({
       ...prev,
       currentSong: {
@@ -132,6 +141,15 @@ const SongsCollection = ({
   };
 
   const handleAddToQueue = async () => {
+    if (currentSong.addToQueueSongId === id) {
+      return setGlobalState((prev) => ({
+        ...prev,
+        alertMessage: {
+          isAlertVisible: true,
+          message: "Song already added to Queue",
+        },
+      }));
+    }
     setGlobalState((prev) => ({
       ...prev,
       currentSong: {
