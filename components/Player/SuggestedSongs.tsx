@@ -76,7 +76,7 @@ const SuggestedSongs = ({
         : [...nonDuplicateSongs, ...fetchedData.data];
       setSuggestedSongs(allSuggestionSongs);
     }
-  }, [fetchedData]);
+  }, [fetchedData, playNextSongId, addToQueueSongId]);
 
   const handleSongRemoval = (e: MouseEvent<HTMLButtonElement>, id: string) => {
     e.stopPropagation();
