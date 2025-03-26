@@ -1,10 +1,10 @@
+import { randomServer } from "@/utils/server";
 import { NextResponse, type NextRequest } from "next/server";
-const mainServerUrl = process.env.MAIN_SERVER_URL;
 
 export const GET = async (request: NextRequest) => {
   const id = request.nextUrl.searchParams.get("id");
   const limit = request.nextUrl.searchParams.get("limit");
-
+  const serverUrl = randomServer();
   try {
     if (!id) {
       return NextResponse.json(
@@ -13,7 +13,7 @@ export const GET = async (request: NextRequest) => {
       );
     }
     const res = await fetch(
-      `${mainServerUrl}/api/artists/${id}?songCount=${limit}&albumCount=1`
+      `${serverUrl}/api/artists/${id}?songCount=${limit}&albumCount=1`
     );
     const data = await res.json();
     return NextResponse.json(data, { status: 200 });

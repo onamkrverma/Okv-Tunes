@@ -1,7 +1,6 @@
 "use client";
 import BackButton from "@/components/BackButton";
 import Card from "@/components/Card";
-import InfinitScroll from "@/components/InfinitScroll";
 import Loading from "@/components/Loading";
 import SongsCollection from "@/components/SongsCollection";
 import Toggle from "@/components/Toggle";
@@ -190,7 +189,7 @@ const SearchComponent = ({ searchParams }: Props) => {
           <Loading loadingText="Loading" />
         )}
       </div>
-      <InfinitScroll />
+      {/* <InfinitScroll /> */}
     </div>
   );
 };

@@ -1,8 +1,9 @@
+import { randomServer } from "@/utils/server";
 import { NextResponse, type NextRequest } from "next/server";
-const mainServerUrl = process.env.MAIN_SERVER_URL;
 
 export const GET = async (request: NextRequest) => {
   const id = request.nextUrl.searchParams.getAll("id");
+  const serverUrl = randomServer();
 
   try {
     if (!id) {
@@ -11,7 +12,7 @@ export const GET = async (request: NextRequest) => {
         { status: 404 }
       );
     }
-    const res = await fetch(`${mainServerUrl}/api/songs/${id.join(",")}`);
+    const res = await fetch(`${serverUrl}/api/songs/${id.join(",")}`);
     const data = await res.json();
     return NextResponse.json(data, { status: 200 });
   } catch (error: unknown) {
