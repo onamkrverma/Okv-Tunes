@@ -1,47 +1,46 @@
 "use client";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import Loading from "./Loading";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
-const InfinitScroll = ({}) => {
+const InfinitScroll = () => {
   const searchParams = useSearchParams();
-  const pathname = usePathname();
-  const router = useRouter();
-
-  const currentLimit = parseInt(searchParams.get("limit") ?? "20");
-
-  const [isLoading, setIsLoading] = useState(false);
-
+  const page = parseInt(searchParams.get("page") ?? "1");
+  const [currentPage, setCurrentPage] = useState(page);
   const current = new URLSearchParams(Array.from(searchParams.entries()));
   const currentQuery = current.get("query");
+
+  let timeoutId: NodeJS.Timeout;
 
   useEffect(() => {
     const handleScroll = () => {
       const { scrollTop, clientHeight, scrollHeight } =
         document.documentElement;
 
-      if (scrollTop + clientHeight >= scrollHeight - 500) {
-        if (currentLimit < 50) {
-          setIsLoading(true);
-          const limitIncrease = currentLimit + 10;
-          current.set("limit", limitIncrease.toString());
-          const search = current.toString();
-          const params = search ? `?${search}` : "";
-          router.replace(`${pathname}${params}`, { scroll: false });
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+
+      timeoutId = setTimeout(() => {
+        if (scrollTop + clientHeight >= scrollHeight - 500) {
+          if (currentPage < 5) {
+            const nextPage = currentPage + 1;
+            setCurrentPage(nextPage);
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set("page", nextPage.toString());
+            window.history.replaceState({}, "", currentUrl.toString());
+          }
         }
-      }
-      if (currentLimit >= 50) {
-        setIsLoading(false);
-      }
+      }, 500);
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      clearTimeout(timeoutId);
     };
-  }, [currentLimit, currentQuery]);
+  }, [currentPage, currentQuery]);
 
-  return isLoading ? <Loading /> : null;
+  return null;
 };
 
 export default InfinitScroll;
