@@ -34,7 +34,7 @@ const PlaylistSongs = async ({ params }: Props) => {
     id: id,
     limit: 20,
   });
-  const { name, description, songs } = playlist.data;
+  const { name, description, songs, songCount } = playlist.data;
 
   return (
     <div className="inner-container flex flex-col gap-6">
@@ -83,7 +83,7 @@ const PlaylistSongs = async ({ params }: Props) => {
         )}
       </div>
 
-      <NextPageContent id={id} type="playlist" />
+      <NextPageContent id={id} type="playlist" count={songCount} />
       <InfinitScroll />
     </div>
   );

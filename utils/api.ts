@@ -39,7 +39,7 @@ type TUserApiQuery = {
   isReorder?: boolean;
 };
 
-export const getPlaylists = async ({ id, page = 0, limit = 10 }: TApiQuery) => {
+export const getPlaylists = async ({ id, page = 1, limit = 10 }: TApiQuery) => {
   const querParams = {
     id,
     limit,
@@ -72,10 +72,15 @@ export const getSuggestedSongs = async ({ id, limit = 10 }: TApiQuery) => {
 
   return response;
 };
-export const getSearchSongs = async ({ query, limit = 10 }: TApiQuery) => {
+export const getSearchSongs = async ({
+  query,
+  limit = 10,
+  page = 1,
+}: TApiQuery) => {
   const querParams = {
     query,
     limit,
+    page,
   };
   const response = (await api
     .query(querParams)
@@ -84,7 +89,7 @@ export const getSearchSongs = async ({ query, limit = 10 }: TApiQuery) => {
 
   return response;
 };
-export const getArtist = async ({ id, limit = 10, page = 0 }: TApiQuery) => {
+export const getArtist = async ({ id, limit = 10, page = 1 }: TApiQuery) => {
   const querParams = {
     id, // id= artist id
     limit,

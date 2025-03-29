@@ -28,7 +28,7 @@ const ArtistInfo = async ({ params }: Props) => {
 
   const id = paramRes.slug.split("-").pop();
 
-  const artist = await getArtist({ id: id, limit: 20 });
+  const artist = await getArtist({ id: id, limit: 20, page: 1 });
 
   const { image, name, topSongs, bio, wiki, dob } = artist.data;
 
@@ -87,7 +87,7 @@ const ArtistInfo = async ({ params }: Props) => {
         </div>
       </div>
       <p className="font-bold text-xl">Top songs</p>
-      <div className="flex flex-col gap-4 my-4">
+      <div className="flex flex-col gap-4 mt-4">
         {topSongs.length > 0 ? (
           topSongs.map((song, index) => (
             <SongsCollection
@@ -101,7 +101,7 @@ const ArtistInfo = async ({ params }: Props) => {
           <p>No songs found</p>
         )}
       </div>
-      <NextPageContent id={id} type="artist" />
+      <NextPageContent id={id} type="artist" count={topSongs.length} />
       <InfinitScroll />
     </div>
   );

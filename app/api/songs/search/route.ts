@@ -4,6 +4,7 @@ import { NextResponse, type NextRequest } from "next/server";
 export const GET = async (request: NextRequest) => {
   const query = request.nextUrl.searchParams.get("query");
   const limit = request.nextUrl.searchParams.get("limit");
+  const page = request.nextUrl.searchParams.get("page");
   const serverUrl = randomServer();
 
   try {
@@ -14,7 +15,7 @@ export const GET = async (request: NextRequest) => {
       );
     }
     const res = await fetch(
-      `${serverUrl}/api/search/songs?query=${query}&limit=${limit}`
+      `${serverUrl}/api/search/songs?query=${query}&limit=${limit}&page=${page}`
     );
     const data = await res.json();
     return NextResponse.json(data, { status: 200 });

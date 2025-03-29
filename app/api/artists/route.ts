@@ -4,7 +4,7 @@ import { NextResponse, type NextRequest } from "next/server";
 export const GET = async (request: NextRequest) => {
   const id = request.nextUrl.searchParams.get("id");
   const limit = request.nextUrl.searchParams.get("limit");
-  const page = request.nextUrl.searchParams.get("page");
+  const page = request.nextUrl.searchParams.get("page") || "0";
   const serverUrl = randomServer();
   try {
     if (!id) {
@@ -14,7 +14,9 @@ export const GET = async (request: NextRequest) => {
       );
     }
     const res = await fetch(
-      `${serverUrl}/api/artists/${id}?songCount=${limit}&page=${page}&albumCount=1`
+      `${serverUrl}/api/artists/${id}?songCount=${limit}&page=${
+        parseInt(page) - 1
+      }&albumCount=1`
     );
     const data = await res.json();
     return NextResponse.json(data, { status: 200 });

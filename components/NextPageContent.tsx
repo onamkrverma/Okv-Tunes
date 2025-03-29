@@ -1,5 +1,5 @@
 "use client";
-import { getArtist, getPlaylists } from "@/utils/api";
+import { getArtist, getPlaylists, getSearchSongs } from "@/utils/api";
 import { TSong } from "@/utils/api.d";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -9,20 +9,25 @@ import SongsCollection from "./SongsCollection";
 
 type Props = {
   id?: string;
+  query?: string;
+  count: number;
   type: "playlist" | "artist" | "search";
 };
 
-const NextPageContent = ({ id, type }: Props) => {
+const NextPageContent = ({ id, type, count, query }: Props) => {
   const searchParams = useSearchParams();
   const page = parseInt(searchParams.get("page") ?? "1");
-  const [SongsData, setSongsData] = useState<TSong[]>([]);
+  const [songsData, setSongsData] = useState<TSong[]>([]);
 
   const playlistFetcher = () => getPlaylists({ id: id, page: page, limit: 20 });
 
   const artistFetcher = () => getArtist({ id: id, page: page, limit: 20 });
 
-  const { data: playlistData, isLoading } = useSWR(
-    id && page > 1 && type == "playlist"
+  const searchSongsFetcher = () =>
+    getSearchSongs({ query: query, limit: 20, page: page });
+
+  const { data: playlistData, isLoading: playlistLoading } = useSWR(
+    id && page > 1 && type === "playlist"
       ? `/playlist?id=${id}&page=${page}`
       : null,
     playlistFetcher,
@@ -33,8 +38,20 @@ const NextPageContent = ({ id, type }: Props) => {
   );
 
   const { data: artistData, isLoading: artistLoading } = useSWR(
-    id && page > 1 && type == "artist" ? `/artist?id=${id}&page=${page}` : null,
+    id && page > 1 && type === "artist"
+      ? `/artist?id=${id}&page=${page}`
+      : null,
     artistFetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
+  const { data: searchSongsData, isLoading: songsLoading } = useSWR(
+    query && page > 1 && type === "search"
+      ? `/next-page-songs?query=${query}&page=${page}`
+      : null,
+    searchSongsFetcher,
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
@@ -42,29 +59,35 @@ const NextPageContent = ({ id, type }: Props) => {
   );
   useEffect(() => {
     if (playlistData?.data) {
-      setSongsData([...SongsData, ...playlistData.data.songs]);
+      return setSongsData([...songsData, ...playlistData.data.songs]);
     }
     if (artistData?.data) {
-      setSongsData([...SongsData, ...artistData.data.topSongs]);
+      return setSongsData([...songsData, ...artistData.data.topSongs]);
     }
-  }, [playlistData, artistData]);
+    if (searchSongsData?.data) {
+      return setSongsData([...songsData, ...searchSongsData.data.results]);
+    }
+  }, [playlistData, artistData, searchSongsData]);
 
+  useEffect(() => {
+    setSongsData([]);
+  }, [query]);
+
+  const isLoading = playlistLoading || artistLoading || songsLoading;
   return (
     <div className="flex flex-col gap-4 mb-4">
-      {!isLoading || !artistLoading ? (
-        SongsData.length > 0 ? (
-          SongsData.map((song, index) => (
+      {songsData.length > 0
+        ? songsData.map((song, index) => (
             <SongsCollection
               key={song.id}
               song={song}
-              index={index + 20}
+              index={index + count}
               isReordering={false}
             />
           ))
-        ) : null
-      ) : (
-        <Loading />
-      )}
+        : null}
+
+      {isLoading ? <Loading /> : null}
     </div>
   );
 };
