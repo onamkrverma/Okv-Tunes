@@ -38,7 +38,11 @@ const SearchComponent = ({ searchParams }: Props) => {
   const playlistFetcher = () =>
     getSearchPlaylists({ query: searchQuery, limit: limit });
 
-  const { data: songResults, isLoading } = useSWR(
+  const {
+    data: songResults,
+    isLoading,
+    error: songError,
+  } = useSWR(
     searchQuery && activeToggle === "songs"
       ? `/search-songs?q=${searchQuery}`
       : null,
@@ -48,7 +52,11 @@ const SearchComponent = ({ searchParams }: Props) => {
       revalidateOnReconnect: false,
     }
   );
-  const { data: artistsResults, isLoading: artistsLoading } = useSWR(
+  const {
+    data: artistsResults,
+    isLoading: artistsLoading,
+    error: artistError,
+  } = useSWR(
     searchQuery && activeToggle === "artists"
       ? `/search-artists?q=${searchQuery}`
       : null,
@@ -58,7 +66,11 @@ const SearchComponent = ({ searchParams }: Props) => {
       revalidateOnReconnect: false,
     }
   );
-  const { data: albumsResults, isLoading: albumsLoading } = useSWR(
+  const {
+    data: albumsResults,
+    isLoading: albumsLoading,
+    error: albumError,
+  } = useSWR(
     searchQuery && activeToggle === "albums"
       ? `/search-albums?q=${searchQuery}`
       : null,
@@ -69,7 +81,11 @@ const SearchComponent = ({ searchParams }: Props) => {
     }
   );
 
-  const { data: playlistResults, isLoading: playlistLoading } = useSWR(
+  const {
+    data: playlistResults,
+    isLoading: playlistLoading,
+    error: playlistError,
+  } = useSWR(
     searchQuery && activeToggle === "playlist"
       ? `/search-playlist?q=${searchQuery}`
       : null,
@@ -85,6 +101,8 @@ const SearchComponent = ({ searchParams }: Props) => {
     // eslint-disable-next-line
   }, [searchQuery]);
 
+  const fetchError = songError || albumError || artistError || playlistError;
+
   return (
     <div className="inner-container flex flex-col gap-4">
       <BackButton />
@@ -98,8 +116,13 @@ const SearchComponent = ({ searchParams }: Props) => {
           activeToggle={activeToggle}
           setActiveToggle={setActiveToggle}
         />
+
         {!isLoading && !artistsLoading && !albumsLoading && !playlistLoading ? (
-          activeToggle === "songs" && songResults ? (
+          fetchError ? (
+            <div className="max-[426px]:grid grid-cols-2 gap-4 flex flex-wrap items-center justify-center bg-white text-action">
+              <p>{fetchError.message}</p>
+            </div>
+          ) : activeToggle === "songs" && songResults ? (
             songResults?.data?.total > 0 ? (
               songResults?.data.results.map((song, index) => (
                 <SongsCollection

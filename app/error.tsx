@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 // Error components must be Client Components
 
 export default function Error({
@@ -29,7 +31,10 @@ export default function Error({
       <small>There is a problem</small>
 
       <p className="text-center">
-        Please try again later or contact website owner
+        Please try again later or{" "}
+        <Link href={"/contact"} className="underline underline-offset-4">
+          Report this error here
+        </Link>
       </p>
 
       <p className="text-center text-sm">

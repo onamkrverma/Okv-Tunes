@@ -79,14 +79,14 @@ const Plalyer = () => {
     suggestionSongIds?.length
       ? getSongs({ id: suggestionSongIds })
       : getSuggestedSongs({ id: id, limit: 20 });
-  const { data: suggestedSongsData, isLoading } = useSWR(
-    id || suggestionSongIds ? "/suggested-songs" : null,
-    dataFetcher,
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-    }
-  );
+  const {
+    data: suggestedSongsData,
+    isLoading,
+    error,
+  } = useSWR(id || suggestionSongIds ? "/suggested-songs" : null, dataFetcher, {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+  });
 
   useEffect(() => {
     if (!isRefetchSuggestion) return;
@@ -444,6 +444,7 @@ const Plalyer = () => {
               isLoading={isLoading}
               playerState={playerState}
               setPlayerState={setPlayerState}
+              error={error}
             />
           </div>
           <MiniPlayer

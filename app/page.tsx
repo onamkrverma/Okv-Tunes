@@ -9,7 +9,9 @@ export async function generateMetadata(): Promise<Metadata> {
   const session = await auth();
   const username = session?.user?.name;
   return {
-    title: `Okv Tunes - Listen to Trending Music for Free | Ad-Free Streaming | ${username}`,
+    title: `Okv Tunes - Listen to Trending Music for Free | Ad-Free Streaming | ${
+      username ?? ""
+    }`,
   };
 }
 

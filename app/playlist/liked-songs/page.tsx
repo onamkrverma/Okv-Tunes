@@ -38,14 +38,14 @@ const LikedSongs = () => {
 
   const likedSongsFetcher = () =>
     likedSongsIds ? getSongs({ id: likedSongsIds }) : null;
-  const { data: likedSongs, isLoading } = useSWR(
-    likedSongsIds?.length ? "/liked-songs" : null,
-    likedSongsFetcher,
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-    }
-  );
+  const {
+    data: likedSongs,
+    isLoading,
+    error,
+  } = useSWR(likedSongsIds?.length ? "/liked-songs" : null, likedSongsFetcher, {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+  });
 
   const hanldeRefresh = async () => {
     setIsRefreshing(true);
@@ -85,6 +85,7 @@ const LikedSongs = () => {
   return (
     <div className="inner-container flex flex-col gap-6">
       <BackButton />
+
       <div className="flex gap-4 flex-col flex-wrap sm:flex-row items-center ">
         <div className="w-[200px] h-[200px]">
           <ImageWithFallback
@@ -107,7 +108,7 @@ const LikedSongs = () => {
           <small className="text-neutral-300 text-center sm:text-start">
             List of your liked songs
           </small>
-          {likedSongs ? (
+          {likedSongs?.data.length ? (
             <PlayAllSongs
               firstSong={likedSongs?.data[0]}
               suggestionSongIds={likedSongs?.data
@@ -117,58 +118,63 @@ const LikedSongs = () => {
           ) : null}
         </div>
       </div>
-
-      <div className="flex flex-col gap-4 my-4">
-        <div className="flex justify-end items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setIsRerodering(!isReordering)}
-            className="flex items-center justify-center gap-2 text-xs border bg-neutral-800 hover:bg-secondary rounded-md p-1 px-2"
-          >
-            <ReorderIcon
-              className={`w-4 h-4 transition-colors ${
-                isReordering ? "text-[#00ff0a]" : ""
-              }`}
-            />
-            Reorder
-          </button>
-          <button
-            type="button"
-            onClick={!isReordering ? hanldeRefresh : handleUpdateList}
-            className="flex items-center justify-center gap-2 text-xs border bg-neutral-800 hover:bg-secondary rounded-md p-1 px-2"
-          >
-            <RefreshIcon
-              className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`}
-            />
-            {!isReordering ? "Refresh" : "Update"}
-          </button>
+      {error ? (
+        <div className="flex items-center justify-center bg-white text-action">
+          <p>{error.message}</p>
         </div>
-        <DndProvider backend={HTML5Backend}>
-          {!isLoading && likedSongsIds ? (
-            likedSongsIds.length > 0 ? (
-              likedSongData?.map((song, index) => (
-                <SongsCollection
-                  key={song.id}
-                  song={song}
-                  index={index}
-                  moveRow={moveRow}
-                  isReordering={isReordering}
-                />
-              ))
+      ) : (
+        <div className="flex flex-col gap-4 my-4">
+          <div className="flex justify-end items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setIsRerodering(!isReordering)}
+              className="flex items-center justify-center gap-2 text-xs border bg-neutral-800 hover:bg-secondary rounded-md p-1 px-2"
+            >
+              <ReorderIcon
+                className={`w-4 h-4 transition-colors ${
+                  isReordering ? "text-[#00ff0a]" : ""
+                }`}
+              />
+              Reorder
+            </button>
+            <button
+              type="button"
+              onClick={!isReordering ? hanldeRefresh : handleUpdateList}
+              className="flex items-center justify-center gap-2 text-xs border bg-neutral-800 hover:bg-secondary rounded-md p-1 px-2"
+            >
+              <RefreshIcon
+                className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`}
+              />
+              {!isReordering ? "Refresh" : "Update"}
+            </button>
+          </div>
+          <DndProvider backend={HTML5Backend}>
+            {!isLoading && likedSongsIds ? (
+              likedSongsIds.length > 0 ? (
+                likedSongData?.map((song, index) => (
+                  <SongsCollection
+                    key={song.id}
+                    song={song}
+                    index={index}
+                    moveRow={moveRow}
+                    isReordering={isReordering}
+                  />
+                ))
+              ) : (
+                <div className="text-center flex flex-col items-center justify-center gap-2 min-h-40">
+                  <p className="text-lg font-bold">Liked Song Not Found</p>
+                  <p className="text-neutral-400 text-sm">
+                    Your liked songs will be displayed here. Please like any
+                    songs to see them appear.
+                  </p>
+                </div>
+              )
             ) : (
-              <div className="text-center flex flex-col items-center justify-center gap-2 min-h-40">
-                <p className="text-lg font-bold">Liked Song Not Found</p>
-                <p className="text-neutral-400 text-sm">
-                  Your liked songs will be displayed here. Please like any songs
-                  to see them appear.
-                </p>
-              </div>
-            )
-          ) : (
-            <Loading loadingText="Loading" />
-          )}
-        </DndProvider>
-      </div>
+              <Loading loadingText="Loading" />
+            )}
+          </DndProvider>
+        </div>
+      )}
     </div>
   );
 };

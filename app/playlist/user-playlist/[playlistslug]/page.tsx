@@ -71,7 +71,11 @@ const UserPlaylistSongs = ({ params, searchParams }: Props) => {
     userPlaylist && userPlaylist?.songIds.length > 0
       ? getSongs({ id: userPlaylist.songIds })
       : null;
-  const { data: playlistSongs, isLoading } = useSWR(
+  const {
+    data: playlistSongs,
+    isLoading,
+    error,
+  } = useSWR(
     userPlaylist ? `/playlist-songs?id=${id}` : null,
     playlistSongsFetcher,
     {
@@ -166,6 +170,7 @@ const UserPlaylistSongs = ({ params, searchParams }: Props) => {
   return (
     <div className="inner-container flex flex-col gap-6 relative">
       <BackButton />
+
       <div className="flex justify-end items-center absolute right-4">
         {type === "private" ? (
           <button
@@ -257,64 +262,69 @@ const UserPlaylistSongs = ({ params, searchParams }: Props) => {
           ) : null}
         </div>
       </div>
-      <div className="flex flex-col gap-4 my-4">
-        {!isLoading && userPlaylist ? (
-          <div className="flex justify-end items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setIsRerodering(!isReordering)}
-              className="flex items-center justify-center gap-2 text-xs border bg-neutral-800 hover:bg-secondary rounded-md p-1 px-2"
-            >
-              <ReorderIcon
-                className={`w-4 h-4 transition-colors ${
-                  isReordering ? "text-[#00ff0a]" : ""
-                }`}
-              />
-              Reorder
-            </button>
-            <button
-              type="button"
-              onClick={!isReordering ? hanldeRefresh : handleUpdateList}
-              className="flex items-center justify-center gap-2 text-xs border bg-neutral-800 hover:bg-secondary rounded-md p-1 px-2"
-            >
-              <RefreshIcon
-                className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`}
-              />
-              {!isReordering ? "Refresh" : "Update"}
-            </button>
-          </div>
-        ) : null}
-        <DndProvider backend={HTML5Backend}>
+      {error ? (
+        <div className="flex items-center justify-center bg-white text-action">
+          <p>{error.message}</p>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-4 my-4">
           {!isLoading && userPlaylist ? (
-            playlistSongs && playlistSongs?.data?.length > 0 ? (
-              userPlaylistSongs.map((song, index) => (
-                <SongsCollection
-                  key={song.id}
-                  song={song}
-                  playlistId={userPlaylist._id}
-                  index={index}
-                  type={type}
-                  moveRow={moveRow}
-                  isReordering={isReordering}
+            <div className="flex justify-end items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setIsRerodering(!isReordering)}
+                className="flex items-center justify-center gap-2 text-xs border bg-neutral-800 hover:bg-secondary rounded-md p-1 px-2"
+              >
+                <ReorderIcon
+                  className={`w-4 h-4 transition-colors ${
+                    isReordering ? "text-[#00ff0a]" : ""
+                  }`}
                 />
-              ))
+                Reorder
+              </button>
+              <button
+                type="button"
+                onClick={!isReordering ? hanldeRefresh : handleUpdateList}
+                className="flex items-center justify-center gap-2 text-xs border bg-neutral-800 hover:bg-secondary rounded-md p-1 px-2"
+              >
+                <RefreshIcon
+                  className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`}
+                />
+                {!isReordering ? "Refresh" : "Update"}
+              </button>
+            </div>
+          ) : null}
+          <DndProvider backend={HTML5Backend}>
+            {!isLoading && userPlaylist ? (
+              playlistSongs && playlistSongs?.data?.length > 0 ? (
+                userPlaylistSongs.map((song, index) => (
+                  <SongsCollection
+                    key={song.id}
+                    song={song}
+                    playlistId={userPlaylist._id}
+                    index={index}
+                    type={type}
+                    moveRow={moveRow}
+                    isReordering={isReordering}
+                  />
+                ))
+              ) : (
+                <div className="text-center flex flex-col items-center justify-center gap-2 min-h-40">
+                  <p className="text-lg font-bold">
+                    No song found in this playlist
+                  </p>
+                  <small className="text-neutral-400">
+                    User saved playlist songs will be displayed here. If this is
+                    your playlist, please add songs to see them appear.
+                  </small>
+                </div>
+              )
             ) : (
-              <div className="text-center flex flex-col items-center justify-center gap-2 min-h-40">
-                <p className="text-lg font-bold">
-                  No song found in this playlist
-                </p>
-                <small className="text-neutral-400">
-                  User saved playlist songs will be displayed here. If this is
-                  your playlist, please add songs to see them appear.
-                </small>
-              </div>
-            )
-          ) : (
-            <Loading loadingText="Loading" />
-          )}
-        </DndProvider>
-      </div>
-
+              <Loading loadingText="Loading" />
+            )}
+          </DndProvider>
+        </div>
+      )}
       {isPopup ? (
         <Popup
           isPopup={isPopup}

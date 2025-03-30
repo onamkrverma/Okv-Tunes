@@ -49,7 +49,9 @@ export const getPlaylists = async ({ id, page = 1, limit = 10 }: TApiQuery) => {
     .query(querParams)
     .get(`/playlists`)
     .json()) as TPlaylists;
-
+  if (!response.success) {
+    throw new Error("Internal Server Error");
+  }
   return response;
 };
 export const getSongs = async ({ id }: TApiQuery) => {
@@ -57,6 +59,9 @@ export const getSongs = async ({ id }: TApiQuery) => {
     id, // id=[songId]
   };
   const response = (await api.query(querParams).get(`/songs`).json()) as TSongs;
+  if (!response.success) {
+    throw new Error("Internal Server Error");
+  }
   return response;
 };
 
@@ -69,7 +74,9 @@ export const getSuggestedSongs = async ({ id, limit = 10 }: TApiQuery) => {
     .query(querParams)
     .get(`/songs/suggestions`)
     .json()) as TSongs;
-
+  if (!response.success) {
+    throw new Error("Internal Server Error");
+  }
   return response;
 };
 export const getSearchSongs = async ({
@@ -86,7 +93,9 @@ export const getSearchSongs = async ({
     .query(querParams)
     .get(`/songs/search`)
     .json()) as TSearchSongs;
-
+  if (!response.success) {
+    throw new Error("Internal Server Error");
+  }
   return response;
 };
 export const getArtist = async ({ id, limit = 10, page = 1 }: TApiQuery) => {
@@ -99,7 +108,9 @@ export const getArtist = async ({ id, limit = 10, page = 1 }: TApiQuery) => {
     .query(querParams)
     .get(`/artists`)
     .json()) as TArtistRes;
-
+  if (!response.success) {
+    throw new Error("Internal Server Error");
+  }
   return response;
 };
 
@@ -112,7 +123,9 @@ export const getSearchArtists = async ({ query, limit = 10 }: TApiQuery) => {
     .query(querParams)
     .get(`/artists/search`)
     .json()) as TSearchResults;
-
+  if (!response.success) {
+    throw new Error("Internal Server Error");
+  }
   return response;
 };
 export const getSearchAlbums = async ({ query, limit = 10 }: TApiQuery) => {
@@ -124,7 +137,9 @@ export const getSearchAlbums = async ({ query, limit = 10 }: TApiQuery) => {
     .query(querParams)
     .get(`/album/search`)
     .json()) as TSearchResults;
-
+  if (!response.success) {
+    throw new Error("Internal Server Error");
+  }
   return response;
 };
 export const getSearchPlaylists = async ({ query, limit = 10 }: TApiQuery) => {
@@ -136,7 +151,9 @@ export const getSearchPlaylists = async ({ query, limit = 10 }: TApiQuery) => {
     .query(querParams)
     .get(`/playlists/search`)
     .json()) as TSearchResults;
-
+  if (!response.success) {
+    throw new Error("Internal Server Error");
+  }
   return response;
 };
 
@@ -148,7 +165,9 @@ export const getAlbum = async ({ id }: TApiQuery) => {
     .query(querParams)
     .get(`/album`)
     .json()) as TPlaylists;
-
+  if (!response.success) {
+    throw new Error("Internal Server Error");
+  }
   return response;
 };
 

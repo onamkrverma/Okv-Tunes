@@ -25,6 +25,7 @@ type Props = {
   isLoading: boolean;
   playerState: TplayerState;
   setPlayerState: Dispatch<SetStateAction<TplayerState>>;
+  error?: { message: string };
 };
 
 const SuggestedSongs = ({
@@ -33,6 +34,7 @@ const SuggestedSongs = ({
   isLoading,
   playerState,
   setPlayerState,
+  error,
 }: Props) => {
   const { currentSong } = useGlobalContext();
   const { playNextSongId, addToQueueSongId, id } = currentSong;
@@ -168,7 +170,11 @@ const SuggestedSongs = ({
       </div>
       <div className="upnext-songs overflow-y-scroll ">
         {!isLoading ? (
-          suggestedSongs.length > 0 ? (
+          error ? (
+            <div className="flex items-center justify-center bg-white text-action">
+              <p>{error.message}</p>
+            </div>
+          ) : suggestedSongs.length > 0 ? (
             suggestedSongs.map((song, index) => (
               <SuggestedSongCard
                 key={song.id}
