@@ -34,7 +34,7 @@ const PlayAllSongs = ({ firstSong, suggestionSongIds }: Props) => {
         imageUrl,
         audioUrl,
         album: albumName,
-        isMaximise: true,
+        isMaximise: !session ? false : true,
         isRefetchSuggestion: true,
         suggestionSongIds: suggestionSongIds,
         isPlayAll: true,

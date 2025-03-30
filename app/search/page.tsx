@@ -86,7 +86,7 @@ const SearchComponent = ({ searchParams }: Props) => {
   }, [searchQuery]);
 
   return (
-    <div className="inner-container flex flex-col gap-6">
+    <div className="inner-container flex flex-col gap-4">
       <BackButton />
 
       <div className="flex flex-col gap-4 mt-2">
