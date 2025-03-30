@@ -33,7 +33,7 @@ const ArtistInfo = async ({ params }: Props) => {
   const { image, name, topSongs, bio, wiki, dob } = artist.data;
 
   return (
-    <div className="inner-container flex flex-col gap-6">
+    <div className="inner-container flex flex-col gap-4">
       <BackButton />
 
       <div className="flex gap-4 flex-col flex-wrap sm:flex-row items-center ">

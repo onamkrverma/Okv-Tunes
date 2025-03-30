@@ -37,7 +37,7 @@ const PlaylistSongs = async ({ params }: Props) => {
   const { name, description, songs, songCount } = playlist.data;
 
   return (
-    <div className="inner-container flex flex-col gap-6">
+    <div className="inner-container flex flex-col gap-4">
       <BackButton />
       <div className="flex gap-4 flex-col flex-wrap sm:flex-row items-center ">
         <div className="w-[200px] h-[200px]">
