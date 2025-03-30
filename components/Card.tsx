@@ -43,7 +43,7 @@ const Card = ({
         imageUrl,
         audioUrl,
         album,
-        isMaximise: true,
+        isMaximise: !session ? false : true,
         isRefetchSuggestion: true,
       },
     }));

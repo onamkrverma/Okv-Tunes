@@ -73,7 +73,7 @@ const SongsCollection = ({
         imageUrl,
         album: albumName,
         audioUrl,
-        isMaximise: true,
+        isMaximise: !session ? false : true,
         isRefetchSuggestion: true,
       },
     }));
