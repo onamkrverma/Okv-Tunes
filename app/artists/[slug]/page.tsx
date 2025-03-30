@@ -1,5 +1,7 @@
 import BackButton from "@/components/BackButton";
 import ImageWithFallback from "@/components/ImageWithFallback";
+import InfinitScroll from "@/components/InfinitScroll";
+import NextPageContent from "@/components/NextPageContent";
 import PlayAllSongs from "@/components/PlayAllSongs";
 import SongsCollection from "@/components/SongsCollection";
 import { getArtist } from "@/utils/api";
@@ -21,14 +23,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-const ArtistInfo = async ({ params, searchParams }: Props) => {
+const ArtistInfo = async ({ params }: Props) => {
   const paramRes = await params;
-  const searchParmsRes = await searchParams;
 
   const id = paramRes.slug.split("-").pop();
-  const limit = parseInt(searchParmsRes?.["limit"] as string);
 
-  const artist = await getArtist({ id: id, limit: limit || 20 });
+  const artist = await getArtist({ id: id, limit: 20, page: 1 });
 
   const { image, name, topSongs, bio, wiki, dob } = artist.data;
 
@@ -87,7 +87,7 @@ const ArtistInfo = async ({ params, searchParams }: Props) => {
         </div>
       </div>
       <p className="font-bold text-xl">Top songs</p>
-      <div className="flex flex-col gap-4 my-4">
+      <div className="flex flex-col gap-4 mt-4">
         {topSongs.length > 0 ? (
           topSongs.map((song, index) => (
             <SongsCollection
@@ -101,7 +101,8 @@ const ArtistInfo = async ({ params, searchParams }: Props) => {
           <p>No songs found</p>
         )}
       </div>
-      {/* <InfinitScroll /> */}
+      <NextPageContent id={id} type="artist" count={topSongs.length} />
+      <InfinitScroll />
     </div>
   );
 };

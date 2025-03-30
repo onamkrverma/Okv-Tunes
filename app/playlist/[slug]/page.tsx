@@ -1,5 +1,7 @@
 import BackButton from "@/components/BackButton";
 import ImageWithFallback from "@/components/ImageWithFallback";
+import InfinitScroll from "@/components/InfinitScroll";
+import NextPageContent from "@/components/NextPageContent";
 import PlayAllSongs from "@/components/PlayAllSongs";
 import SongsCollection from "@/components/SongsCollection";
 import { getPlaylists } from "@/utils/api";
@@ -22,19 +24,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-const PlaylistSongs = async ({ params, searchParams }: Props) => {
+const PlaylistSongs = async ({ params }: Props) => {
   const { slug } = await params;
-  const searchParamRes = await searchParams;
 
   const id = slug.split("-").pop() as string;
   const title = slug.split("-").slice(0, -1).join(" ");
-  const limit = parseInt(searchParamRes?.["limit"] as string);
 
   const playlist = await getPlaylists({
     id: id,
-    limit: limit || 20,
+    limit: 20,
   });
-  const { name, description, songs } = playlist.data;
+  const { name, description, songs, songCount } = playlist.data;
 
   return (
     <div className="inner-container flex flex-col gap-6">
@@ -68,7 +68,7 @@ const PlaylistSongs = async ({ params, searchParams }: Props) => {
           ) : null}
         </div>
       </div>
-      <div className="flex flex-col gap-4 my-4">
+      <div className="flex flex-col gap-4 mt-4">
         {songs.length > 0 ? (
           songs.map((song, index) => (
             <SongsCollection
@@ -83,7 +83,8 @@ const PlaylistSongs = async ({ params, searchParams }: Props) => {
         )}
       </div>
 
-      {/* <InfinitScroll /> */}
+      <NextPageContent id={id} type="playlist" count={songCount} />
+      <InfinitScroll />
     </div>
   );
 };

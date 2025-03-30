@@ -5,9 +5,13 @@ import { auth } from "@/auth";
 import ImageWithFallback from "@/components/ImageWithFallback";
 import Link from "next/link";
 
-export const metadata: Metadata = {
-  title: "Okv Tunes - Listen to Trending Music for Free | Ad-Free Streaming",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const session = await auth();
+  const username = session?.user?.name;
+  return {
+    title: `Okv Tunes - Listen to Trending Music for Free | Ad-Free Streaming | ${username}`,
+  };
+}
 
 export default async function Home() {
   const session = await auth();

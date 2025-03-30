@@ -1,7 +1,9 @@
 "use client";
 import BackButton from "@/components/BackButton";
 import Card from "@/components/Card";
+import InfinitScroll from "@/components/InfinitScroll";
 import Loading from "@/components/Loading";
+import NextPageContent from "@/components/NextPageContent";
 import SongsCollection from "@/components/SongsCollection";
 import Toggle from "@/components/Toggle";
 import {
@@ -11,7 +13,7 @@ import {
   getSearchSongs,
 } from "@/utils/api";
 import { Suspense, use, useEffect, useState } from "react";
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 
 type Props = {
   searchParams: Promise<{ [key: string]: string | undefined }>;
@@ -21,7 +23,7 @@ const SearchComponent = ({ searchParams }: Props) => {
   const searchParamsRes = use(searchParams);
   const searchQuery = searchParamsRes["query"];
   const typeQuery = searchParamsRes["type"];
-  const limit = parseInt(searchParamsRes?.["limit"] ?? "20");
+  const limit = 20;
 
   const toggleList = ["songs", "playlist", "albums", "artists"];
   const [activeToggle, setActiveToggle] = useState(typeQuery ?? toggleList[0]);
@@ -77,14 +79,6 @@ const SearchComponent = ({ searchParams }: Props) => {
       revalidateOnReconnect: false,
     }
   );
-  useEffect(() => {
-    if (limit) {
-      mutate(`/search-songs?q=${searchQuery}`);
-      mutate(`/search-playlist?q=${searchQuery}`);
-      mutate(`/search-albums?q=${searchQuery}`);
-      mutate(`/search-artists?q=${searchQuery}`);
-    }
-  }, [limit]);
 
   useEffect(() => {
     document.title = `${searchQuery}-Search • Okv-Tunes`;
@@ -95,7 +89,7 @@ const SearchComponent = ({ searchParams }: Props) => {
     <div className="inner-container flex flex-col gap-6">
       <BackButton />
 
-      <div className="flex flex-col gap-4 my-2">
+      <div className="flex flex-col gap-4 mt-2">
         <h2 className="capitalize font-bold text-sm sm:text-lg  ">
           Search results for {`"${searchQuery}"`}
         </h2>
@@ -189,7 +183,12 @@ const SearchComponent = ({ searchParams }: Props) => {
           <Loading loadingText="Loading" />
         )}
       </div>
-      {/* <InfinitScroll /> */}
+      {activeToggle === "songs" ? (
+        <>
+          <NextPageContent type="search" count={20} query={searchQuery} />
+          <InfinitScroll />
+        </>
+      ) : null}
     </div>
   );
 };

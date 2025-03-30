@@ -29,7 +29,7 @@ const Navbar = () => {
     const formInput = e.target.elements[0] as HTMLInputElement;
     const searchQuery = formInput.value;
     if (searchQuery) {
-      navigate.push(`/search?query=${searchQuery}`);
+      navigate.push(`/search?query=${searchQuery}`, { scroll: true });
       e.target.reset();
       inputRef.current?.blur();
     }
