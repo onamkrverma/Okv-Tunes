@@ -5,8 +5,8 @@ import Navbar from "@/components/Navbar";
 import SideNavbar from "@/components/SideNavbar";
 import Footer from "@/components/Footer";
 import dynamic from "next/dynamic";
+// import registerSw from "@/public/registerSw";
 import { usePathname } from "next/navigation";
-import registerSw from "@/public/registerSw";
 import AlertNotification from "@/components/AlertNotification";
 import LoadingBar from "@/components/LoadingBar";
 const Plalyer = dynamic(() => import("@/components/Player"), { ssr: false });
@@ -18,9 +18,9 @@ const ClientLayout = ({
   children: React.ReactNode;
   authToken?: string;
 }>) => {
-  useEffect(() => {
-    registerSw();
-  }, []);
+  // useEffect(() => {
+  //   registerSw();
+  // }, []);
 
   const currentPath = usePathname();
   const hideSideNavbarPaths = ["/login", "/signup"];

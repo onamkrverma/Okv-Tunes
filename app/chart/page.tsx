@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   title: "Top Trending Songs • Okv-Tunes",
 };
 
+export const dynamic = "force-static";
+export const revalidate = 31104000;
+
 const Chart = () => {
   return (
     <div className="inner-container flex flex-col gap-6">

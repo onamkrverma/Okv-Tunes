@@ -6,6 +6,8 @@ import React from "react";
 export const metadata: Metadata = {
   title: "Privacy Policy • Okv-Tunes",
 };
+export const dynamic = "force-static";
+export const revalidate = false;
 
 const Privacy = () => {
   return (

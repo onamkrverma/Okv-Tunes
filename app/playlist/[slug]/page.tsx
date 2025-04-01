@@ -24,6 +24,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
+export const revalidate = 3600;
+export const dynamic = "force-static";
+
 const PlaylistSongs = async ({ params }: Props) => {
   const { slug } = await params;
 

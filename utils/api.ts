@@ -12,13 +12,14 @@ import {
 
 const downloadServer = process.env.NEXT_PUBLIC_MY_DOWNLOAD_URL;
 
-const serverUrl =
-  process.env.NODE_ENV === "development"
-    ? "http://localhost:3000"
-    : process.env.NEXT_PUBLIC_MY_SERVER_URL;
+const serverUrl = "http://localhost:3000";
+// const serverUrl =
+//   process.env.NODE_ENV === "development"
+//     ? "http://localhost:3000"
+//     : process.env.NEXT_PUBLIC_MY_SERVER_URL;
 
 const api = Wretch(`${serverUrl}/api`, {
-  next: { revalidate: 3600 * 6 },
+  next: { revalidate: 3600 * 12 },
 }).addon(queryString);
 
 type TApiQuery = {
@@ -39,7 +40,7 @@ type TUserApiQuery = {
   isReorder?: boolean;
 };
 
-export const getPlaylists = async ({ id, page = 1, limit = 10 }: TApiQuery) => {
+export const getPlaylists = async ({ id, page = 1, limit = 20 }: TApiQuery) => {
   const querParams = {
     id,
     limit,

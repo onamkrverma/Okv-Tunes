@@ -70,11 +70,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const authCookiesName =
-    process.env.NODE_ENV === "production"
-      ? "__Secure-authjs.session-token"
-      : "authjs.session-token";
+  const authCookiesName = "authjs.session-token";
+  // const authCookiesName =
+  //   process.env.NODE_ENV === "production"
+  //     ? "__Secure-authjs.session-token"
+  //     : "authjs.session-token";
   const authToken = (await cookies()).get(authCookiesName)?.value;
+  console.log({ authToken });
   return (
     <html lang="en">
       <GoogleTagManager gtmId="GTM-5G23KL35" />

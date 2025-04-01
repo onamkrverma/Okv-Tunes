@@ -59,13 +59,13 @@ const NextPageContent = ({ id, type, count, query }: Props) => {
   );
   useEffect(() => {
     if (playlistData?.data) {
-      return setSongsData([...songsData, ...playlistData.data.songs]);
+      return setSongsData((prev) => [...prev, ...playlistData.data.songs]);
     }
     if (artistData?.data) {
-      return setSongsData([...songsData, ...artistData.data.topSongs]);
+      return setSongsData((prev) => [...prev, ...artistData.data.topSongs]);
     }
     if (searchSongsData?.data) {
-      return setSongsData([...songsData, ...searchSongsData.data.results]);
+      return setSongsData((prev) => [...prev, ...searchSongsData.data.results]);
     }
   }, [playlistData, artistData, searchSongsData]);
 
