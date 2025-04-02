@@ -1,13 +1,13 @@
-import { homePlaylists } from "@/utils/playlists";
 import CardCollection from "@/components/CardCollection";
-import { Metadata } from "next";
 import GreetUser from "@/components/GreetUser";
+import { homePlaylists } from "@/utils/playlists";
+import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: `Okv Tunes - Listen to Trending Music for Free | Ad-Free Streaming`,
 };
 
-export const revalidate = 86400;
+export const revalidate = 864000;
 export const dynamic = "force-static";
 
 export default async function Home() {

@@ -5,12 +5,11 @@ const { AUTH_SECRET } = process.env;
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const authCookiesName = "authjs.session-token";
 
-  // const authCookiesName =
-  //   process.env.NODE_ENV === "production"
-  //     ? "__Secure-authjs.session-token"
-  //     : "authjs.session-token";
+  const authCookiesName =
+    process.env.NODE_ENV === "production"
+      ? "__Secure-authjs.session-token"
+      : "authjs.session-token";
 
   const token = await getToken({
     req,

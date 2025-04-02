@@ -17,11 +17,7 @@ const Login = ({ searchParams }: Props) => {
   const searchParamsRes = use(searchParams);
   const redirectNext = searchParamsRes["next"];
 
-  const removeSwAndRedirect = async () => {
-    if ("serviceWorker" in navigator) {
-      const sw = await navigator.serviceWorker.getRegistration("/sw.js");
-      await sw?.unregister();
-    }
+  const redirect = () => {
     window.location.href = redirectNext
       ? `${window.location.origin}/${redirectNext}`
       : "/";
@@ -40,12 +36,12 @@ const Login = ({ searchParams }: Props) => {
     if (res?.error) {
       return setErrorMessage(res.error);
     }
-    await removeSwAndRedirect();
+    redirect();
   };
 
   const handleGoogleLogin = async () => {
     await gooogleLoginAction(redirectNext);
-    await removeSwAndRedirect();
+    redirect();
   };
 
   return (

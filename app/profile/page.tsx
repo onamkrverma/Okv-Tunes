@@ -25,12 +25,11 @@ export async function generateMetadata(): Promise<Metadata> {
 const Profile = async () => {
   const session = await auth();
   const userId = session?.user?.id ?? "";
-  const authCookiesName = "authjs.session-token";
 
-  // const authCookiesName =
-  //   process.env.NODE_ENV === "production"
-  //     ? "__Secure-authjs.session-token"
-  //     : "authjs.session-token";
+  const authCookiesName =
+    process.env.NODE_ENV === "production"
+      ? "__Secure-authjs.session-token"
+      : "authjs.session-token";
 
   const authToken = (await cookies()).get(authCookiesName)?.value;
   const userInfo = authToken ? await getUserInfo({ userId, authToken }) : null;

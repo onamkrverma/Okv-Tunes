@@ -5,7 +5,7 @@ import SongsCollection from "@/components/SongsCollection";
 import { getAlbum } from "@/utils/api";
 import { Metadata } from "next";
 
-export const revalidate = 86400;
+export const revalidate = 864000;
 export const dynamic = "force-static";
 
 type Props = {

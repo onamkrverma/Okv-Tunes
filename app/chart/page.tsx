@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export const dynamic = "force-static";
-export const revalidate = 31104000;
+export const revalidate = false;
 
 const Chart = () => {
   return (
