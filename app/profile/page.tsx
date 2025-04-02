@@ -25,10 +25,12 @@ export async function generateMetadata(): Promise<Metadata> {
 const Profile = async () => {
   const session = await auth();
   const userId = session?.user?.id ?? "";
+
   const authCookiesName =
     process.env.NODE_ENV === "production"
       ? "__Secure-authjs.session-token"
       : "authjs.session-token";
+
   const authToken = (await cookies()).get(authCookiesName)?.value;
   const userInfo = authToken ? await getUserInfo({ userId, authToken }) : null;
   const userPlaylists = authToken
@@ -37,7 +39,6 @@ const Profile = async () => {
   const publicPlaylists = authToken
     ? await getUserPublicPlaylists({ authToken })
     : [];
-
   const userImg = session?.user?.image || userInfo?.image;
 
   const urlSlug = (title: string, id: string, type: "public" | "private") =>

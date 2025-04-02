@@ -1,5 +1,5 @@
 "use client";
-import { getLikedSongs } from "@/utils/api";
+import { getLikedSongs, getToken } from "@/utils/api";
 import ls from "localstorage-slim";
 import { Session } from "next-auth";
 import React, {
@@ -37,7 +37,7 @@ type TGlobalState = {
   likedSongsIds: string[];
   alertMessage?: TAlertMessage;
   session?: Session | null;
-  authToken?: string;
+  authToken?: string | null;
 };
 export const defaultState: TGlobalState = {
   currentSong: {
@@ -63,14 +63,13 @@ type TGlobalContext = {
   likedSongsIds: string[];
   alertMessage?: TAlertMessage;
   session?: Session | null;
-  authToken?: string;
+  authToken?: string | null;
   setGlobalState: React.Dispatch<React.SetStateAction<TGlobalState>>;
 };
 
 type TGlobalProviderProps = {
   children: ReactNode;
   value?: TGlobalState;
-  authToken?: string;
 };
 
 export const GlobalContext = createContext<TGlobalContext | null>(null);
@@ -78,22 +77,23 @@ export const GlobalContext = createContext<TGlobalContext | null>(null);
 export const GlobalContextProvider = ({
   children,
   value,
-  authToken,
 }: TGlobalProviderProps) => {
   const [globalState, setGlobalState] = useState(value || defaultState);
 
   const getUserSession = async () => {
-    const res = await fetch(
-      `/api/auth/session?timestamp=${new Date().getTime()}`
-    );
+    const res = await fetch(`/api/auth/session`);
 
     const session: Session | null = await res.json();
+
+    const authToken = (await getToken()).authToken;
+    if (!session || !authToken) return;
     setGlobalState((prev) => ({
       ...prev,
       session: session,
       authToken: authToken,
     }));
-    if (!session || !authToken) return;
+    console.log({ session, authToken });
+
     if (!session.user?.id) return;
     const likedSongsIds = await getLikedSongs({
       authToken,

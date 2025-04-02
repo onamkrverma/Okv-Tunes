@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 
 const LoadingBar = () => {
@@ -19,11 +19,13 @@ const LoadingBar = () => {
   }, [pathname, searchParams]);
 
   return (
-    isLoading && (
-      <div className="w-full h-[2px] fixed top-0 left-0 z-20 ">
-        <div className="animate-loadingBar transition-transform delay-300 bg-action w-full h-full"></div>
-      </div>
-    )
+    <Suspense>
+      {isLoading && (
+        <div className="w-full h-[2px] fixed top-0 left-0 z-20 ">
+          <div className="animate-loadingBar transition-transform delay-300 bg-action w-full h-full"></div>
+        </div>
+      )}
+    </Suspense>
   );
 };
 

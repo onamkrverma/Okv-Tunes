@@ -2,7 +2,7 @@
 import { getArtist, getPlaylists, getSearchSongs } from "@/utils/api";
 import { TSong } from "@/utils/api.d";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import useSWR from "swr";
 import Loading from "./Loading";
 import SongsCollection from "./SongsCollection";
@@ -14,7 +14,7 @@ type Props = {
   type: "playlist" | "artist" | "search";
 };
 
-const NextPageContent = ({ id, type, count, query }: Props) => {
+const PageContent = ({ id, type, count, query }: Props) => {
   const searchParams = useSearchParams();
   const page = parseInt(searchParams.get("page") ?? "1");
   const [songsData, setSongsData] = useState<TSong[]>([]);
@@ -59,13 +59,13 @@ const NextPageContent = ({ id, type, count, query }: Props) => {
   );
   useEffect(() => {
     if (playlistData?.data) {
-      return setSongsData([...songsData, ...playlistData.data.songs]);
+      return setSongsData((prev) => [...prev, ...playlistData.data.songs]);
     }
     if (artistData?.data) {
-      return setSongsData([...songsData, ...artistData.data.topSongs]);
+      return setSongsData((prev) => [...prev, ...artistData.data.topSongs]);
     }
     if (searchSongsData?.data) {
-      return setSongsData([...songsData, ...searchSongsData.data.results]);
+      return setSongsData((prev) => [...prev, ...searchSongsData.data.results]);
     }
   }, [playlistData, artistData, searchSongsData]);
 
@@ -89,6 +89,14 @@ const NextPageContent = ({ id, type, count, query }: Props) => {
 
       {isLoading ? <Loading /> : null}
     </div>
+  );
+};
+
+const NextPageContent = ({ id, type, count, query }: Props) => {
+  return (
+    <Suspense fallback={<Loading loadingText="Loading" />}>
+      <PageContent id={id} type={type} count={count} query={query} />
+    </Suspense>
   );
 };
 

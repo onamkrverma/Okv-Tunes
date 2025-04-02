@@ -10,6 +10,9 @@ export const metadata: Metadata = {
     "Discover and stream the latest and trending music on Okv Tunes. Enjoy ad-free listening with top hits from popular artists like Arijit Singh, Neha Kakkar, Justin Bieber, Diljit Dosanjh and more",
 };
 
+export const dynamic = "force-static";
+export const revalidate = false;
+
 const TopArtists = () => {
   return (
     <div className="inner-container flex flex-col gap-6">

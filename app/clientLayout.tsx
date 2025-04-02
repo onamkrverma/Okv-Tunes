@@ -1,27 +1,20 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { GlobalContextProvider } from "./GlobalContex";
+import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import SideNavbar from "@/components/SideNavbar";
-import Footer from "@/components/Footer";
 import dynamic from "next/dynamic";
-import { usePathname } from "next/navigation";
-import registerSw from "@/public/registerSw";
+import React, { Suspense, useEffect, useState } from "react";
+import { GlobalContextProvider } from "./GlobalContex";
 import AlertNotification from "@/components/AlertNotification";
 import LoadingBar from "@/components/LoadingBar";
+import { usePathname } from "next/navigation";
 const Plalyer = dynamic(() => import("@/components/Player"), { ssr: false });
 
 const ClientLayout = ({
   children,
-  authToken,
 }: Readonly<{
   children: React.ReactNode;
-  authToken?: string;
 }>) => {
-  useEffect(() => {
-    registerSw();
-  }, []);
-
   const currentPath = usePathname();
   const hideSideNavbarPaths = ["/login", "/signup"];
   const [isOffline, setIsOffline] = useState(false);
@@ -37,26 +30,13 @@ const ClientLayout = ({
   }, []);
 
   return (
-    <GlobalContextProvider authToken={authToken}>
+    <GlobalContextProvider>
       <main className="container relative">
-        <LoadingBar />
+        <Suspense>
+          <LoadingBar />
+        </Suspense>
         <div className="absolute top-0 w-full h-48 -z-10 flex items-center justify-end rounded-full">
           <span className="bg-custom_gradient block w-3/4 h-full blur-3xl" />
-        </div>
-        <div
-          className="!hidden"
-          style={{
-            textAlign: "center",
-            margin: "5px 0",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            fontSize: "18px",
-          }}
-        >
-          <p style={{ color: "red" }}>⚠️There is a problem</p>
-          <p style={{ margin: "0" }}>Unable to fetch existing caches data</p>
-          <p>Please clear site data or caches data manualy!</p>
         </div>
         {isOffline ? (
           <div

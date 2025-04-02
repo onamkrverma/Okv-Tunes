@@ -171,10 +171,10 @@ const SuggestedSongs = ({
       <div className="upnext-songs overflow-y-scroll ">
         {!isLoading ? (
           error ? (
-            <div className="flex items-center justify-center bg-white text-action">
-              <p>{error.message}</p>
+            <div className="flex items-center justify-center">
+              <p>{JSON.parse(error.message).error}</p>
             </div>
-          ) : suggestedSongs.length > 0 ? (
+          ) : (
             suggestedSongs.map((song, index) => (
               <SuggestedSongCard
                 key={song.id}
@@ -184,8 +184,6 @@ const SuggestedSongs = ({
                 handleSongRemoval={handleSongRemoval}
               />
             ))
-          ) : (
-            <p>No suggestions found for the this song</p>
           )
         ) : (
           <Loading loadingText="loading" />

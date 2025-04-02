@@ -1,9 +1,8 @@
+import { GoogleTagManager } from "@next/third-parties/google";
 import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
-import "./globals.css";
 import ClientLayout from "./clientLayout";
-import { GoogleTagManager } from "@next/third-parties/google";
-import { cookies } from "next/headers";
+import "./globals.css";
 
 const poppins = Poppins({
   display: "swap",
@@ -70,16 +69,11 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const authCookiesName =
-    process.env.NODE_ENV === "production"
-      ? "__Secure-authjs.session-token"
-      : "authjs.session-token";
-  const authToken = (await cookies()).get(authCookiesName)?.value;
   return (
     <html lang="en">
       <GoogleTagManager gtmId="GTM-5G23KL35" />
       <body className={poppins.className}>
-        <ClientLayout authToken={authToken}>{children}</ClientLayout>
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );

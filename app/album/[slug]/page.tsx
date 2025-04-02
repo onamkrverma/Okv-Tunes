@@ -4,6 +4,10 @@ import PlayAllSongs from "@/components/PlayAllSongs";
 import SongsCollection from "@/components/SongsCollection";
 import { getAlbum } from "@/utils/api";
 import { Metadata } from "next";
+
+export const revalidate = 864000;
+export const dynamic = "force-static";
+
 type Props = {
   params: Promise<{ slug: string }>;
 };

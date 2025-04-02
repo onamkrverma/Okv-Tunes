@@ -18,7 +18,7 @@ const serverUrl =
     : process.env.NEXT_PUBLIC_MY_SERVER_URL;
 
 const api = Wretch(`${serverUrl}/api`, {
-  next: { revalidate: 3600 * 6 },
+  next: { revalidate: 3600 * 12 },
 }).addon(queryString);
 
 type TApiQuery = {
@@ -39,7 +39,7 @@ type TUserApiQuery = {
   isReorder?: boolean;
 };
 
-export const getPlaylists = async ({ id, page = 1, limit = 10 }: TApiQuery) => {
+export const getPlaylists = async ({ id, page = 1, limit = 20 }: TApiQuery) => {
   const querParams = {
     id,
     limit,
@@ -349,4 +349,11 @@ export const getDownloadAudio = ({
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
+};
+
+export const getToken = async () => {
+  const response = (await api.get(`/authtoken`).json()) as {
+    authToken: string | null;
+  };
+  return response;
 };

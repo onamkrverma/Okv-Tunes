@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   title: "Terms of Service • Okv-Tunes",
 };
 
+export const dynamic = "force-static";
+export const revalidate = false;
+
 const Terms = () => {
   return (
     <div className="inner-container p-6">
