@@ -10,10 +10,7 @@ export async function GET() {
   if (authToken) {
     return NextResponse.json({ authToken });
   }
-  return NextResponse.json(
-    {
-      authToken: null,
-    },
-    { status: 404 }
-  );
+  return NextResponse.json({
+    authToken: null,
+  });
 }
