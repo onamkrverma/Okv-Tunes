@@ -12,11 +12,10 @@ import {
 
 const downloadServer = process.env.NEXT_PUBLIC_MY_DOWNLOAD_URL;
 
-const serverUrl = "http://localhost:3000";
-// const serverUrl =
-//   process.env.NODE_ENV === "development"
-//     ? "http://localhost:3000"
-//     : process.env.NEXT_PUBLIC_MY_SERVER_URL;
+const serverUrl =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:3000"
+    : process.env.NEXT_PUBLIC_MY_SERVER_URL;
 
 const api = Wretch(`${serverUrl}/api`, {
   next: { revalidate: 3600 * 12 },
@@ -350,4 +349,11 @@ export const getDownloadAudio = ({
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
+};
+
+export const getToken = async () => {
+  const response = (await api.get(`/authtoken`).json()) as {
+    authToken: string | null;
+  };
+  return response;
 };
