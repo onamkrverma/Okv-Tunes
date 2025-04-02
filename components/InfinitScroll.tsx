@@ -1,8 +1,9 @@
 "use client";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import Loading from "./Loading";
 
-const InfinitScroll = () => {
+const Scroll = () => {
   const searchParams = useSearchParams();
   const page = parseInt(searchParams.get("page") ?? "1");
   const [currentPage, setCurrentPage] = useState(page);
@@ -62,6 +63,14 @@ const InfinitScroll = () => {
   }, []);
 
   return null;
+};
+
+const InfinitScroll = () => {
+  return (
+    <Suspense fallback={<Loading loadingText="Loading" />}>
+      <Scroll />
+    </Suspense>
+  );
 };
 
 export default InfinitScroll;
