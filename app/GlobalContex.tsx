@@ -92,7 +92,6 @@ export const GlobalContextProvider = ({
       session: session,
       authToken: authToken,
     }));
-    console.log({ session, authToken });
 
     if (!session.user?.id) return;
     const likedSongsIds = await getLikedSongs({
