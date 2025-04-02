@@ -21,7 +21,7 @@ export const GET = async (request: NextRequest) => {
     return NextResponse.json(data, {
       status: 200,
       headers: {
-        "Cache-Control": "s-maxage=43200, stale-while-revalidate=3600",
+        "Cache-Control": "s-maxage=43200, stale-while-revalidate=21600",
       },
     });
   } catch (error: unknown) {

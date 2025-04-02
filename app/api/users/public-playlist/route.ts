@@ -7,12 +7,10 @@ import { NextRequest, NextResponse } from "next/server";
 export const GET = async (request: NextRequest) => {
   const playlistId = request.nextUrl.searchParams.get("playlistid");
   try {
-    const authCookiesName = "authjs.session-token";
-
-    // const authCookiesName =
-    //   process.env.NODE_ENV === "production"
-    //     ? "__Secure-authjs.session-token"
-    //     : "authjs.session-token";
+    const authCookiesName =
+      process.env.NODE_ENV === "production"
+        ? "__Secure-authjs.session-token"
+        : "authjs.session-token";
 
     const token = await getToken({
       req: request,
