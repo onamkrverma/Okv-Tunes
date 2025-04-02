@@ -10,20 +10,10 @@ import { defaultState, useGlobalContext } from "@/app/GlobalContex";
 const LoginLogout = ({ session }: { session: Session | null }) => {
   const { setGlobalState } = useGlobalContext();
 
-  const clearAllCaches = async () => {
-    const cacheNames = await caches.keys();
-    await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
-    if ("serviceWorker" in navigator) {
-      const sw = await navigator.serviceWorker.getRegistration("/sw.js");
-      await sw?.unregister();
-    }
-    window.localStorage.clear();
-  };
-
   const handleLogout = async () => {
-    await clearAllCaches();
     await logoutAction();
     setGlobalState(defaultState);
+    window.localStorage.clear();
     window.location.href = "/login";
   };
 
