@@ -14,12 +14,14 @@ import {
 } from "@/utils/api";
 import { Suspense, use, useEffect, useState } from "react";
 import useSWR from "swr";
+import { useGlobalContext } from "../GlobalContex";
 
 type Props = {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 };
 
 const SearchComponent = ({ searchParams }: Props) => {
+  const { session } = useGlobalContext();
   const searchParamsRes = use(searchParams);
   const searchQuery = searchParamsRes["query"];
   const typeQuery = searchParamsRes["type"];
@@ -97,7 +99,9 @@ const SearchComponent = ({ searchParams }: Props) => {
   );
 
   useEffect(() => {
-    document.title = `${searchQuery}-Search • Okv-Tunes`;
+    document.title = `${searchQuery}-Search • Okv-Tunes | ${
+      session ? session.user?.name : ""
+    }`;
     // eslint-disable-next-line
   }, [searchQuery]);
 
