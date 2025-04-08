@@ -1,5 +1,5 @@
-# Okv Tunes 
-Okv Tunes is a Progressive Web App (PWA) music streaming platform that allows users to search for songs or artists, browse charts, and discover new music across various genres and languages.
+# Nextjs Pwa Music 
+Nextjs Pwa Music is a Progressive Web App (PWA) music streaming platform that allows users to search for songs or artists, browse charts, and discover new music across various genres and languages.
 
 ![image](https://github.com/user-attachments/assets/a5d27616-2f74-4c9c-a920-67561de36f16)
 
@@ -45,10 +45,10 @@ Instructions on how to install and set up your project.
 
 ```bash
 # Clone the repository
-git clone https://github.com/onamkrverma/Okv-Tunes.git
+git clone https://github.com/onamkrverma/Nextjs-Pwa-Music.git
 
 # Navigate to the project directory
-cd okv-tunes
+cd Nextjs-Pwa-Music
 
 # Install dependencies
 npm install
