@@ -42,25 +42,34 @@ const SuggestedSongs = ({
   const [isUpnextClick, setIsUpnextClick] = useState(false);
   const suggestedSongsRef = useRef<HTMLDivElement>(null);
 
-  const dataFetcher = () =>
-    playNextSongId || addToQueueSongId
-      ? getSongs({ id: playNextSongId || addToQueueSongId })
-      : null;
+  const playNextDataFetcher = () =>
+    playNextSongId ? getSongs({ id: playNextSongId }) : null;
+  const addToQueueDataFetcher = () =>
+    addToQueueSongId ? getSongs({ id: addToQueueSongId }) : null;
 
-  const { data: fetchedData } = useSWR(
-    playNextSongId || addToQueueSongId
-      ? `/manual-added-songs?id=${playNextSongId || addToQueueSongId}`
-      : null,
-    dataFetcher,
+  const { data: fetchedPlayNextData } = useSWR(
+    playNextSongId ? `/play-next-songs?id=${playNextSongId}` : null,
+    playNextDataFetcher,
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
     }
   );
-
+  const { data: fetchedQueueData } = useSWR(
+    addToQueueSongId ? `/add-to-queue?id=${addToQueueSongId}` : null,
+    addToQueueDataFetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
   useEffect(() => {
-    if (fetchedData?.data) {
-      const fetchedSongIds = new Set(fetchedData.data.map((song) => song.id));
+    if (fetchedPlayNextData?.data || fetchedQueueData?.data) {
+      const fetchedData = [
+        ...(fetchedPlayNextData?.data ?? []),
+        ...(fetchedQueueData?.data ?? []),
+      ];
+      const fetchedSongIds = new Set(fetchedData.map((song) => song.id));
 
       const nonDuplicateSongs = suggestedSongs.filter(
         (item) => !fetchedSongIds.has(item.id)
@@ -72,13 +81,13 @@ const SuggestedSongs = ({
       const allSuggestionSongs = playNextSongId
         ? [
             ...nonDuplicateSongs.slice(0, currentSongIndex + 1),
-            ...fetchedData.data,
+            ...fetchedData,
             ...nonDuplicateSongs.slice(currentSongIndex + 1),
           ]
-        : [...nonDuplicateSongs, ...fetchedData.data];
+        : [...nonDuplicateSongs, ...fetchedData];
       setSuggestedSongs(allSuggestionSongs);
     }
-  }, [fetchedData, playNextSongId, addToQueueSongId]);
+  }, [fetchedPlayNextData, fetchedQueueData, playNextSongId, addToQueueSongId]);
 
   const handleSongRemoval = (e: MouseEvent<HTMLButtonElement>, id: string) => {
     e.stopPropagation();
@@ -170,7 +179,7 @@ const SuggestedSongs = ({
       </div>
       <div className="upnext-songs overflow-y-scroll ">
         {!isLoading ? (
-          error ? (
+          error && !suggestedSongs.length ? (
             <div className="flex items-center justify-center">
               <p>{JSON.parse(error.message).error}</p>
             </div>

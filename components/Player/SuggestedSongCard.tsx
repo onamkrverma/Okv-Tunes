@@ -1,3 +1,4 @@
+"use client";
 import secondsToTime from "@/utils/secondsToTime";
 import React, { MouseEvent } from "react";
 import ImageWithFallback from "../ImageWithFallback";

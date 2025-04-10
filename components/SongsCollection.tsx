@@ -137,7 +137,7 @@ const SongsCollection = ({
       },
     }));
     setIsMoreBtnClick(false);
-    await mutate(`/manual-added-songs?id=${id}`);
+    await mutate(`/play-next-songs?id=${id}`);
   };
 
   const handleAddToQueue = async () => {
@@ -160,7 +160,7 @@ const SongsCollection = ({
       },
     }));
     setIsMoreBtnClick(false);
-    await mutate(`/manual-added-songs?id=${id}`);
+    await mutate(`/add-to-queue?id=${id}`);
   };
 
   useEffect(() => {
