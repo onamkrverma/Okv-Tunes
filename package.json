@@ -21,7 +21,7 @@
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^19.0.0",
     "react-player": "^2.16.0",
-    "sharp": "^0.33.5",
+    "sharp": "^0.34.1",
     "swr": "^2.3.3",
     "wretch": "^2.11.0"
   },
